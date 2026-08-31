@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VueCarteEtQuartiersB06</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="min-h-screen bg-background text-foreground flex flex-col font-sans relative">
+      <header class="absolute top-4 left-4 right-4 z-20 space-y-2">
+        <div
+          class="flex items-center gap-2 rounded-xl border border-border bg-card shadow-sm px-3 min-h-[52px]"
+        >
+          <button
+            class="min-w-10 min-h-10 flex items-center justify-center text-foreground"
+            aria-label="Retour au flux"
+          >
+            <iconify-icon icon="ph:arrow-left-bold" width="18" height="18"></iconify-icon>
+          </button>
+          <div class="flex-1 min-w-0">
+            <p class="text-[14px] font-bold text-foreground truncate">Cotonou &amp; Calavi</p>
+            <p class="text-[12px] text-muted-foreground truncate">42 biens vérifiés · 30k – 60k</p>
+          </div>
+          <button
+            class="min-w-10 min-h-10 flex items-center justify-center text-foreground"
+            aria-label="Filtres"
+          >
+            <iconify-icon
+              icon="ph:sliders-horizontal-bold"
+              width="18"
+              height="18"
+            ></iconify-icon></button
+          ><button
+            class="min-w-10 min-h-10 flex items-center justify-center text-primary font-bold"
+            aria-label="Mode Liste"
+          >
+            <iconify-icon icon="ph:list-bullets-bold" width="20" height="20"></iconify-icon>
+          </button>
+        </div>
+        <div class="flex gap-2 overflow-x-auto no-scrollbar py-1">
+          <button
+            class="shrink-0 px-3 py-1.5 rounded-full bg-foreground text-background text-[13px] font-bold"
+          >
+            Tous (42)</button
+          ><button
+            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+          >
+            Fidjrossè (12)</button
+          ><button
+            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+          >
+            Cadjèhoun (8)</button
+          ><button
+            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+          >
+            Agla (9)</button
+          ><button
+            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+          >
+            Godomey (7)</button
+          ><button
+            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+          >
+            Akpakpa (6)
+          </button>
+        </div>
+      </header>
+      <div class="flex-1 w-full relative bg-[#E5ECE9] overflow-hidden min-h-[500px]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="absolute inset-0 w-full h-full">
+          <path d="M 0 540 Q 180 520 400 550 L 400 800 L 0 800 Z" fill="#D3E5E8" />
+          <path d="M 220 0 Q 300 120 400 100 L 400 0 Z" fill="#D3E5E8" />
+          <path d="M 0 460 Q 160 450 400 480" fill="none" stroke="#CBD5E1" stroke-width="8" />
+          <path d="M 60 0 Q 120 280 200 460" fill="none" stroke="#CBD5E1" stroke-width="6" />
+          <path d="M 0 260 Q 200 240 400 300" fill="none" stroke="#CBD5E1" stroke-width="7" />
+          <path d="M 280 0 L 260 480" fill="none" stroke="#CBD5E1" stroke-width="5" /></svg
+        ><span
+          class="absolute top-28 left-6 text-[12px] font-bold text-[#64748B] tracking-wider uppercase"
+          >Calavi / Godomey</span
+        ><span
+          class="absolute top-44 left-32 text-[12px] font-bold text-[#64748B] tracking-wider uppercase"
+          >Agla</span
+        ><span
+          class="absolute bottom-48 left-10 text-[12px] font-bold text-[#64748B] tracking-wider uppercase"
+          >Fidjrossè Plage</span
+        ><span
+          class="absolute bottom-48 right-16 text-[12px] font-bold text-[#64748B] tracking-wider uppercase"
+          >Cadjèhoun / Haie Vive</span
+        ><span
+          class="absolute top-36 right-8 text-[12px] font-bold text-[#64748B] tracking-wider uppercase"
+          >Akpakpa</span
+        ><span
+          class="absolute bottom-12 right-24 text-[12px] font-bold text-[#00708A] tracking-wider uppercase"
+          >Océan Atlantique</span
+        >
+        <div class="absolute bottom-36 left-12 z-10 flex flex-col items-center">
+          <div
+            class="px-2.5 py-1 rounded-full bg-primary text-primary-foreground font-extrabold text-[13px] shadow-lg flex items-center gap-1 border-2 border-white"
+          >
+            <iconify-icon icon="ph:camera-rotate-bold" width="14" height="14"></iconify-icon
+            ><span>35 000 F</span>
+          </div>
+          <div class="w-2.5 h-2.5 bg-primary rotate-45 -mt-1 shadow-sm"></div>
+        </div>
+        <div class="absolute bottom-40 right-14 z-10 flex flex-col items-center">
+          <div
+            class="px-2 py-1 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
+          >
+            <span class="text-[#006B4A]">●</span> 42 000 F
+          </div>
+          <div class="w-2 h-2 bg-card border-r border-b border-border rotate-45 -mt-1"></div>
+        </div>
+        <div class="absolute top-48 left-28 z-10 flex flex-col items-center">
+          <div
+            class="px-2 py-1 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
+          >
+            <span class="text-[#006B4A]">●</span> 30 000 F
+          </div>
+          <div class="w-2 h-2 bg-card border-r border-b border-border rotate-45 -mt-1"></div>
+        </div>
+        <div class="absolute top-36 left-10 z-10 flex flex-col items-center">
+          <div
+            class="px-2 py-1 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
+          >
+            <span class="text-[#006B4A]">●</span> 48 000 F
+          </div>
+          <div class="w-2 h-2 bg-card border-r border-b border-border rotate-45 -mt-1"></div>
+        </div>
+        <div class="absolute top-44 right-10 z-10 flex flex-col items-center">
+          <div
+            class="px-2 py-1 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
+          >
+            <span class="text-[#006B4A]">●</span> 38 000 F
+          </div>
+          <div class="w-2 h-2 bg-card border-r border-b border-border rotate-45 -mt-1"></div>
+        </div>
+        <button
+          class="absolute bottom-48 right-4 z-10 w-12 h-12 rounded-full bg-card border border-border shadow-md flex items-center justify-center text-foreground"
+          aria-label="Centrer sur ma position"
+        >
+          <iconify-icon icon="ph:crosshair-bold" width="22" height="22"></iconify-icon>
+        </button>
+      </div>
+      <div class="p-4 bg-background border-t border-border z-20 space-y-3">
+        <article
+          class="h-32 rounded-2xl border border-primary bg-card p-2 flex gap-3 relative shadow-sm"
+        >
+          <div class="relative w-28 shrink-0">
+            <img
+              alt="Chambre-salon Fidjrossè"
+              src="https://ggrhecslgdflloszjkwl.supabase.co/storage/v1/object/public/user-assets/yqwTzo2JarQ/components/fb5ANajxPq0.jpeg"
+              class="w-28 h-[84px] object-cover rounded-2xl"
+            /><span
+              class="absolute left-1.5 bottom-1.5 rounded-md bg-accent px-2 py-1 text-[13px] font-bold text-accent-foreground"
+              >360</span
+            >
+          </div>
+          <div class="min-w-0 flex-1 pr-6">
+            <p
+              class="font-heading text-[18px] font-extrabold leading-6 tabular-nums text-foreground"
+            >
+              35 000 F <span class="font-sans text-[14px] font-semibold">/mois</span>
+            </p>
+            <p class="text-[14px] text-muted-foreground truncate">Chambre-salon · Fidjrossè</p>
+            <p class="text-[13px] font-semibold text-foreground">
+              <span class="text-[#006B4A]">●</span> Vérifié disponible aujourd'hui
+            </p>
+            <p class="text-[13px] font-bold tabular-nums text-foreground">
+              Entrée : 245 000 F · 3 mois
+            </p>
+            <p class="text-[12px] text-muted-foreground">~22 min en Zem de ton travail</p>
+          </div>
+          <button
+            class="absolute right-2 bottom-2 min-w-10 min-h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+            aria-label="Voir la fiche"
+          >
+            <iconify-icon icon="ph:arrow-right-bold" width="18" height="18"></iconify-icon>
+          </button>
+        </article>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+
+# pubspec.lock EST versionne : c'est une application, pas une bibliotheque.
+# Il garantit que toute l'equipe construit avec les memes versions.
+
+# IDE
+.idea/
+.vscode/
+
+# Android
+android/.gradle/
+android/local.properties
+android/app/debug/
+android/app/profile/
+android/app/release/
+*.hprof
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Secrets — AUCUNE cle marchande ne doit jamais entrer ici (CONSTITUTION P11)
+.env
+.env.*
+**/google-services.json
+**/GoogleService-Info.plist
+android/key.properties
+*.jks
+*.keystore
+
+# Outillage local, machine-specifique
+graphify-out/
+.unlazy/
+.unlazy-hook-state.json
+.claude/settings.local.json
+.hallmark/

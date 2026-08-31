@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DépôtDeBienDémarcheurD02DépôtDeBienDémarcheurD02</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="min-h-screen bg-background text-foreground font-sans px-4 pt-6 pb-24 space-y-5">
+      <div class="flex items-center justify-between">
+        <a
+          href="#"
+          class="min-w-12 min-h-12 flex items-center justify-center -ml-2 rounded-xl text-foreground active:bg-muted/60"
+          ><iconify-icon icon="ph:arrow-left-bold" width="24" height="24"></iconify-icon
+        ></a>
+        <h1 class="font-heading text-[18px] font-extrabold text-foreground text-center">
+          Apporter un bien
+        </h1>
+        <span class="text-[13px] font-bold text-[#006B4A] bg-[#006B4A]/10 px-2.5 py-1 rounded-full"
+          >+1 000 F</span
+        >
+      </div>
+      <p class="text-[14px] text-muted-foreground leading-snug">
+        Remplis ces infos sur place. Dès vérification par un agent sous 48h, tu reçois 1 000 F sur
+        ton MoMo.
+      </p>
+      <form onsubmit="event.preventDefault()" class="space-y-5">
+        <div class="space-y-2">
+          <label class="text-[14px] font-bold text-foreground"
+            >1. Quartier (Cotonou / Calavi)</label
+          >
+          <div class="flex flex-wrap gap-2">
+            <button
+              type="button"
+              class="min-h-12 px-4 rounded-xl text-[14px] font-bold bg-[#D93A1F] text-white"
+            >
+              Fidjrossè</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              Agla</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              Godomey</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              Kpota</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              Autre...
+            </button>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[14px] font-bold text-foreground">2. Type de bien</label>
+          <div class="flex flex-wrap gap-2">
+            <button
+              type="button"
+              class="min-h-12 px-4 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              Chambre</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 rounded-xl text-[14px] font-bold bg-[#D93A1F] text-white"
+            >
+              Chambre-salon</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              2 ch-salon</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              Boutique
+            </button>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[14px] font-bold text-foreground">3. Loyer mensuel demandé</label>
+          <div class="relative">
+            <input
+              type="number"
+              class="w-full min-h-12 rounded-xl bg-card border border-border px-4 text-[18px] font-extrabold text-foreground tabular-nums focus:outline-none focus:border-[#D93A1F]"
+              inputmode="numeric"
+              value="35000"
+            /><span
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-[16px] font-bold text-muted-foreground"
+              >FCFA / mois</span
+            >
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[14px] font-bold text-foreground"
+            >4. Avance demandée par le proprio</label
+          >
+          <div class="grid grid-cols-5 gap-1.5">
+            <button
+              type="button"
+              class="min-h-12 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              1 m</button
+            ><button
+              type="button"
+              class="min-h-12 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              2 m</button
+            ><button
+              type="button"
+              class="min-h-12 rounded-xl text-[14px] font-bold bg-[#D93A1F] text-white"
+            >
+              3 m</button
+            ><button
+              type="button"
+              class="min-h-12 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              6 m</button
+            ><button
+              type="button"
+              class="min-h-12 rounded-xl text-[14px] font-bold bg-card border border-border text-foreground"
+            >
+              12 m
+            </button>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-[14px] font-bold text-foreground">5. Photos du bien</label
+            ><span class="text-[13px] font-bold text-[#006B4A]">3 prises (min. 3)</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div
+              class="aspect-square rounded-xl bg-muted border border-border flex flex-col items-center justify-center text-muted-foreground"
+            >
+              <iconify-icon icon="ph:image-square-bold" width="24" height="24"></iconify-icon
+              ><span class="text-[11px] font-bold mt-1">Salon</span>
+            </div>
+            <div
+              class="aspect-square rounded-xl bg-muted border border-border flex flex-col items-center justify-center text-muted-foreground"
+            >
+              <iconify-icon icon="ph:image-square-bold" width="24" height="24"></iconify-icon
+              ><span class="text-[11px] font-bold mt-1">Chambre</span>
+            </div>
+            <button
+              type="button"
+              class="aspect-square rounded-xl border-2 border-dashed border-[#D93A1F]/50 bg-[#D93A1F]/5 flex flex-col items-center justify-center text-[#C4321A]"
+            >
+              <iconify-icon icon="ph:camera-plus-bold" width="28" height="28"></iconify-icon
+              ><span class="text-[11px] font-bold mt-1">Ajouter</span>
+            </button>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[14px] font-bold text-foreground"
+            >6. Téléphone du propriétaire ou gardien</label
+          >
+          <div class="flex gap-2">
+            <span
+              class="min-h-12 px-3.5 bg-muted rounded-xl flex items-center justify-center font-bold text-[15px] text-foreground border border-border"
+              >+229</span
+            ><input
+              type="tel"
+              class="flex-1 min-h-12 rounded-xl bg-card border border-border px-4 text-[16px] font-bold text-foreground focus:outline-none focus:border-[#D93A1F]"
+              placeholder="97 00 00 00"
+            />
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[14px] font-bold text-foreground"
+            >7. Note vocale (plus rapide que taper)</label
+          ><button
+            type="button"
+            class="w-full min-h-14 rounded-2xl bg-muted/60 border border-border flex items-center justify-center gap-3 text-foreground active:bg-muted font-bold text-[15px]"
+          >
+            <span
+              class="size-9 rounded-full bg-[#D93A1F] text-white flex items-center justify-center"
+              ><iconify-icon icon="ph:microphone-bold" width="20" height="20"></iconify-icon></span
+            ><span>Appuie pour enregistrer une note</span>
+          </button>
+        </div>
+        <div class="pt-2">
+          <button
+            type="button"
+            class="w-full min-h-14 rounded-full bg-[#D93A1F] text-white font-heading font-extrabold text-[17px] shadow-sm flex items-center justify-center gap-2 active:opacity-95"
+          >
+            <span>Envoyer — 1 000 F si vérifié</span
+            ><iconify-icon icon="ph:paper-plane-right-bold" width="20" height="20"></iconify-icon>
+          </button>
+          <p class="text-center text-[12px] text-muted-foreground mt-2">
+            Ton apport est protégé. Seul ton compte touchera la commission de 3 000 F à la location.
+          </p>
+        </div>
+      </form>
+    </main>
+  </body>
+</html>

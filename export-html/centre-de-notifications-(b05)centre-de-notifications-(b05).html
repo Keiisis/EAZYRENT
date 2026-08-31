@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CentreDeNotificationsB05CentreDeNotificationsB05</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main
+      class="min-h-screen bg-background text-foreground font-sans px-4 pt-6 pb-24 max-w-md mx-auto safe-area-bottom"
+    >
+      <div class="flex items-center justify-between pb-4 border-b border-border">
+        <div class="flex items-center gap-3">
+          <button
+            class="min-w-12 min-h-12 rounded-full bg-muted flex items-center justify-center text-foreground active:scale-95"
+            aria-label="Retour"
+          >
+            <iconify-icon icon="ph:arrow-left-bold" width="20" height="20"></iconify-icon>
+          </button>
+          <h1 class="font-heading text-[22px] font-extrabold text-foreground">Notifications</h1>
+        </div>
+        <button
+          class="text-[13px] font-bold text-[#00708A] min-h-12 px-3 flex items-center rounded-lg active:bg-muted"
+        >
+          Tout marquer lu
+        </button>
+      </div>
+      <div
+        class="my-3 py-2.5 px-3.5 bg-muted/50 rounded-xl border border-border flex items-center justify-between text-[13px] text-muted-foreground"
+      >
+        <span class="flex items-center gap-1.5 font-medium"
+          ><iconify-icon
+            icon="ph:moon-stars-bold"
+            width="16"
+            height="16"
+            class="text-[#00708A]"
+          ></iconify-icon
+          >Pas de notification entre 21h et 7h</span
+        ><a href="#" class="text-[#C4321A] font-bold underline min-h-12 flex items-center"
+          >Régler</a
+        >
+      </div>
+      <div class="space-y-2.5 mt-4">
+        <p class="text-[13px] font-bold text-muted-foreground uppercase tracking-wider">
+          Aujourd'hui
+        </p>
+        <a
+          href="#"
+          class="block p-3.5 rounded-2xl bg-card border-2 border-[#D93A1F]/30 shadow-sm relative min-h-14"
+          ><div class="flex items-start gap-3">
+            <span class="size-2.5 rounded-full bg-[#D93A1F] mt-2 shrink-0"></span>
+            <div
+              class="size-12 rounded-xl bg-[#D93A1F]/10 text-[#C4321A] flex items-center justify-center shrink-0"
+            >
+              <iconify-icon icon="ph:lightning-bold" width="20" height="20"></iconify-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-1">
+                <p class="text-[14px] font-bold text-foreground truncate">
+                  Nouveau bien à Fidjrossè
+                </p>
+                <span class="text-[12px] text-muted-foreground tabular-nums shrink-0">20 min</span>
+              </div>
+              <p class="text-[14px] text-muted-foreground mt-0.5 leading-snug">
+                Chambre-salon, 35 000 F. Visite 360° disponible.
+              </p>
+            </div>
+          </div></a
+        ><a href="#" class="block p-3.5 rounded-2xl bg-card border border-border shadow-sm min-h-14"
+          ><div class="flex items-start gap-3">
+            <div
+              class="size-12 rounded-xl bg-[#006B4A]/10 text-[#006B4A] flex items-center justify-center shrink-0"
+            >
+              <iconify-icon icon="ph:check-circle-bold" width="20" height="20"></iconify-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-1">
+                <p class="text-[14px] font-bold text-foreground truncate">
+                  Disponibilité reconfirmée
+                </p>
+                <span class="text-[12px] text-muted-foreground tabular-nums shrink-0">2 h</span>
+              </div>
+              <p class="text-[14px] text-muted-foreground mt-0.5 leading-snug">
+                Le bien de Kpota (40 000 F) est toujours libre — vérifié ce matin.
+              </p>
+            </div>
+          </div></a
+        >
+      </div>
+      <div class="space-y-2.5 mt-6">
+        <p class="text-[13px] font-bold text-muted-foreground uppercase tracking-wider">Hier</p>
+        <a href="#" class="block p-3.5 rounded-2xl bg-card border border-border shadow-sm min-h-14"
+          ><div class="flex items-start gap-3">
+            <div
+              class="size-12 rounded-xl bg-[#00708A]/10 text-[#00708A] flex items-center justify-center shrink-0"
+            >
+              <iconify-icon icon="ph:gift-bold" width="20" height="20"></iconify-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-1">
+                <p class="text-[14px] font-bold text-foreground truncate">
+                  Visite offerte de la semaine
+                </p>
+                <span class="text-[12px] text-muted-foreground tabular-nums shrink-0"
+                  >Hier 09h</span
+                >
+              </div>
+              <p class="text-[14px] text-muted-foreground mt-0.5 leading-snug">
+                Ton crédit gratuit du samedi est prêt. Choisis ton logement à visiter.
+              </p>
+            </div>
+          </div></a
+        >
+      </div>
+      <div class="mt-8 text-center">
+        <a
+          href="#"
+          class="inline-flex min-h-12 items-center justify-center text-[14px] font-bold text-[#00708A] underline"
+          >Régler mes notifications par type</a
+        >
+      </div>
+      <div class="h-1 w-32 bg-foreground/20 rounded-full mx-auto mt-6"></div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Messages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="min-h-screen bg-background text-foreground pb-32 font-sans">
+      <header
+        class="sticky top-0 z-30 bg-background/95 border-b border-border px-4 py-3.5 flex items-center justify-between"
+      >
+        <div>
+          <h1 class="font-heading text-[22px] font-extrabold text-foreground">Messages</h1>
+          <p class="text-[13px] text-muted-foreground">Agents vérificateurs &amp; Propriétaires</p>
+        </div>
+        <span
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#006B4A]/10 text-[#006B4A] text-[12px] font-black"
+          ><span class="size-2 rounded-full bg-[#006B4A]"></span>3 actifs</span
+        >
+      </header>
+      <div class="p-4">
+        <div
+          class="p-3.5 rounded-2xl bg-muted/60 border border-border flex items-center justify-between gap-3"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="size-12 rounded-xl bg-[#25D366] text-white flex items-center justify-center shrink-0"
+            >
+              <iconify-icon icon="mdi:whatsapp" width="26" height="26"></iconify-icon>
+            </div>
+            <div>
+              <p class="text-[14px] font-extrabold text-foreground">
+                Discussions WhatsApp directes
+              </p>
+              <p class="text-[12px] text-muted-foreground">
+                Numéros masqués jusqu'à confirmation de visite
+              </p>
+            </div>
+          </div>
+          <iconify-icon
+            icon="solar:shield-check-bold"
+            class="text-[#006B4A] shrink-0"
+            width="22"
+            height="22"
+          ></iconify-icon>
+        </div>
+      </div>
+      <div class="px-4 space-y-2.5">
+        <div
+          class="p-4 rounded-2xl border-2 border-border bg-card flex items-start gap-3.5 relative"
+        >
+          <div class="relative shrink-0">
+            <img
+              alt="Rachid"
+              src="https://randomuser.me/api/portraits/men/32.jpg"
+              class="size-12 rounded-full object-cover border border-border"
+            /><span
+              class="absolute -bottom-0.5 -right-0.5 size-3.5 rounded-full bg-[#006B4A] border-2 border-card"
+            ></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-0.5">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span class="text-[15px] font-extrabold text-foreground truncate"
+                  >Rachid (Agent vérif.)</span
+                ><iconify-icon
+                  icon="solar:verified-check-bold"
+                  class="text-[#006B4A] shrink-0"
+                  width="16"
+                  height="16"
+                ></iconify-icon>
+              </div>
+              <span class="text-[12px] text-muted-foreground whitespace-nowrap">10:45</span>
+            </div>
+            <p class="text-[13px] font-bold text-[#00708A] mb-1">
+              Chambre-salon · Fidjrossè (35 000 F)
+            </p>
+            <p class="text-[14px] text-foreground font-semibold truncate">
+              Le propriétaire a validé votre RDV pour demain 16h30 au carrefour IITA.
+            </p>
+          </div>
+          <span class="size-2.5 rounded-full bg-primary shrink-0 self-center"></span>
+        </div>
+        <div class="p-4 rounded-2xl border border-border bg-card flex items-start gap-3.5">
+          <div
+            class="size-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 font-heading font-black text-[16px]"
+          >
+            EZ
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-0.5">
+              <span class="text-[15px] font-extrabold text-foreground">Support EAZYRENT</span
+              ><span class="text-[12px] text-muted-foreground">Hier</span>
+            </div>
+            <p class="text-[13px] font-bold text-[#006B4A] mb-1">Pass 3 Visites activé</p>
+            <p class="text-[14px] text-muted-foreground truncate">
+              Votre reçu de 2 500 F est disponible. Il vous reste 2 visites 360°.
+            </p>
+          </div>
+        </div>
+        <div class="p-4 rounded-2xl border border-border bg-card flex items-start gap-3.5">
+          <div class="relative shrink-0">
+            <img
+              alt="M. Houndékon"
+              src="https://randomuser.me/api/portraits/men/68.jpg"
+              class="size-12 rounded-full object-cover border border-border"
+            />
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-0.5">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span class="text-[15px] font-extrabold text-foreground truncate"
+                  >M. Houndékon (Bailleur)</span
+                >
+              </div>
+              <span class="text-[12px] text-muted-foreground whitespace-nowrap">14 avr.</span>
+            </div>
+            <p class="text-[13px] font-bold text-muted-foreground mb-1">
+              2 Chambres-salon · Cadjèhoun (65 000 F)
+            </p>
+            <p class="text-[14px] text-muted-foreground truncate">
+              Le compteur SBEE est individuel, voici la quittance de la dernière recharge.
+            </p>
+          </div>
+        </div>
+      </div>
+      <nav
+        class="fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border px-2 pt-1 pb-4 safe-area-bottom"
+      >
+        <div class="flex items-center justify-around">
+          <a
+            href="#"
+            class="flex flex-col items-center justify-center flex-1 min-h-12 text-muted-foreground"
+            ><iconify-icon icon="solar:magnifer-linear" width="22" height="22"></iconify-icon
+            ><span class="text-[11px] font-bold mt-0.5">Chercher</span></a
+          ><a
+            href="#"
+            class="flex flex-col items-center justify-center flex-1 min-h-12 text-muted-foreground"
+            ><iconify-icon icon="solar:heart-linear" width="22" height="22"></iconify-icon
+            ><span class="text-[11px] font-bold mt-0.5">Ma liste</span></a
+          ><a
+            href="#"
+            class="flex flex-col items-center justify-center flex-1 min-h-12 text-foreground font-black relative"
+            ><iconify-icon
+              icon="solar:chat-round-dots-bold"
+              class="text-foreground"
+              width="22"
+              height="22"
+            ></iconify-icon
+            ><span class="text-[11px] font-black mt-0.5">Messages</span
+            ><span class="absolute top-2 right-6 size-2 rounded-full bg-primary"></span></a
+          ><a
+            href="#"
+            class="flex flex-col items-center justify-center flex-1 min-h-12 text-muted-foreground"
+            ><iconify-icon icon="solar:user-linear" width="22" height="22"></iconify-icon
+            ><span class="text-[11px] font-bold mt-0.5">Moi</span></a
+          >
+        </div>
+        <div class="h-1 w-32 bg-foreground/20 rounded-full mx-auto mt-1"></div>
+      </nav>
+    </main>
+  </body>
+</html>

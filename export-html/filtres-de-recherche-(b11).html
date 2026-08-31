@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FiltresDeRechercheB11</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="min-h-screen bg-background text-foreground flex flex-col font-sans antialiased pb-32"
+    >
+      <header
+        class="sticky top-0 z-30 bg-card border-b border-border px-4 py-3 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            class="min-w-12 min-h-12 rounded-full border border-border flex items-center justify-center bg-card active:bg-muted"
+            aria-label="Fermer"
+          >
+            <iconify-icon
+              icon="solar:close-circle-bold"
+              class="text-foreground"
+              width="24"
+              height="24"
+            ></iconify-icon>
+          </button>
+          <div>
+            <h1 class="font-heading text-lg font-bold tracking-tight">Filtres de recherche</h1>
+            <p class="text-xs text-muted-foreground font-medium">18 logements correspondent</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="min-h-12 text-sm font-bold text-muted-foreground active:text-foreground px-3 py-1 flex items-center"
+        >
+          Réinitialiser
+        </button>
+      </header>
+      <main class="flex-1 px-4 py-4 space-y-6">
+        <section class="space-y-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+            >Type de logement</label
+          >
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              class="min-h-12 flex items-center justify-between px-3.5 py-3 rounded-xl border border-primary bg-primary/5 text-foreground font-bold text-sm"
+            >
+              <span>Chambre-salon</span
+              ><iconify-icon
+                icon="solar:check-circle-bold"
+                class="text-primary"
+                width="20"
+                height="20"
+              ></iconify-icon></button
+            ><button
+              type="button"
+              class="min-h-12 flex items-center justify-between px-3.5 py-3 rounded-xl border border-border bg-card text-foreground font-medium text-sm active:border-primary"
+            >
+              <span>2 chambres-salon</span></button
+            ><button
+              type="button"
+              class="min-h-12 flex items-center justify-between px-3.5 py-3 rounded-xl border border-border bg-card text-foreground font-medium text-sm active:border-primary"
+            >
+              <span>Entrée personnelle</span></button
+            ><button
+              type="button"
+              class="min-h-12 flex items-center justify-between px-3.5 py-3 rounded-xl border border-border bg-card text-foreground font-medium text-sm active:border-primary"
+            >
+              <span>Chambre seule</span>
+            </button>
+          </div>
+        </section>
+        <section class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >Zone &amp; Quartiers</label
+            ><span class="text-xs font-bold text-[#00708A]">2 sélectionnés</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              type="button"
+              class="min-h-12 px-4 py-2 rounded-full border border-primary bg-primary text-white text-xs font-bold flex items-center gap-1.5"
+            >
+              <span>Fidjrossè</span
+              ><iconify-icon
+                icon="solar:close-circle-bold"
+                width="16"
+                height="16"
+              ></iconify-icon></button
+            ><button
+              type="button"
+              class="min-h-12 px-4 py-2 rounded-full border border-primary bg-primary text-white text-xs font-bold flex items-center gap-1.5"
+            >
+              <span>Cadjèhoun</span
+              ><iconify-icon
+                icon="solar:close-circle-bold"
+                width="16"
+                height="16"
+              ></iconify-icon></button
+            ><button
+              type="button"
+              class="min-h-12 px-4 py-2 rounded-full border border-border bg-card text-foreground text-xs font-semibold active:border-primary"
+            >
+              + Agla</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 py-2 rounded-full border border-border bg-card text-foreground text-xs font-semibold active:border-primary"
+            >
+              + Godomey</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 py-2 rounded-full border border-border bg-card text-foreground text-xs font-semibold active:border-primary"
+            >
+              + Akpakpa</button
+            ><button
+              type="button"
+              class="min-h-12 px-4 py-2 rounded-full border border-border bg-card text-foreground text-xs font-semibold active:border-primary"
+            >
+              + Calavi Kpota
+            </button>
+          </div>
+        </section>
+        <section class="bg-card border border-border rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >Loyer mensuel max</label
+            ><span class="text-base font-extrabold font-heading text-foreground tabular-nums"
+              >45 000 F /mois</span
+            >
+          </div>
+          <div class="relative w-full flex items-center">
+            <div class="w-full bg-muted h-2 rounded-full overflow-hidden">
+              <div class="bg-primary h-full w-2/3 rounded-full"></div>
+            </div>
+          </div>
+          <div
+            class="flex justify-between text-xs text-muted-foreground font-semibold tabular-nums"
+          >
+            <span>20 000 F</span><span>50 000 F</span><span>100 000 F+</span>
+          </div>
+        </section>
+        <section class="space-y-3">
+          <label class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+            >Critères essentiels Bénin</label
+          >
+          <div
+            class="bg-card border border-border rounded-2xl p-3.5 flex items-center justify-between min-h-14"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="size-10 rounded-xl bg-muted flex items-center justify-center text-foreground"
+              >
+                <iconify-icon
+                  icon="solar:bolt-bold"
+                  class="text-[#00708A]"
+                  width="20"
+                  height="20"
+                ></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-bold text-foreground">Compteur SBEE à carte personnel</div>
+                <div class="text-xs text-muted-foreground">Pas de décompteur partagé</div>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              class="size-6 rounded border-border text-primary focus:ring-primary accent-[#D93A1F]"
+              checked
+            />
+          </div>
+          <div
+            class="bg-card border border-border rounded-2xl p-3.5 flex items-center justify-between min-h-14"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="size-10 rounded-xl bg-muted flex items-center justify-center text-foreground"
+              >
+                <iconify-icon
+                  icon="solar:waterdrop-bold"
+                  class="text-[#00708A]"
+                  width="20"
+                  height="20"
+                ></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-bold text-foreground">Robinet SONEB dans la maison</div>
+                <div class="text-xs text-muted-foreground">Pression constante garantie</div>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              class="size-6 rounded border-border text-primary focus:ring-primary accent-[#D93A1F]"
+              checked
+            />
+          </div>
+          <div
+            class="bg-card border border-border rounded-2xl p-3.5 flex items-center justify-between min-h-14"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="size-10 rounded-xl bg-muted flex items-center justify-center text-foreground"
+              >
+                <iconify-icon
+                  icon="solar:streets-bold"
+                  class="text-[#006B4A]"
+                  width="20"
+                  height="20"
+                ></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-bold text-foreground">Zone non inondable / Voie pavée</div>
+                <div class="text-xs text-muted-foreground">
+                  Accès zem &amp; voiture en saison des pluies
+                </div>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              class="size-6 rounded border-border text-primary focus:ring-primary accent-[#D93A1F]"
+            />
+          </div>
+        </section>
+        <section
+          class="bg-[#006B4A]/5 border border-[#006B4A]/20 rounded-2xl p-3.5 flex items-center justify-between min-h-14"
+        >
+          <div class="flex items-center gap-3">
+            <iconify-icon
+              icon="solar:shield-check-bold"
+              class="text-[#006B4A] shrink-0"
+              width="24"
+              height="24"
+            ></iconify-icon>
+            <div>
+              <div class="text-sm font-bold text-foreground">
+                Respect de la loi (Max 3 mois d'avance)
+              </div>
+              <div class="text-xs text-muted-foreground">
+                Exclut les bailleurs qui demandent 6 mois
+              </div>
+            </div>
+          </div>
+          <input
+            type="checkbox"
+            class="size-6 rounded border-border text-primary focus:ring-primary accent-[#D93A1F]"
+            checked
+          />
+        </section>
+      </main>
+      <footer
+        class="fixed bottom-0 left-0 right-0 bg-card border-t border-border p-4 pb-4 safe-area-bottom z-40"
+      >
+        <button
+          type="button"
+          class="w-full min-h-14 bg-primary text-primary-foreground font-heading font-extrabold text-base rounded-full shadow-sm flex items-center justify-center gap-2 active:scale-[0.99] transition-transform"
+        >
+          <span>Afficher les 18 logements</span
+          ><iconify-icon icon="solar:arrow-right-bold" width="20" height="20"></iconify-icon>
+        </button>
+        <div class="h-1 w-32 bg-foreground/20 rounded-full mx-auto mt-2"></div>
+      </footer>
+    </div>
+  </body>
+</html>

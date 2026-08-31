@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visionneuse360TourComplet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="relative h-screen w-full bg-[#0B0F19] text-[#F8FAFC] overflow-hidden font-sans">
+      <div class="absolute inset-0">
+        <img
+          alt="Visite 360 complète"
+          src="https://ggrhecslgdflloszjkwl.supabase.co/storage/v1/object/public/user-assets/yqwTzo2JarQ/components/kUqSU5GrYoZ.jpeg"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-black/15 pointer-events-none"></div>
+      </div>
+      <header class="relative z-10 p-4 pt-6 flex items-center justify-between gap-3">
+        <button
+          class="min-w-12 min-h-12 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center active:bg-white/20"
+          aria-label="Fermer"
+        >
+          <iconify-icon icon="ph:x-bold" width="24" height="24"></iconify-icon>
+        </button>
+        <div class="flex-1 max-w-[190px]">
+          <div class="flex items-center justify-between text-[13px] font-bold mb-1">
+            <span>Progression</span><span>4/6 pièces</span>
+          </div>
+          <div class="grid grid-cols-6 gap-1 h-2">
+            <div class="bg-[#00E599] rounded-sm"></div>
+            <div class="bg-[#00E599] rounded-sm"></div>
+            <div class="bg-[#00E599] rounded-sm"></div>
+            <div class="bg-[#00E599] rounded-sm"></div>
+            <div class="bg-white/30 rounded-sm"></div>
+            <div class="bg-white/30 rounded-sm"></div>
+          </div>
+        </div>
+        <div class="flex gap-1">
+          <button
+            class="min-w-12 min-h-12 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center active:bg-white/20"
+            aria-label="Paramètres"
+          >
+            <iconify-icon icon="ph:gear-six-bold" width="20" height="20"></iconify-icon></button
+          ><button
+            class="min-w-12 min-h-12 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center active:bg-white/20"
+            aria-label="Télécharger pour hors-ligne"
+          >
+            <iconify-icon icon="ph:download-simple-bold" width="20" height="20"></iconify-icon>
+          </button>
+        </div>
+      </header>
+      <div class="absolute top-1/3 left-1/4 z-10">
+        <button
+          class="min-h-12 rounded-full bg-[#00B4D8] text-[#0B0F19] px-4 text-[13px] font-extrabold flex items-center gap-1.5 shadow-lg active:scale-95"
+        >
+          <span>↗</span> Chambre 1
+        </button>
+      </div>
+      <div class="absolute top-1/2 right-1/4 z-10">
+        <button
+          class="min-h-12 rounded-full bg-[#00B4D8] text-[#0B0F19] px-4 text-[13px] font-extrabold flex items-center gap-1.5 shadow-lg active:scale-95"
+        >
+          <span>↘</span> Cuisine
+        </button>
+      </div>
+      <div
+        class="absolute bottom-28 left-4 z-10 size-16 rounded-xl bg-black/70 border border-white/20 p-1.5 grid grid-cols-2 gap-1"
+      >
+        <div class="bg-[#D93A1F] rounded-sm flex items-center justify-center text-[10px] font-bold">
+          S
+        </div>
+        <div class="bg-white/30 rounded-sm"></div>
+        <div class="bg-white/30 rounded-sm"></div>
+        <div class="bg-white/30 rounded-sm"></div>
+      </div>
+      <footer
+        class="absolute inset-x-0 bottom-0 z-10 bg-[#0B0F19]/90 border-t border-white/10 px-3 pt-2 pb-5 safe-area-bottom"
+      >
+        <div class="flex items-center justify-between gap-1">
+          <button class="flex-1 min-h-12 rounded-lg bg-white text-[#0B0F19] text-[13px] font-bold">
+            Salon</button
+          ><button class="flex-1 min-h-12 rounded-lg bg-white text-[#0B0F19] text-[13px] font-bold">
+            Ch.1</button
+          ><button class="flex-1 min-h-12 rounded-lg bg-white text-[#0B0F19] text-[13px] font-bold">
+            Ch.2</button
+          ><button class="flex-1 min-h-12 rounded-lg bg-white text-[#0B0F19] text-[13px] font-bold">
+            Cuisine</button
+          ><button class="flex-1 min-h-12 rounded-lg border border-white/40 text-white text-[13px]">
+            Douche</button
+          ><button class="flex-1 min-h-12 rounded-lg border border-white/40 text-white text-[13px]">
+            Cour
+          </button>
+        </div>
+        <div class="h-1 w-32 bg-white/20 rounded-full mx-auto mt-2"></div>
+      </footer>
+      <div class="absolute inset-0 z-20 bg-black/80 p-4 flex items-center justify-center">
+        <div
+          class="w-full max-w-sm rounded-2xl border border-white/20 bg-[#0B0F19] p-5 space-y-4 text-center"
+        >
+          <div
+            class="size-12 rounded-full bg-[#00E599]/20 text-[#00E599] mx-auto flex items-center justify-center text-[22px] font-bold"
+          >
+            ✓
+          </div>
+          <h2 class="font-heading text-[22px] font-extrabold text-white">Tour complet</h2>
+          <p class="text-[16px] text-white">Tu as tout vu de ce logement sans bouger.</p>
+          <p class="rounded-xl bg-white/10 p-3 text-[16px] font-bold text-[#00E599]">
+            💰 6 500 F économisés ce mois-ci
+          </p>
+          <button
+            class="w-full min-h-14 rounded-full bg-[#D93A1F] text-white font-bold text-[16px] active:opacity-90"
+          >
+            Garder ce bien</button
+          ><button
+            class="w-full min-h-12 text-[14px] text-white/80 font-semibold underline underline-offset-4 flex items-center justify-center"
+          >
+            Continuer à chercher
+          </button>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

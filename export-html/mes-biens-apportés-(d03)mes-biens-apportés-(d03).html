@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MesBiensApportésD03MesBiensApportésD03</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main
+      class="min-h-screen bg-background text-foreground font-sans px-4 pt-6 pb-24 max-w-md mx-auto"
+    >
+      <div class="space-y-3 pb-3 border-b border-border">
+        <div class="flex items-center justify-between">
+          <h1 class="font-heading text-[22px] font-extrabold text-foreground">Mes apports</h1>
+          <a
+            href="#"
+            class="min-h-11 px-3.5 rounded-full bg-[#D93A1F] text-white text-[13px] font-extrabold flex items-center gap-1 shadow-sm active:scale-95"
+            ><iconify-icon icon="ph:plus-bold" width="16" height="16"></iconify-icon>Nouveau</a
+          >
+        </div>
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+          <button
+            class="px-3.5 py-1.5 rounded-full bg-foreground text-background text-[13px] font-bold whitespace-nowrap"
+          >
+            Tous (12)</button
+          ><button
+            class="px-3.5 py-1.5 rounded-full bg-card border border-border text-muted-foreground text-[13px] font-bold whitespace-nowrap"
+          >
+            En vérif (2)</button
+          ><button
+            class="px-3.5 py-1.5 rounded-full bg-card border border-border text-muted-foreground text-[13px] font-bold whitespace-nowrap"
+          >
+            Publiés (8)</button
+          ><button
+            class="px-3.5 py-1.5 rounded-full bg-card border border-border text-muted-foreground text-[13px] font-bold whitespace-nowrap"
+          >
+            Refusés (2)
+          </button>
+        </div>
+      </div>
+      <div class="space-y-3 pt-4">
+        <div class="p-3.5 bg-card rounded-2xl border border-border shadow-sm space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <span
+                class="inline-flex items-center gap-1 text-[12px] font-bold text-[#006B4A] bg-[#006B4A]/10 px-2 py-0.5 rounded-md"
+                ><iconify-icon icon="ph:check-circle-bold" width="14" height="14"></iconify-icon
+                >Publié le 8 mars</span
+              >
+              <h2 class="font-heading text-[16px] font-bold text-foreground mt-1.5">
+                Chambre-salon · Fidjrossè
+              </h2>
+              <p class="text-[14px] text-muted-foreground tabular-nums">Loyer : 35 000 F /mois</p>
+            </div>
+            <span
+              class="text-[15px] font-black text-[#006B4A] bg-[#006B4A]/10 px-2.5 py-1 rounded-xl tabular-nums shrink-0"
+              >+1 000 F</span
+            >
+          </div>
+          <div
+            class="pt-2 border-t border-border flex items-center justify-between text-[13px] text-muted-foreground"
+          >
+            <span>👁 23 vues · 2 demandes RDV</span
+            ><span class="font-bold text-[#00708A]">Tournage 360 fait</span>
+          </div>
+        </div>
+        <div class="p-3.5 bg-card rounded-2xl border border-border shadow-sm space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <span
+                class="inline-flex items-center gap-1 text-[12px] font-bold text-[#00708A] bg-[#00708A]/10 px-2 py-0.5 rounded-md"
+                ><iconify-icon icon="ph:hourglass-medium-bold" width="14" height="14"></iconify-icon
+                >En vérification terrain</span
+              >
+              <h2 class="font-heading text-[16px] font-bold text-foreground mt-1.5">
+                Villa 2 chambres · Cadjèhoun
+              </h2>
+              <p class="text-[14px] text-muted-foreground tabular-nums">Loyer : 90 000 F /mois</p>
+            </div>
+            <span
+              class="text-[13px] font-bold text-muted-foreground bg-muted px-2 py-1 rounded-xl shrink-0"
+              >Agent en route</span
+            >
+          </div>
+          <p class="text-[13px] text-muted-foreground pt-1 border-t border-border">
+            Envoyé hier à 16h40 · Résultat sous 24h
+          </p>
+        </div>
+        <div class="p-3.5 bg-card rounded-2xl border border-border shadow-sm space-y-2.5">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <span
+                class="inline-flex items-center gap-1 text-[12px] font-bold text-[#C4321A] bg-[#C4321A]/10 px-2 py-0.5 rounded-md"
+                ><iconify-icon icon="ph:x-circle-bold" width="14" height="14"></iconify-icon>Refusé
+                · Doublon</span
+              >
+              <h2 class="font-heading text-[16px] font-bold text-foreground mt-1.5">
+                Studio · Agla Hlazounto
+              </h2>
+            </div>
+            <span class="text-[14px] font-bold text-muted-foreground tabular-nums">25 000 F</span>
+          </div>
+          <div class="p-2.5 bg-muted/60 rounded-xl text-[13px] text-foreground leading-snug">
+            <strong class="font-bold">Motif clair :</strong> Ce bien était déjà enregistré dans
+            l'application (apporté par un autre démarcheur le 2 mars).
+          </div>
+        </div>
+      </div>
+      <nav
+        class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-card border-t border-border flex items-center justify-around h-16 px-4 z-30"
+      >
+        <a
+          href="#"
+          class="flex-1 min-h-12 flex flex-col items-center justify-center gap-1 text-foreground text-[13px] font-bold"
+          ><iconify-icon
+            icon="ph:handshake-bold"
+            width="20"
+            height="20"
+            class="text-[#C4321A]"
+          ></iconify-icon
+          >Apports</a
+        ><a
+          href="#"
+          class="flex-1 min-h-12 flex flex-col items-center justify-center gap-1 text-muted-foreground text-[13px]"
+          ><iconify-icon icon="ph:wallet-bold" width="20" height="20"></iconify-icon>Gains</a
+        ><a
+          href="#"
+          class="flex-1 min-h-12 flex flex-col items-center justify-center gap-1 text-muted-foreground text-[13px]"
+          ><iconify-icon icon="ph:user-circle-bold" width="20" height="20"></iconify-icon>Moi (D)</a
+        >
+      </nav>
+    </main>
+  </body>
+</html>

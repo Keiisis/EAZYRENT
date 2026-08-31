@@ -1,0 +1,45 @@
+# EAZYRENT — analyse stricte. La CI échoue sur tout avertissement.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    # Les règles qui protègent les décisions d'architecture sont des ERREURS,
+    # pas des suggestions. Une suggestion se contourne, une erreur non.
+    always_use_package_imports: ignore
+    avoid_relative_lib_imports: error
+    prefer_const_constructors: error      # budget de rendu (UI_DESIGN_SYSTEM §12)
+    prefer_const_literals_to_create_immutables: error
+    use_build_context_synchronously: error
+    avoid_print: error
+    missing_required_argument: error
+    body_might_complete_normally: error
+    unused_import: error
+    dead_code: error
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/generated_plugin_registrant.dart"
+    - build/**
+    - android/**
+    - ios/**
+
+linter:
+  rules:
+    - always_declare_return_types
+    - avoid_dynamic_calls
+    - avoid_empty_else
+    - avoid_slow_async_io
+    - cancel_subscriptions
+    - close_sinks
+    - directives_ordering
+    - prefer_final_locals
+    - prefer_single_quotes
+    # require_trailing_commas retiré : redondant avec le formateur « tall »
+    # (Dart >= 3.7), qui gère les virgules finales lui-même.
+    - sort_child_properties_last
+    - unawaited_futures
+    - use_super_parameters
