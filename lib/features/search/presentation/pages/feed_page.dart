@@ -15,6 +15,12 @@ import '../bloc/feed_cubit.dart';
 class FeedScreen extends StatelessWidget {
   const FeedScreen({super.key});
 
+  /// Le produit est pensé pour une main sur un écran de 6,1 pouces. Au-delà,
+  /// on ne s'étale pas : la ligne de lecture reste courte et le bouton favori
+  /// reste à portée du pouce. Sans cette borne, sur tablette ou en paysage,
+  /// le cœur de la carte se retrouve à 1 700 px de son bouton.
+  static const double _maxContentWidth = 480;
+
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
@@ -22,13 +28,18 @@ class FeedScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: p.surfaceBase,
       body: SafeArea(
-        child: BlocBuilder<FeedCubit, FeedState>(
-          builder: (context, state) => switch (state) {
-            FeedLoading() => const _Skeleton(),
-            FeedReady() => _Ready(state: state),
-            FeedEmpty() => _Empty(state: state),
-            FeedError() => _Error(state: state),
-          },
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+            child: BlocBuilder<FeedCubit, FeedState>(
+              builder: (context, state) => switch (state) {
+                FeedLoading() => const _Skeleton(),
+                FeedReady() => _Ready(state: state),
+                FeedEmpty() => _Empty(state: state),
+                FeedError() => _Error(state: state),
+              },
+            ),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
