@@ -12,6 +12,7 @@ import 'features/auth/data/auth_repository.dart';
 import 'features/auth/presentation/auth_flow.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'features/listing/domain/repositories/listing_repository.dart';
+import 'features/profile/presentation/pages/me_page.dart';
 import 'features/search/presentation/bloc/feed_cubit.dart';
 import 'features/search/presentation/pages/feed_page.dart';
 import 'features/shortlist/presentation/bloc/shortlist_cubit.dart';
@@ -91,7 +92,7 @@ class _Root extends StatelessWidget {
         search: const FeedScreen(),
         shortlist: const ShortlistScreen(),
         messages: const _Placeholder(label: 'Messages'),
-        me: const _Placeholder(label: 'Moi'),
+        me: const MeScreen(),
       ),
     );
   }
