@@ -43,6 +43,18 @@ class NavigationCtrl extends GetxController {
 
   static const _distance = Distance();
 
+  /// Deux temps distincts, et ils ne se ressemblent pas.
+  ///
+  /// APERÇU : on compare les modes, on ne bouge pas encore. Le GPS tourne
+  /// juste assez pour savoir d'où partir.
+  /// EN ROUTE : on suit. La distance affichée devient CE QUI RESTE, et elle
+  /// décroît à chaque pas.
+  ///
+  /// Sans cette séparation, l'écran montrait la longueur TOTALE du trajet,
+  /// figée : quelqu'un qui marchait voyait le même « 3,2 km » au départ et à
+  /// l'arrivée, et en concluait — à raison — que rien ne le suivait.
+  final started = false.obs;
+
   final mode = TravelMode.zem.obs;
   final plan = Rxn<RoutePlan>();
   final me = Rxn<LatLng>();
@@ -54,6 +66,22 @@ class NavigationCtrl extends GetxController {
 
   /// Les quatre durées, calculées une fois, pour comparer sans attendre.
   final alternatives = <TravelMode, RoutePlan>{}.obs;
+
+  /// Mètres restants le long du TRACÉ, pas à vol d'oiseau. Sur un trajet
+  /// urbain les deux diffèrent d'un facteur deux : annoncer « 400 m » à
+  /// quelqu'un qui en a 900 à parcourir le fait tourner au mauvais endroit.
+  final remainingMeters = RxnDouble();
+
+  /// Reste à parcourir, converti en temps avec la vitesse MOYENNE du trajet
+  /// calculé — pas une vitesse théorique par mode. Si Valhalla estime 3,2 km
+  /// en 8 min, on garde ce rapport-là pour le reste.
+  Duration? get remainingDuration {
+    final r = remainingMeters.value;
+    final p = plan.value;
+    if (r == null || p == null || p.distanceMeters == 0) return null;
+    final ratio = r / p.distanceMeters;
+    return Duration(seconds: (p.duration.inSeconds * ratio).round());
+  }
 
   StreamSubscription<Position>? _sub;
 
@@ -110,6 +138,11 @@ class NavigationCtrl extends GetxController {
     me.value = LatLng(p.latitude, p.longitude);
     accuracyMeters.value = p.accuracy;
 
+    final current = plan.value;
+    if (current != null) {
+      remainingMeters.value = _remainingAlong(current.geometry);
+    }
+
     if (metersToDestination <= arrivalMeters) {
       arrived.value = true;
       // On coupe le GPS soi-même. Attendre que l'utilisateur ferme l'écran
@@ -119,11 +152,54 @@ class NavigationCtrl extends GetxController {
       return;
     }
 
-    final current = plan.value;
     if (current == null || computing.value) return;
-    if (_deviationFrom(current.geometry) > offRouteMeters) {
+    // Hors du trajet, on ne recalcule QUE si le guidage a démarré : recalculer
+    // pendant qu'on compare les modes ferait sauter les quatre durées à chaque
+    // dérive du GPS.
+    if (started.value && _deviationFrom(current.geometry) > offRouteMeters) {
       unawaited(compute(mode.value));
     }
+  }
+
+  /// Longueur du tracé restant à partir du point le plus proche de soi.
+  ///
+  /// On projette la position sur le point de géométrie le plus proche, puis
+  /// on somme les segments jusqu'au bout. C'est ce que « il te reste 1,4 km »
+  /// veut dire — et c'est ce qui doit décroître à l'écran.
+  double _remainingAlong(List<LatLng> geometry) {
+    final here = me.value;
+    if (here == null || geometry.length < 2) return 0;
+
+    var nearest = 0;
+    var best = double.infinity;
+    for (var i = 0; i < geometry.length; i++) {
+      final d = _distance(here, geometry[i]);
+      if (d < best) {
+        best = d;
+        nearest = i;
+      }
+    }
+
+    var total = _distance(here, geometry[nearest]);
+    for (var i = nearest; i < geometry.length - 1; i++) {
+      total += _distance(geometry[i], geometry[i + 1]);
+    }
+    return total;
+  }
+
+  /// Le geste explicite. Rien ne suit personne avant qu'il ait été fait.
+  void startGuiding() {
+    started.value = true;
+    following.value = true;
+    final current = plan.value;
+    if (current != null) {
+      remainingMeters.value = _remainingAlong(current.geometry);
+    }
+  }
+
+  void stopGuiding() {
+    started.value = false;
+    remainingMeters.value = null;
   }
 
   /// Écart minimal entre la position et le tracé. On compare aux POINTS de la

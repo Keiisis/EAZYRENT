@@ -102,6 +102,8 @@ class _NavigationScreenState extends State<NavigationScreen>
               children: [
                 TileLayer(
                   urlTemplate: MapCtrl.tileUrl,
+                  tileDimension: MapCtrl.tileDimension,
+                  zoomOffset: MapCtrl.zoomOffset,
                   fallbackUrl: MapCtrl.fallbackTileUrl,
                   userAgentPackageName: 'bj.eazyrent.eazyrent',
                 ),
@@ -280,6 +282,20 @@ class _BottomPanel extends StatelessWidget {
                   );
                 }
 
+                // EN ROUTE : ce qui est gros à l'écran devient CE QUI RESTE.
+                // C'est le seul chiffre qui bouge quand on avance, donc le
+                // seul qui prouve à l'utilisateur qu'il est suivi.
+                final live = nav.started.value;
+                final rest = nav.remainingMeters.value;
+                final restDur = nav.remainingDuration;
+
+                final bigTime = live && restDur != null
+                    ? _fmtDuration(restDur)
+                    : route.durationLabel;
+                final bigDist = live && rest != null
+                    ? _fmtDistance(rest.round())
+                    : route.distanceLabel;
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -288,39 +304,82 @@ class _BottomPanel extends StatelessWidget {
                       textBaseline: TextBaseline.alphabetic,
                       children: [
                         Text(
-                          route.durationLabel,
+                          bigTime,
                           style: AppText.displayM.copyWith(color: p.inkStrong),
                         ),
                         const SizedBox(width: Space.xs),
                         Text(
-                          route.distanceLabel,
+                          live ? '$bigDist restants' : bigDist,
                           style: AppText.bodyL.copyWith(color: p.inkMuted),
                         ),
                         const Spacer(),
-                        Obx(() {
-                          final acc = nav.accuracyMeters.value;
-                          if (acc == null) return const SizedBox.shrink();
-                          // La précision du GPS est dite. À ±40 m, savoir
-                          // que c'est ±40 m change la façon de chercher un
-                          // portail.
-                          return Text(
-                            '± ${acc.round()} m',
-                            style: AppText.caption.copyWith(color: p.inkMuted),
-                          );
-                        }),
+                        // LE GESTE, SUR LA MÊME LIGNE QUE LE CHIFFRE.
+                        //
+                        // Empilé dessous, il tombait sous le pli : vérifié sur
+                        // l'appareil, « Démarrer » n'était tout simplement pas
+                        // à l'écran. Un panneau de navigation ne se fait pas
+                        // défiler — on le lit d'un coup d'œil, une main sur le
+                        // guidon.
+                        //
+                        // Et rien ne suit personne avant ce geste : un suivi
+                        // qui démarre tout seul consomme la batterie de
+                        // quelqu'un qui comparait simplement deux modes.
+                        if (!live)
+                          FilledButton.icon(
+                            onPressed: nav.startGuiding,
+                            style: FilledButton.styleFrom(
+                              minimumSize: Size(
+                                0,
+                                Touch.target(p.isHighContrast),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: Space.md,
+                              ),
+                            ),
+                            icon: const Icon(Icons.navigation, size: 18),
+                            label: const Text('Démarrer'),
+                          )
+                        else
+                          OutlinedButton.icon(
+                            onPressed: nav.stopGuiding,
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: Size(
+                                0,
+                                Touch.target(p.isHighContrast),
+                              ),
+                              foregroundColor: p.inkMuted,
+                            ),
+                            icon: const Icon(
+                              Icons.stop_circle_outlined,
+                              size: 18,
+                            ),
+                            label: const Text('Arrêter'),
+                          ),
                       ],
                     ),
 
                     const SizedBox(height: Space.xxs),
                     // G40 — la limite du chiffre est SUR l'écran, pas dans
-                    // une aide que personne n'ouvre.
-                    Text(
-                      route.mode.sharesCarTiming
-                          ? 'Temps sans embouteillage. Le calcul ne tient pas '
-                                'compte du faufilage d\'un zem.'
-                          : 'Temps sans embouteillage.',
-                      style: AppText.caption.copyWith(color: p.inkMuted),
-                    ),
+                    // une aide que personne n'ouvre. Une fois en route, elle
+                    // cède la place à la précision du GPS : c'est ce qui
+                    // compte quand on cherche un portail, pas une mise en
+                    // garde qu'on a déjà lue.
+                    Obx(() {
+                      final acc = nav.accuracyMeters.value;
+                      if (live && acc != null) {
+                        return Text(
+                          'Position à ± ${acc.round()} m près.',
+                          style: AppText.caption.copyWith(color: p.inkMuted),
+                        );
+                      }
+                      return Text(
+                        route.mode.sharesCarTiming
+                            ? 'Temps sans embouteillage. Le calcul ne tient '
+                                  'pas compte du faufilage d\'un zem.'
+                            : 'Temps sans embouteillage.',
+                        style: AppText.caption.copyWith(color: p.inkMuted),
+                      );
+                    }),
                   ],
                 );
               }),
@@ -465,3 +524,20 @@ class _MeDot extends StatelessWidget {
     ),
   );
 }
+
+/// Mêmes règles d'écriture que `RoutePlan`, appliquées au reste du trajet.
+/// Dupliquées ici plutôt qu'exposées : ce sont des libellés d'écran, pas des
+/// propriétés du domaine — le domaine décrit un itinéraire entier, pas ce
+/// qu'il en reste à un instant donné.
+String _fmtDuration(Duration d) {
+  final m = d.inMinutes;
+  if (m < 1) return "moins d'1 min";
+  if (m < 60) return '$m min';
+  final h = m ~/ 60;
+  final r = m % 60;
+  return r == 0 ? '$h h' : '$h h ${r.toString().padLeft(2, '0')}';
+}
+
+String _fmtDistance(int meters) => meters < 1000
+    ? '$meters m'
+    : '${(meters / 1000).toStringAsFixed(1).replaceAll('.', ',')} km';

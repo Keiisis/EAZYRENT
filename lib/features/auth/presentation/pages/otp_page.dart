@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
-import '../../../support/presentation/pages/help_page.dart';
 import '../../domain/entities/account.dart';
 import '../bloc/auth_cubit.dart';
+import 'account_recovery_page.dart';
 
 /// A3 — Saisie du code.
 ///
@@ -187,7 +187,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     TextButton(
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (_) => const HelpScreen(),
+                          builder: (_) => const AccountRecoveryScreen(),
                         ),
                       ),
                       style: TextButton.styleFrom(

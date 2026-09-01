@@ -85,23 +85,46 @@ class MapCtrl extends GetxController {
     return t.startsWith('pk.') && t.length >= 60 && !t.contains('remplace');
   }
 
+  /// Deux fonds, et un seul est gratuit.
+  ///
+  /// ⚠️ CARTO A ÉTÉ ESSAYÉ ET RETIRÉ. Ses tuiles Voyager sont servies en @2x,
+  /// ce qui réglait la netteté — mais elles reviennent tamponnées
+  /// « API KEY REQUIRED » en travers de la carte quand aucune clé n'est
+  /// fournie. Le serveur répond bien 200 : c'est l'IMAGE qui porte le
+  /// filigrane. Vérifier le code HTTP ne suffisait pas, il fallait regarder
+  /// la tuile. Constaté à l'écran, sur l'appareil.
+  ///
+  /// Il reste donc deux options honnêtes :
+  ///   · SANS JETON → OpenStreetMap standard. Propre, sans filigrane, libre.
+  ///     Servi en 256 px non-retina : sur un écran à 450 dpi les étiquettes
+  ///     sont un peu douces. C'est le prix du gratuit, et il est acceptable.
+  ///   · AVEC UN JETON MAPBOX → tuiles @2x, cartographie plus fine,
+  ///     étiquettes nettes. C'est LA raison d'ajouter le jeton, et la seule.
+  ///
+  /// CE QU'AUCUN FOND NE CHANGERA : les noms de rues. « Rue 12.172 » n'est
+  /// pas un défaut d'OpenStreetMap, c'est le nom OFFICIEL de la voie —
+  /// Cotonou numérote ses rues, et Google Maps affiche exactement les mêmes.
+  /// Un fond différent rend le libellé plus net ; il ne peut pas inventer un
+  /// nom que la ville n'a pas donné.
   static const osmTiles = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   static String get tileUrl => usesMapbox
-      ? 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/'
+      ? 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/512/'
             '{z}/{x}/{y}@2x?access_token=$_mapboxToken'
       : osmTiles;
 
-  /// Repli tuile par tuile. Un jeton expiré, un quota dépassé ou une panne
-  /// Mapbox ne doivent pas rendre la carte grise : elles la font simplement
-  /// revenir à OpenStreetMap, qui ne demande rien. La dégradation est
-  /// silencieuse pour l'utilisateur parce qu'elle ne lui coûte rien —
-  /// contrairement à un écran vide, qu'il ne peut ni comprendre ni contourner.
+  /// Repli tuile par tuile : un jeton expiré ou un quota dépassé ramène la
+  /// carte sur OpenStreetMap plutôt que sur un rectangle gris.
   static String? get fallbackTileUrl => usesMapbox ? osmTiles : null;
 
-  /// L'attribution n'est pas décorative : OpenStreetMap l'exige (ODbL), et
-  /// Mapbox aussi. L'omettre est une violation de licence, pas un choix de
-  /// mise en page.
+  /// Les tuiles Mapbox @2x en 512 px couvrent deux fois plus de terrain par
+  /// tuile : il faut le dire au moteur, sinon la carte est zoomée d'un cran
+  /// et les étiquettes sont deux fois trop grosses.
+  static int get tileDimension => usesMapbox ? 512 : 256;
+  static double get zoomOffset => usesMapbox ? -1 : 0;
+
+  /// L'attribution n'est pas décorative : ODbL pour OpenStreetMap, conditions
+  /// Mapbox. L'omettre est une violation de licence.
   static String get attribution =>
       usesMapbox ? '© Mapbox · © OpenStreetMap' : '© OpenStreetMap';
 

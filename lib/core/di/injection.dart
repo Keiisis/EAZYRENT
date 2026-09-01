@@ -18,6 +18,7 @@ import '../moments/moment.dart';
 import '../moments/savings_counter.dart';
 import '../notifications/notification_policy.dart';
 import '../progression/stage_resolver.dart';
+import '../theme/theme_controller.dart';
 
 final getIt = GetIt.instance;
 
@@ -29,7 +30,10 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<StageResolver>(DefaultStageResolver.new)
     ..registerLazySingleton<NotificationPolicy>(DefaultNotificationPolicy.new)
     ..registerLazySingleton<MomentBus>(MomentBus.new)
-    ..registerLazySingleton<SavingsCounter>(SavingsCounter.new);
+    ..registerLazySingleton<SavingsCounter>(SavingsCounter.new)
+    // Singleton OBLIGATOIRE : deux instances donneraient deux vérités sur le
+    // thème, et l'interrupteur de « Moi » cesserait de refléter l'écran.
+    ..registerLazySingleton<ThemeController>(ThemeController.new);
 
   // Feature `listing` — le seul point où la couche data est câblée.
   // La présentation ne connaît que l'interface de domaine.

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -125,6 +126,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   children: [
                     TileLayer(
                       urlTemplate: MapCtrl.tileUrl,
+                      tileDimension: MapCtrl.tileDimension,
+                      zoomOffset: MapCtrl.zoomOffset,
                       // Si Mapbox refuse (jeton expiré, quota, 401), la tuile
                       // est redemandée à OpenStreetMap au lieu de rester
                       // vide. Vérifié sur l'appareil : sans ce repli, un
@@ -189,7 +192,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   child: SafeArea(
                     top: false,
                     child: SizedBox(
-                      height: 132,
+                      height: 216,
                       child: PageView.builder(
                         controller: _carousel,
                         onPageChanged: _onPageChanged,
@@ -396,61 +399,124 @@ class _CarouselCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: const BorderRadius.all(Radii.card),
         child: Container(
-          padding: const EdgeInsets.all(Space.sm),
           decoration: BoxDecoration(
             color: p.surfaceRaised,
             borderRadius: const BorderRadius.all(Radii.card),
             boxShadow: Elevation.mapPin,
           ),
-          child: Row(
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+              // LA PHOTO DU PORTAIL, AU-DESSUS DU PRIX.
+              //
+              // Sur la carte, on ne cherche plus à savoir si le bien plaît :
+              // on cherche à le RECONNAÎTRE en arrivant. Le portail est donc
+              // prioritaire sur la belle photo du salon. À défaut, la photo
+              // du bien. Si aucune des deux n'existe, on n'affiche rien —
+              // un cadre vide occupe la place sans rien apprendre.
+              if (listing.arrivalImageUrl != null)
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radii.card),
+                  child: SizedBox(
+                    height: 88,
+                    width: double.infinity,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: listing.arrivalImageUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (_, _) =>
+                              ColoredBox(color: p.surfaceSunken),
+                          errorWidget: (_, _, _) =>
+                              ColoredBox(color: p.surfaceSunken),
+                        ),
+                        // Le badge dit CE QU'ON REGARDE. Une photo de portail
+                        // et une photo de salon ne se distinguent pas d'un
+                        // coup d'œil, et confondre les deux fait sonner à la
+                        // mauvaise porte.
+                        if (listing.gatePhotoUrl != null)
+                          Positioned(
+                            left: Space.xs,
+                            bottom: Space.xs,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: p.surfaceRaised,
+                                borderRadius: const BorderRadius.all(
+                                  Radii.pill,
+                                ),
+                              ),
+                              child: Text(
+                                'Le portail',
+                                style: AppText.caption.copyWith(
+                                  color: p.inkStrong,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              Padding(
+                padding: const EdgeInsets.all(Space.sm),
+                child: Row(
                   children: [
-                    // Même ordre de lecture que la carte du feed : prix →
-                    // type et quartier → fraîcheur → coût d'entrée.
-                    Text(
-                      MoneyFcfa.short(listing.monthlyRentFcfa),
-                      style: AppText.amount.copyWith(color: p.inkStrong),
-                      maxLines: 1,
-                    ),
-                    Text(
-                      '${listing.propertyType} · ${listing.locationLabel}',
-                      style: AppText.bodyM.copyWith(color: p.inkMuted),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      listing.freshness.label,
-                      style: AppText.label.copyWith(
-                        color: switch (listing.freshness.tone) {
-                          FreshnessTone.ok => p.success,
-                          FreshnessTone.warn => p.warn,
-                          FreshnessTone.stale => p.inkMuted,
-                        },
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            MoneyFcfa.short(listing.monthlyRentFcfa),
+                            style: AppText.amount.copyWith(color: p.inkStrong),
+                            maxLines: 1,
+                          ),
+                          Text(
+                            '${listing.propertyType} · ${listing.locationLabel}',
+                            style: AppText.bodyM.copyWith(color: p.inkMuted),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            listing.freshness.label,
+                            style: AppText.label.copyWith(
+                              color: switch (listing.freshness.tone) {
+                                FreshnessTone.ok => p.success,
+                                FreshnessTone.warn => p.warn,
+                                FreshnessTone.stale => p.inkMuted,
+                              },
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            listing.totalMoveInCostFcfa == null
+                                ? 'Entrée à confirmer'
+                                : 'Entrée : '
+                                      '${MoneyFcfa.short(listing.totalMoveInCostFcfa!)}',
+                            style: AppText.bodyM.copyWith(
+                              color: p.inkStrong,
+                              fontWeight: FontWeight.w600,
+                              fontFeatures: Fonts.tabular,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
-                      listing.totalMoveInCostFcfa == null
-                          ? 'Entrée à confirmer'
-                          : 'Entrée : '
-                                '${MoneyFcfa.short(listing.totalMoveInCostFcfa!)}',
-                      style: AppText.bodyM.copyWith(
-                        color: p.inkStrong,
-                        fontWeight: FontWeight.w600,
-                        fontFeatures: Fonts.tabular,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    Icon(Icons.chevron_right, color: p.inkFaint),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: p.inkFaint),
             ],
           ),
         ),

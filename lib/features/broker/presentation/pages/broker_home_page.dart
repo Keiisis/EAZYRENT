@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
+import 'submissions_page.dart';
 import 'submit_listing_page.dart';
 
 /// D1 — Accueil apporteur.
@@ -70,9 +71,29 @@ class BrokerHomeScreen extends StatelessWidget {
                 _Scale(),
 
                 const SizedBox(height: Space.lg),
-                Text(
-                  'MES APPORTS',
-                  style: AppText.label.copyWith(color: p.inkMuted),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'MES APPORTS',
+                        style: AppText.label.copyWith(color: p.inkMuted),
+                      ),
+                    ),
+                    // D03 — l'accueil montre les derniers apports ; la liste
+                    // complète, avec ses filtres et SURTOUT le motif des
+                    // refus, vit dans son propre écran.
+                    TextButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const SubmissionsScreen(),
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        minimumSize: Size(0, Touch.target(p.isHighContrast)),
+                      ),
+                      child: const Text('Tout voir'),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: Space.xs),
                 for (final s in submissions) _SubmissionRow(submission: s),

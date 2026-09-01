@@ -88,6 +88,7 @@ class Listing extends Equatable {
     this.isSponsored = false,
     this.latitude,
     this.longitude,
+    this.gatePhotoUrl,
   });
 
   final String id;
@@ -121,6 +122,19 @@ class Listing extends Equatable {
   final double? longitude;
 
   bool get hasCoordinates => latitude != null && longitude != null;
+
+  /// Le portail, photographié sur place. Ce n'est pas une image de plus :
+  /// c'est ce qui permet de reconnaître l'entrée en arrivant, dans des
+  /// quartiers où les rues n'ont souvent ni nom ni numéro.
+  final String? gatePhotoUrl;
+
+  /// L'image à montrer quand on cherche à ARRIVER — sur la carte, en fin de
+  /// guidage. Le portail d'abord, la photo du bien à défaut.
+  ///
+  /// Jamais de placeholder : un rectangle réservé qui reste vide occupe la
+  /// place et n'apprend rien. Quand les deux manquent, on n'affiche rien et
+  /// le texte remonte.
+  String? get arrivalImageUrl => gatePhotoUrl ?? mainImageUrl;
 
   String get locationLabel => neighborhood ?? city;
 

@@ -4,6 +4,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
 import '../../../listing/domain/entities/listing.dart';
+import '../pages/payment_status_page.dart';
 
 /// S07 — Le déblocage.
 ///
@@ -144,7 +145,24 @@ class _PaywallSheetState extends State<PaywallSheet> {
 
               const SizedBox(height: Space.lg),
               FilledButton(
-                onPressed: _operator == null ? null : () {},
+                // Le paiement Mobile Money se termine AILLEURS que dans
+                // l'application : dans une fenêtre système de l'opérateur,
+                // qui parfois ne s'affiche pas. L'écran d'état existe pour
+                // que personne ne reste devant un téléphone muet.
+                onPressed: _operator == null
+                    ? null
+                    : () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => PaymentStatusScreen(
+                            amountFcfa: offer.priceFcfa,
+                            operator: switch (_operator!) {
+                              _Operator.mtn => MomoOperator.mtn,
+                              _Operator.moov => MomoOperator.moov,
+                              _Operator.celtiis => MomoOperator.celtiis,
+                            },
+                          ),
+                        ),
+                      ),
                 style: FilledButton.styleFrom(
                   minimumSize: Size(0, Touch.target(p.isHighContrast) + 8),
                 ),

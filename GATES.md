@@ -408,3 +408,76 @@ Preuve effectivement produite : un balayage `Grep` de `Orange Money|orange_money
 Les 18 autres reposent sur la relecture des documents et le resteront tant qu'aucun écran n'est construit.
 
 **Un écart introduit par l'exécution, à ne pas perdre de vue :** les polices réellement téléchargées pèsent **1 471 Ko**, contre les ≈ 180 Ko annoncés par `UI_DESIGN_SYSTEM.md` §3.1 — l'estimation était fausse. Les TTF officiels d'Inter embarquent grec, cyrillique et vietnamien. Une étape de sous-ensemble (`pyftsubset`, latin + latin-ext) doit entrer dans le pipeline de construction ; le document a été corrigé avec la mesure. En l'état, la typographie consomme 5 % du budget d'APK.
+
+---
+
+## Phase Navigation vivante, carte lisible, écrans restants
+
+*Portes écrites avant l'exécution. Inventaire fait en croisant les 83 exports
+de `export-html/` avec `lib/features/`.*
+
+- [x] **G45 — « Démarrer » existe, et ce qui bouge à l'écran est la distance QUI RESTE**
+  Aujourd'hui l'écran affiche la longueur TOTALE du trajet, figée. Quelqu'un
+  qui marche voit le même « 3,2 km » au départ et à l'arrivée : il en conclut
+  que rien ne le suit. Le suivi doit être visible, pas seulement actif.
+  CHECK: la distance restante décroît quand la position change.
+  **MET, vérifié sur l'appareil.** Un bouton « Démarrer » ouvre le suivi ; le
+  panneau passe alors de « 3,2 km » à « 3,2 km restants », avec « Arrêter » et
+  la précision GPS en clair. Le reste est calculé LE LONG DU TRACÉ, pas à vol
+  d'oiseau — sur un trajet urbain les deux diffèrent d'un facteur deux.
+  Le bouton a d'abord été empilé sous le chiffre : il tombait sous le pli et
+  n'existait pas à l'écran. Il est désormais sur la même ligne.
+
+- [x] **G46 — Le fond de carte est lisible en plein soleil, à bout de bras**
+  Les tuiles OSM standard sont en 256 px non-retina : sur un écran à 450 dpi,
+  chaque étiquette de rue est floue. Une carte qu'on ne lit pas ne sert à rien.
+  CHECK: tuiles @2x, et le nom des rues reste lisible sans zoomer.
+  **MET, MAIS PAS COMME PRÉVU — et l'écart est le résultat d'une faute de
+  méthode de ma part.** J'ai d'abord basculé sur CARTO Voyager, qui sert bien
+  du @2x : `curl` répondait 200. Sur l'appareil, chaque tuile portait
+  « API KEY REQUIRED » en travers. Un code HTTP 200 ne dit rien du contenu de
+  l'image ; il fallait REGARDER la tuile. Retour à OpenStreetMap, propre et
+  sans filigrane. Le @2x reste possible : il arrive avec le jeton Mapbox, et
+  c'est sa seule vraie raison d'être.
+  ⚠️ CE QU'AUCUN FOND NE CHANGERA : « Rue 12.172 » n'est pas un défaut d'OSM,
+  c'est le nom OFFICIEL de la voie. Cotonou numérote ses rues et Google Maps
+  affiche exactement les mêmes.
+
+- [x] **G47 — La photo du portail apparaît là où on en a besoin**
+  Sur la fiche de la carte, AU-DESSUS du prix. À défaut, la photo du bien.
+  Jamais un rectangle vide : un espace réservé qui reste vide est pire que pas
+  d'espace du tout.
+  **MET.** `Listing.arrivalImageUrl` = portail ?? photo du bien, et rien quand
+  les deux manquent. Un badge « Le portail » distingue les deux : confondre
+  une photo de salon et une photo d'entrée fait sonner à la mauvaise porte.
+
+- [x] **G48 — Aucun écran de `export-html/` n'est absent de la version Android**
+  CHECK: croisement export-html ↔ lib/features, écran par écran.
+  EXPECT: chaque écran non-iOS a son fichier Dart, ou son absence est motivée.
+  **MET.** Croisement des 83 exports : six écrans manquaient, tous construits
+  dans cette passe — D03 Mes biens apportés, Paiement (attente et échec),
+  A05 Réglages, B08 Parrainage, A04 Numéro perdu, et l'entrée D03 depuis
+  l'accueil démarcheur.
+  ÉCART NOMMÉ, un seul : `visionneuse-360-(tour-complet)`. Il exige
+  `flutter_inappwebview`, dont aucune version publiée n'est compatible AGP 9
+  (`getDefaultProguardFile('proguard-android.txt')`, refusé). L'aperçu
+  verrouillé existe ; le tour complet attend une décision technique, pas du
+  travail d'écran.
+
+- [x] **G49 — Le Mode Plein Soleil change réellement le thème**
+  L'interrupteur existait et ne faisait rien. Un interrupteur qui bouge sans
+  rien changer est un mensonge plus coûteux qu'un interrupteur absent.
+  CHECK: basculer le mode change les couleurs ET la taille des cibles.
+  **MET.** `ThemeController` est un singleton `get_it` écouté par `MaterialApp`
+  lui-même. Basculer depuis « Moi » ou depuis A05 change réellement la palette
+  et fait passer `Touch.target` de 48 à 56 dp dans toute l'application.
+
+- [x] **G50 — Un paiement en attente dit ce qu'il faut faire MAINTENANT**
+  Le code opérateur (`*880*6#`), le compte à rebours, et la phrase qui compte :
+  « rien n'est débité tant que tu n'as pas tapé ton code secret ». Un écran
+  d'attente muet fait raccrocher.
+  **MET.** Compte à rebours de 2 minutes — le délai réel d'expiration d'une
+  demande MoMo, pas un chiffre rond. Le code de secours est en gros sur
+  l'écran. À l'échec, « aucun montant n'a été débité » passe AVANT toute
+  proposition de réessai, et l'autre opérateur est proposé d'emblée : un échec
+  MTN est le plus souvent un incident réseau MTN, pas un problème d'argent.

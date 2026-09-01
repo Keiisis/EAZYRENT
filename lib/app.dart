@@ -6,6 +6,7 @@ import 'core/di/injection.dart';
 import 'core/moments/moment.dart';
 import 'core/progression/stage_resolver.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_controller.dart';
 import 'core/widgets/app_shell.dart';
 import 'features/auth/data/auth_repository.dart';
 import 'features/auth/domain/entities/account.dart';
@@ -21,27 +22,26 @@ import 'features/search/presentation/pages/feed_page.dart';
 import 'features/shortlist/presentation/bloc/shortlist_cubit.dart';
 import 'features/shortlist/presentation/pages/shortlist_page.dart';
 
-enum AppThemeMode { light, dark, sunlight }
-
-class EazyrentApp extends StatefulWidget {
+class EazyrentApp extends StatelessWidget {
   const EazyrentApp({super.key});
 
   @override
-  State<EazyrentApp> createState() => _EazyrentAppState();
-}
-
-class _EazyrentAppState extends State<EazyrentApp> {
-  // Fixe jusqu'à ce que E0.1 branche ThemeController (clair / sombre /
-  // Plein Soleil proposé par le capteur de luminosité).
-  final AppThemeMode _mode = AppThemeMode.light;
-
-  @override
   Widget build(BuildContext context) {
+    // Le thème est reconstruit à chaque changement du contrôleur. C'est ce
+    // qui rend le Mode Plein Soleil RÉEL : avant, l'interrupteur bougeait et
+    // l'écran ne changeait pas.
+    return ListenableBuilder(
+      listenable: getIt<ThemeController>(),
+      builder: (context, _) => _buildApp(getIt<ThemeController>().mode),
+    );
+  }
+
+  Widget _buildApp(AppThemeMode mode) {
     return MaterialApp(
       title: 'EAZYRENT',
       debugShowCheckedModeBanner: false,
 
-      theme: switch (_mode) {
+      theme: switch (mode) {
         AppThemeMode.light => AppTheme.light(),
         AppThemeMode.dark => AppTheme.dark(),
         AppThemeMode.sunlight => AppTheme.sunlight(),

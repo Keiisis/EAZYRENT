@@ -234,6 +234,8 @@ class _CaptureLocationScreenState extends State<CaptureLocationScreen> {
                   children: [
                     TileLayer(
                       urlTemplate: MapCtrl.tileUrl,
+                      tileDimension: MapCtrl.tileDimension,
+                      zoomOffset: MapCtrl.zoomOffset,
                       fallbackUrl: MapCtrl.fallbackTileUrl,
                       userAgentPackageName: 'bj.eazyrent.eazyrent',
                     ),

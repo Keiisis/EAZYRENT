@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/progression/user_stage.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
+import '../../../../core/theme/theme_controller.dart';
 import '../../../alerts/presentation/pages/alerts_page.dart';
 import '../../../alerts/presentation/pages/notification_center_page.dart';
 import '../../../alerts/presentation/pages/notification_settings_page.dart';
@@ -20,6 +22,8 @@ import '../../../support/presentation/pages/help_page.dart';
 import '../../../support/presentation/pages/legal_page.dart';
 import '../../../tenancy/presentation/pages/my_home_page.dart';
 import '../../../tenancy/presentation/pages/receipts_page.dart';
+import 'referral_page.dart';
+import 'settings_page.dart';
 
 /// S12 — Moi.
 ///
@@ -36,6 +40,7 @@ class MeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.palette;
     final shortlist = context.watch<ShortlistCubit>();
+    final theme = getIt<ThemeController>();
     final auth = context.watch<AuthCubit>();
     final stage = shortlist.stage;
     final account = switch (auth.state) {
@@ -96,19 +101,38 @@ class MeScreen extends StatelessWidget {
                 onTap: () => _go(context, const NotificationSettingsScreen()),
               ),
 
+              // ── Parrainage : la croissance ne se cache pas dans l'aide ─
+              _Row(
+                icon: Icons.card_giftcard_outlined,
+                label: 'Parrainer un proche',
+                subtitle: 'Offre une visite 360, reçois-en une',
+                onTap: () => _go(context, const ReferralScreen()),
+              ),
+
               // ── Contexte d'usage : jamais enterré ──────────────────────
               _SectionTitle('Affichage et données'),
-              const _ToggleRow(
+              _Row(
+                icon: Icons.tune_rounded,
+                label: "Tous les réglages d'affichage",
+                subtitle: 'Plein Soleil, Mode Léger, qualité des visites',
+                onTap: () => _go(context, const SettingsScreen()),
+              ),
+              // Branchées sur le contrôleur RÉEL, plus sur un état local :
+              // basculer ici change vraiment les couleurs et la taille des
+              // cibles tactiles de toute l'application.
+              _ToggleRow(
                 icon: Icons.wb_sunny_outlined,
                 label: 'Mode Plein Soleil',
                 subtitle: 'Contraste maximal pour lire dehors',
-                initial: false,
+                value: theme.isSunlight,
+                onChanged: theme.toggleSunlight,
               ),
-              const _ToggleRow(
+              _ToggleRow(
                 icon: Icons.data_saver_on,
                 label: 'Mode Léger',
                 subtitle: 'Moins de données. Activé hors Wi-Fi.',
-                initial: true,
+                value: theme.liteData,
+                onChanged: (v) => theme.liteData = v,
               ),
 
               // ── Locataire installé : l'onglet change de métier ─────────
@@ -354,36 +378,36 @@ class _SectionTitle extends StatelessWidget {
 ///
 /// Toute la ligne est tactile, pas seulement l'interrupteur : viser un
 /// rectangle de 32 dp sur un écran de 5 pouces, une main occupée, échoue.
-class _ToggleRow extends StatefulWidget {
+/// Une bascule d'affichage, pilotée depuis l'extérieur.
+///
+/// Elle avait un état LOCAL : l'interrupteur bougeait sous le doigt et rien
+/// ne changeait à l'écran. C'était la définition même d'un réglage décoratif.
+/// Elle reflète désormais `ThemeController`, qui est la seule vérité.
+///
+/// Toute la ligne est tactile, pas seulement l'interrupteur : viser un
+/// rectangle de 32 dp sur un écran de 5 pouces, une main occupée, échoue.
+class _ToggleRow extends StatelessWidget {
   const _ToggleRow({
     required this.icon,
     required this.label,
     required this.subtitle,
-    required this.initial,
+    required this.value,
+    required this.onChanged,
   });
 
   final IconData icon;
   final String label;
   final String subtitle;
-  final bool initial;
-
-  @override
-  State<_ToggleRow> createState() => _ToggleRowState();
-}
-
-class _ToggleRowState extends State<_ToggleRow> {
-  late bool _value = widget.initial;
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) => _Row(
-    icon: widget.icon,
-    label: widget.label,
-    subtitle: widget.subtitle,
-    trailing: Switch(
-      value: _value,
-      onChanged: (v) => setState(() => _value = v),
-    ),
-    onTap: () => setState(() => _value = !_value),
+    icon: icon,
+    label: label,
+    subtitle: subtitle,
+    trailing: Switch(value: value, onChanged: onChanged),
+    onTap: () => onChanged(!value),
   );
 }
 
