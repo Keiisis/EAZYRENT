@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AttenteÉchecPaiementIOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="min-h-screen bg-black/60 flex flex-col justify-end font-sans antialiased">
+      <div
+        class="w-full bg-[#F2F2F7] text-foreground rounded-t-[28px] p-5 pb-8 space-y-5 max-h-[92vh] overflow-y-auto safe-area-bottom shadow-2xl"
+      >
+        <div class="w-10 h-1 bg-muted-foreground/30 rounded-full mx-auto"></div>
+        <div class="p-5 rounded-2xl bg-card border border-black/5 shadow-xs space-y-4">
+          <div class="flex items-center justify-between">
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00708A]/10 text-[#00708A] text-xs font-black"
+              ><iconify-icon
+                icon="solar:phone-calling-rounded-bold"
+                width="16"
+                height="16"
+              ></iconify-icon
+              >EN ATTENTE</span
+            ><span class="font-heading font-black text-base text-[#C4321A] tabular-nums"
+              >⏱ 1:42</span
+            >
+          </div>
+          <div class="space-y-1">
+            <h2 class="font-heading text-[19px] font-extrabold text-foreground leading-tight">
+              📲 Regarde ton téléphone.
+            </h2>
+            <p class="text-[15px] text-foreground leading-relaxed">
+              Valide le paiement de <span class="font-extrabold tabular-nums">1 000 F</span> sur le
+              pop-up <strong class="text-foreground">MTN MoMo</strong>.
+            </p>
+          </div>
+          <div
+            class="p-3 rounded-xl bg-[#F2F2F7] border border-black/5 flex items-start gap-2.5 text-xs text-muted-foreground leading-snug"
+          >
+            <div
+              class="size-7 rounded-lg bg-[#FFCC00] text-black font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5"
+            >
+              *880#
+            </div>
+            <div>
+              Si aucun message n'apparaît, compose
+              <strong class="text-foreground font-black">*880*6#</strong> pour approuver la
+              transaction.
+            </div>
+          </div>
+          <div
+            class="p-2.5 rounded-xl bg-[#006B4A]/10 border border-[#006B4A]/20 flex items-center gap-2"
+          >
+            <iconify-icon
+              icon="solar:shield-check-bold"
+              class="text-[#006B4A] shrink-0"
+              width="18"
+              height="18"
+            ></iconify-icon>
+            <p class="text-xs font-bold text-[#006B4A]">Rien n'est débité sans ton code secret.</p>
+          </div>
+          <button
+            class="w-full min-h-12 rounded-full border border-black/10 bg-card font-bold text-sm text-muted-foreground active:bg-muted"
+          >
+            Annuler la demande
+          </button>
+        </div>
+        <div class="p-5 rounded-2xl bg-card border border-black/5 shadow-xs space-y-3.5">
+          <div class="flex items-center justify-between">
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-muted-foreground text-xs font-black"
+              ><iconify-icon icon="solar:refresh-circle-bold" width="16" height="16"></iconify-icon
+              >ÉCHEC RÉSEAU</span
+            ><span class="text-xs font-bold text-muted-foreground">Délai expiré</span>
+          </div>
+          <div>
+            <h3 class="font-heading text-[17px] font-extrabold text-foreground">
+              Paiement non abouti
+            </h3>
+            <p class="text-xs text-muted-foreground mt-0.5">
+              Aucun montant n'a été prélevé sur ton solde.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button
+              class="min-h-14 px-3 rounded-2xl bg-card border-2 border-primary text-foreground font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs active:bg-muted"
+            >
+              <div
+                class="size-5 rounded-full bg-[#FFCC00] text-black font-black text-[9px] flex items-center justify-center"
+              >
+                M
+              </div>
+              Réessayer MTN</button
+            ><button
+              class="min-h-14 px-3 rounded-2xl bg-card border border-black/5 text-foreground font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs active:bg-muted"
+            >
+              <div
+                class="size-5 rounded-full bg-[#005BAC] text-white font-black text-[9px] flex items-center justify-center"
+              >
+                M
+              </div>
+              Essayer Moov
+            </button>
+          </div>
+        </div>
+        <div class="h-1 w-32 bg-foreground/20 rounded-full mx-auto mt-2"></div>
+      </div>
+    </div>
+  </body>
+</html>

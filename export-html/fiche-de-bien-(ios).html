@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FicheDeBienIOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main
+      class="min-h-screen bg-[#F2F2F7] text-foreground font-sans pb-32 safe-area-bottom antialiased"
+    >
+      <div class="relative w-full aspect-video bg-black">
+        <img
+          alt="Logement Fidjrossè"
+          src="https://ggrhecslgdflloszjkwl.supabase.co/storage/v1/object/public/user-assets/yqwTzo2JarQ/components/i56BcfTVrWM.jpeg"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-x-0 top-0 p-3 pt-4 flex items-center justify-between z-10">
+          <button
+            class="min-w-12 min-h-12 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-foreground active:opacity-60"
+            aria-label="Retour"
+          >
+            <iconify-icon icon="ph:caret-left-bold" width="22" height="22"></iconify-icon>
+          </button>
+          <div class="flex gap-2">
+            <button
+              class="min-w-12 min-h-12 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-foreground active:opacity-60"
+              aria-label="Partager"
+            >
+              <iconify-icon
+                icon="ph:share-network-bold"
+                width="20"
+                height="20"
+              ></iconify-icon></button
+            ><button
+              class="min-w-12 min-h-12 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-foreground active:opacity-60"
+              aria-label="Favori"
+            >
+              <iconify-icon icon="ph:heart-bold" width="20" height="20"></iconify-icon>
+            </button>
+          </div>
+        </div>
+        <div class="absolute inset-x-0 bottom-3 flex justify-center z-10">
+          <button
+            class="min-h-12 px-6 rounded-full bg-[#00708A] text-[14px] font-bold text-white flex items-center gap-2 shadow-lg active:scale-95"
+          >
+            <iconify-icon icon="ph:play-fill" width="16" height="16"></iconify-icon> Visiter en 360°
+          </button>
+        </div>
+      </div>
+      <div class="px-4 pt-4 space-y-4">
+        <div>
+          <p class="font-heading text-[28px] font-black leading-tight tabular-nums text-foreground">
+            35 000 F
+            <span class="font-sans text-[16px] font-semibold text-muted-foreground">/mois</span>
+          </p>
+          <h1 class="font-heading text-[18px] font-bold text-foreground">
+            Chambre-salon · Fidjrossè, Cotonou
+          </h1>
+        </div>
+        <div
+          class="rounded-2xl bg-white border border-border/80 p-3.5 flex items-center gap-3 shadow-xs"
+        >
+          <img
+            alt="Rachid"
+            src="https://randomuser.me/api/portraits/men/32.jpg"
+            class="size-12 rounded-full object-cover border border-border"
+          />
+          <div>
+            <p class="text-[14px] font-bold text-foreground">
+              <span class="text-[#006B4A]">●</span> Vérifié disponible aujourd'hui 09h12
+            </p>
+            <p class="text-[13px] text-muted-foreground">par Rachid, agent EAZYRENT</p>
+          </div>
+        </div>
+        <section class="rounded-2xl bg-white border border-border/80 p-4 shadow-xs space-y-3">
+          <h2 class="font-heading text-[15px] font-bold uppercase tracking-wide text-foreground">
+            Ce que tu paies pour entrer
+          </h2>
+          <div class="space-y-2 text-[14px]">
+            <div class="flex justify-between text-muted-foreground">
+              <span>Avance 3 mois</span
+              ><span class="font-semibold text-foreground tabular-nums">105 000 F</span>
+            </div>
+            <div class="flex justify-between text-muted-foreground">
+              <span>Caution 1 mois</span
+              ><span class="font-semibold text-foreground tabular-nums">35 000 F</span>
+            </div>
+            <div class="flex justify-between text-muted-foreground">
+              <span>Frais</span
+              ><span class="font-semibold text-foreground tabular-nums">105 000 F</span>
+            </div>
+            <div
+              class="border-t border-border pt-2 flex justify-between font-extrabold text-[16px] text-foreground"
+            >
+              <span>Total</span><span class="tabular-nums">245 000 F</span>
+            </div>
+          </div>
+          <p class="text-[12px] text-muted-foreground">
+            ⓘ Conditions encadrées par la loi n°2018-12 portant bail d'habitation.
+          </p>
+        </section>
+        <section class="rounded-2xl bg-white border border-border/80 p-4 shadow-xs space-y-3">
+          <h2 class="font-heading text-[16px] font-bold text-foreground">L'essentiel</h2>
+          <div class="flex items-center gap-3 text-[14px]">
+            <iconify-icon
+              icon="ph:lightning-bold"
+              class="text-foreground shrink-0"
+              width="20"
+              height="20"
+            ></iconify-icon
+            ><span>Compteur électrique à carte (SBEE individuel)</span>
+          </div>
+          <div class="flex items-center gap-3 text-[14px]">
+            <iconify-icon
+              icon="ph:drop-bold"
+              class="text-foreground shrink-0"
+              width="20"
+              height="20"
+            ></iconify-icon
+            ><span>Eau courante (SONEB directe au robinet)</span>
+          </div>
+          <div class="flex items-center gap-3 text-[14px]">
+            <iconify-icon
+              icon="ph:road-horizon-bold"
+              class="text-foreground shrink-0"
+              width="20"
+              height="20"
+            ></iconify-icon
+            ><span>Voie bitumée et quartier non inondable</span>
+          </div>
+          <div class="flex items-center gap-3 text-[14px]">
+            <iconify-icon
+              icon="ph:moped-bold"
+              class="text-foreground shrink-0"
+              width="20"
+              height="20"
+            ></iconify-icon
+            ><span>~22 min de ton lieu de travail</span>
+          </div>
+        </section>
+      </div>
+      <div
+        class="fixed bottom-0 inset-x-0 border-t border-border/80 bg-white/95 backdrop-blur-md px-4 pt-3 pb-6 safe-area-bottom z-30 shadow-lg"
+      >
+        <div class="flex gap-2">
+          <button
+            class="flex-1 min-h-12 rounded-full border border-border bg-white font-bold text-[14px] text-foreground active:bg-muted"
+          >
+            Demander RDV</button
+          ><button
+            class="flex-1 min-h-12 rounded-full bg-primary font-bold text-[14px] text-white active:opacity-90"
+          >
+            ▶ Visiter en 360°
+          </button>
+        </div>
+        <div class="h-1 w-36 bg-black/30 rounded-full mx-auto mt-2"></div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AideEtLitigeIOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="min-h-screen bg-[#F2F2F7] text-[#000000] font-sans flex flex-col justify-between pb-8 antialiased"
+    >
+      <div class="sticky top-0 z-30 bg-[#F2F2F7]/80 backdrop-blur-md border-b border-[#E5E5EA]">
+        <div
+          class="flex items-center justify-between px-6 pt-3 pb-1 text-xs font-semibold tracking-tight"
+        >
+          <span class="font-bold text-[14px]">9:41</span>
+          <div class="w-24 h-4 bg-black rounded-full mx-auto"></div>
+          <div class="flex items-center gap-1.5">
+            <iconify-icon icon="ph:cell-signal-high-bold" width="14" height="14"></iconify-icon
+            ><iconify-icon icon="ph:wifi-high-bold" width="14" height="14"></iconify-icon
+            ><iconify-icon icon="ph:battery-full-bold" width="18" height="18"></iconify-icon>
+          </div>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+          <a
+            href="#"
+            class="min-w-12 min-h-12 flex items-center text-[#D93A1F] text-[16px] font-semibold"
+            ><iconify-icon icon="ph:caret-left-bold" width="22" height="22"></iconify-icon>Moi</a
+          >
+          <h1 class="font-heading text-[17px] font-bold text-black">Aide &amp; Litiges</h1>
+          <div class="min-w-12"></div>
+        </div>
+      </div>
+      <main class="flex-1 px-4 pt-4 space-y-4 max-w-md mx-auto w-full">
+        <div class="bg-white rounded-2xl shadow-sm divide-y divide-[#E5E5EA] overflow-hidden">
+          <a
+            href="#"
+            class="p-4 flex items-center justify-between gap-3 active:bg-[#F2F2F7] transition-colors"
+            ><div class="flex items-center gap-3">
+              <div
+                class="size-11 rounded-xl bg-[#25D366]/15 text-[#25D366] flex items-center justify-center shrink-0"
+              >
+                <iconify-icon icon="mdi:whatsapp" width="24" height="24"></iconify-icon>
+              </div>
+              <div>
+                <p class="text-[15px] font-bold text-black">Support WhatsApp EAZYRENT</p>
+                <p class="text-[13px] text-[#8E8E93]">Réponse sous 15 min 7j/7</p>
+              </div>
+            </div>
+            <iconify-icon
+              icon="ph:caret-right-bold"
+              class="text-[#C7C7CC]"
+              width="18"
+              height="18"
+            ></iconify-icon></a
+          ><a
+            href="#"
+            class="p-4 flex items-center justify-between gap-3 active:bg-[#F2F2F7] transition-colors"
+            ><div class="flex items-center gap-3">
+              <div
+                class="size-11 rounded-xl bg-[#D93A1F]/10 text-[#D93A1F] flex items-center justify-center shrink-0"
+              >
+                <iconify-icon icon="ph:warning-circle-bold" width="22" height="22"></iconify-icon>
+              </div>
+              <div>
+                <p class="text-[15px] font-bold text-black">Signaler une annonce</p>
+                <p class="text-[13px] text-[#8E8E93]">Faux prix ou bien déjà loué</p>
+              </div>
+            </div>
+            <iconify-icon
+              icon="ph:caret-right-bold"
+              class="text-[#C7C7CC]"
+              width="18"
+              height="18"
+            ></iconify-icon></a
+          ><a
+            href="#"
+            class="p-4 flex items-center justify-between gap-3 active:bg-[#F2F2F7] transition-colors"
+            ><div class="flex items-center gap-3">
+              <div
+                class="size-11 rounded-xl bg-[#F2F2F7] text-black flex items-center justify-center shrink-0"
+              >
+                <iconify-icon icon="ph:scales-bold" width="22" height="22"></iconify-icon>
+              </div>
+              <div>
+                <p class="text-[15px] font-bold text-black">Ouvrir une médiation</p>
+                <p class="text-[13px] text-[#8E8E93]">Litige d'avance ou caution</p>
+              </div>
+            </div>
+            <iconify-icon
+              icon="ph:caret-right-bold"
+              class="text-[#C7C7CC]"
+              width="18"
+              height="18"
+            ></iconify-icon
+          ></a>
+        </div>
+        <div class="space-y-2">
+          <h2 class="font-heading text-[17px] font-bold text-black px-1">Questions fréquentes</h2>
+          <div class="bg-white rounded-2xl shadow-sm divide-y divide-[#E5E5EA] overflow-hidden">
+            <div class="p-4 space-y-1">
+              <p class="text-[15px] font-bold text-black">
+                Comment fonctionne la visite à 1 000 F ?
+              </p>
+              <p class="text-[13px] text-[#8E8E93] leading-relaxed">
+                Tu accèdes au tour complet 360° tourné sur place par notre agent. Tu vérifies toutes
+                les pièces sans te déplacer.
+              </p>
+            </div>
+            <div class="p-4 space-y-1">
+              <p class="text-[15px] font-bold text-black">Et si le logement est déjà pris ?</p>
+              <p class="text-[13px] text-[#8E8E93] leading-relaxed">
+                Si un logement s'avère occupé, ton crédit de visite t'est recrédité automatiquement
+                sous 24h.
+              </p>
+            </div>
+            <div class="p-4 space-y-1">
+              <p class="text-[15px] font-bold text-black">Qui effectue les tournages 360 ?</p>
+              <p class="text-[13px] text-[#8E8E93] leading-relaxed">
+                Des agents de terrain certifiés EAZYRENT basés à Cotonou et Calavi.
+              </p>
+            </div>
+          </div>
+        </div>
+        <p class="text-center text-[13px] text-[#8E8E93] pt-2">
+          Numéro d'urgence : <span class="font-bold text-black tabular-nums">+229 97 00 00 00</span>
+        </p>
+        <div class="h-1 w-32 bg-black/25 rounded-full mx-auto mt-4"></div>
+      </main>
+    </div>
+  </body>
+</html>

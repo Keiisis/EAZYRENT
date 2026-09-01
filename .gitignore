@@ -46,3 +46,13 @@ graphify-out/
 .unlazy-hook-state.json
 .claude/settings.local.json
 .hallmark/
+
+# --- Web (Next.js, dossier web/) ---
+web/node_modules/
+web/.next/
+web/out/
+web/.vercel/
+web/next-env.d.ts
+web/.env
+web/.env.*
+!web/.env.example

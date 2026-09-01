@@ -203,60 +203,62 @@
     </style>
   </head>
   <body>
-    <main class="min-h-screen bg-background text-foreground flex flex-col font-sans relative">
+    <main
+      class="min-h-screen bg-background text-foreground flex flex-col font-sans relative pb-6 safe-area-bottom"
+    >
       <header class="absolute top-4 left-4 right-4 z-20 space-y-2">
         <div
-          class="flex items-center gap-2 rounded-xl border border-border bg-card shadow-sm px-3 min-h-[52px]"
+          class="flex items-center gap-2 rounded-xl border border-border bg-card shadow-sm px-3 min-h-[56px]"
         >
           <button
-            class="min-w-10 min-h-10 flex items-center justify-center text-foreground"
+            class="min-w-12 min-h-12 flex items-center justify-center text-foreground active:bg-muted rounded-full"
             aria-label="Retour au flux"
           >
-            <iconify-icon icon="ph:arrow-left-bold" width="18" height="18"></iconify-icon>
+            <iconify-icon icon="ph:arrow-left-bold" width="20" height="20"></iconify-icon>
           </button>
           <div class="flex-1 min-w-0">
             <p class="text-[14px] font-bold text-foreground truncate">Cotonou &amp; Calavi</p>
             <p class="text-[12px] text-muted-foreground truncate">42 biens vérifiés · 30k – 60k</p>
           </div>
           <button
-            class="min-w-10 min-h-10 flex items-center justify-center text-foreground"
+            class="min-w-12 min-h-12 flex items-center justify-center text-foreground active:bg-muted rounded-full"
             aria-label="Filtres"
           >
             <iconify-icon
               icon="ph:sliders-horizontal-bold"
-              width="18"
-              height="18"
+              width="20"
+              height="20"
             ></iconify-icon></button
           ><button
-            class="min-w-10 min-h-10 flex items-center justify-center text-primary font-bold"
+            class="min-w-12 min-h-12 flex items-center justify-center text-primary font-bold active:bg-muted rounded-full"
             aria-label="Mode Liste"
           >
-            <iconify-icon icon="ph:list-bullets-bold" width="20" height="20"></iconify-icon>
+            <iconify-icon icon="ph:list-bullets-bold" width="22" height="22"></iconify-icon>
           </button>
         </div>
         <div class="flex gap-2 overflow-x-auto no-scrollbar py-1">
           <button
-            class="shrink-0 px-3 py-1.5 rounded-full bg-foreground text-background text-[13px] font-bold"
+            class="shrink-0 min-h-12 px-4 py-2 rounded-full bg-foreground text-background text-[13px] font-bold flex items-center"
           >
             Tous (42)</button
           ><button
-            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+            class="shrink-0 min-h-12 px-4 py-2 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold flex items-center"
           >
             Fidjrossè (12)</button
           ><button
-            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+            class="shrink-0 min-h-12 px-4 py-2 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold flex items-center"
           >
             Cadjèhoun (8)</button
           ><button
-            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+            class="shrink-0 min-h-12 px-4 py-2 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold flex items-center"
           >
             Agla (9)</button
           ><button
-            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+            class="shrink-0 min-h-12 px-4 py-2 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold flex items-center"
           >
             Godomey (7)</button
           ><button
-            class="shrink-0 px-3 py-1.5 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold"
+            class="shrink-0 min-h-12 px-4 py-2 rounded-full bg-card border border-border text-foreground text-[13px] font-semibold flex items-center"
           >
             Akpakpa (6)
           </button>
@@ -291,16 +293,16 @@
         >
         <div class="absolute bottom-36 left-12 z-10 flex flex-col items-center">
           <div
-            class="px-2.5 py-1 rounded-full bg-primary text-primary-foreground font-extrabold text-[13px] shadow-lg flex items-center gap-1 border-2 border-white"
+            class="px-3 py-1.5 rounded-full bg-primary text-primary-foreground font-extrabold text-[13px] shadow-lg flex items-center gap-1 border-2 border-white"
           >
-            <iconify-icon icon="ph:camera-rotate-bold" width="14" height="14"></iconify-icon
+            <iconify-icon icon="ph:camera-rotate-bold" width="16" height="16"></iconify-icon
             ><span>35 000 F</span>
           </div>
           <div class="w-2.5 h-2.5 bg-primary rotate-45 -mt-1 shadow-sm"></div>
         </div>
         <div class="absolute bottom-40 right-14 z-10 flex flex-col items-center">
           <div
-            class="px-2 py-1 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
+            class="px-2.5 py-1.5 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
           >
             <span class="text-[#006B4A]">●</span> 42 000 F
           </div>
@@ -308,7 +310,7 @@
         </div>
         <div class="absolute top-48 left-28 z-10 flex flex-col items-center">
           <div
-            class="px-2 py-1 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
+            class="px-2.5 py-1.5 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
           >
             <span class="text-[#006B4A]">●</span> 30 000 F
           </div>
@@ -316,7 +318,7 @@
         </div>
         <div class="absolute top-36 left-10 z-10 flex flex-col items-center">
           <div
-            class="px-2 py-1 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
+            class="px-2.5 py-1.5 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
           >
             <span class="text-[#006B4A]">●</span> 48 000 F
           </div>
@@ -324,14 +326,14 @@
         </div>
         <div class="absolute top-44 right-10 z-10 flex flex-col items-center">
           <div
-            class="px-2 py-1 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
+            class="px-2.5 py-1.5 rounded-full bg-card text-foreground font-bold text-[12px] shadow-md flex items-center gap-1 border border-border"
           >
             <span class="text-[#006B4A]">●</span> 38 000 F
           </div>
           <div class="w-2 h-2 bg-card border-r border-b border-border rotate-45 -mt-1"></div>
         </div>
         <button
-          class="absolute bottom-48 right-4 z-10 w-12 h-12 rounded-full bg-card border border-border shadow-md flex items-center justify-center text-foreground"
+          class="absolute bottom-48 right-4 z-10 min-w-12 min-h-12 rounded-full bg-card border border-border shadow-md flex items-center justify-center text-foreground active:bg-muted"
           aria-label="Centrer sur ma position"
         >
           <iconify-icon icon="ph:crosshair-bold" width="22" height="22"></iconify-icon>
@@ -351,7 +353,7 @@
               >360</span
             >
           </div>
-          <div class="min-w-0 flex-1 pr-6">
+          <div class="min-w-0 flex-1 pr-10">
             <p
               class="font-heading text-[18px] font-extrabold leading-6 tabular-nums text-foreground"
             >
@@ -367,12 +369,13 @@
             <p class="text-[12px] text-muted-foreground">~22 min en Zem de ton travail</p>
           </div>
           <button
-            class="absolute right-2 bottom-2 min-w-10 min-h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+            class="absolute right-2 bottom-2 min-w-12 min-h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center active:opacity-90"
             aria-label="Voir la fiche"
           >
-            <iconify-icon icon="ph:arrow-right-bold" width="18" height="18"></iconify-icon>
+            <iconify-icon icon="ph:arrow-right-bold" width="20" height="20"></iconify-icon>
           </button>
         </article>
+        <div class="h-1 w-32 bg-foreground/20 rounded-full mx-auto mt-2"></div>
       </div>
     </main>
   </body>

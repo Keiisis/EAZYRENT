@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PointDAncrageIOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="min-h-screen bg-[#F2F2F7] text-[#000000] font-sans antialiased pb-24 safe-area-bottom"
+    >
+      <div class="sticky top-0 z-40 bg-[#F2F2F7]/80 backdrop-blur-md border-b border-[#C6C6C8]/60">
+        <div
+          class="flex justify-between items-center px-6 pt-3 pb-1 text-xs font-semibold text-foreground select-none"
+        >
+          <span>9:41</span>
+          <div class="flex items-center gap-1.5">
+            <iconify-icon icon="tabler:cell" width="14" height="14"></iconify-icon
+            ><iconify-icon
+              icon="material-symbols:wifi-rounded"
+              width="14"
+              height="14"
+            ></iconify-icon
+            ><iconify-icon icon="solar:battery-charge-bold" width="18" height="18"></iconify-icon>
+          </div>
+        </div>
+        <header class="px-4 py-2.5 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              class="min-w-12 min-h-12 -ml-2 rounded-full flex items-center justify-center text-[#D93A1F] active:opacity-60"
+              aria-label="Retour"
+            >
+              <iconify-icon
+                icon="solar:alt-arrow-left-linear"
+                width="26"
+                height="26"
+              ></iconify-icon>
+            </button>
+            <h1 class="font-heading text-[17px] font-bold text-foreground">
+              Point d'ancrage &amp; Trajets
+            </h1>
+          </div>
+          <button
+            type="button"
+            class="min-h-12 px-3 text-[15px] font-bold text-[#D93A1F] active:opacity-60"
+          >
+            Enregistrer
+          </button>
+        </header>
+      </div>
+      <main class="max-w-md mx-auto px-4 pt-4 space-y-5">
+        <div class="space-y-1">
+          <h2 class="font-heading text-[22px] font-extrabold text-foreground tracking-tight">
+            Où vas-tu tous les jours ?
+          </h2>
+          <p class="text-[14px] text-[#8E8E93] leading-relaxed">
+            Renseigne ton travail ou ton université. EAZYRENT calcule instantanément le temps de
+            trajet en moto-taxi (Zem) sur chaque logement.
+          </p>
+        </div>
+        <section class="bg-card rounded-2xl p-4 border border-[#E5E5EA] shadow-xs space-y-3.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-[#D93A1F] font-heading font-bold text-[15px]">
+              <iconify-icon icon="ph:briefcase-bold" width="20" height="20"></iconify-icon
+              ><span>Lieu principal (Travail)</span>
+            </div>
+            <span
+              class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#D93A1F]/10 text-[#D93A1F]"
+              >Actif</span
+            >
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-[12px] font-semibold text-[#8E8E93]"
+              >Nom ou repère du lieu</label
+            ><input
+              type="text"
+              value="Port Autonome de Cotonou (Ganhi)"
+              class="w-full min-h-12 px-3.5 bg-[#F2F2F7] border border-[#E5E5EA] rounded-xl font-heading text-[15px] font-bold text-foreground focus:outline-none focus:border-[#D93A1F]"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-[12px] font-semibold text-[#8E8E93]">Quartier ou zone</label
+            ><select
+              class="w-full min-h-12 px-3 bg-[#F2F2F7] border border-[#E5E5EA] rounded-xl text-[14px] font-bold text-foreground focus:outline-none"
+            >
+              <option selected>Zone Portuaire / Ganhi (Cotonou)</option>
+              <option>Boulevard de la Marina</option>
+              <option>Haie Vive / Les Cocotiers</option>
+              <option>Cadjehoun / Aérodrome</option>
+              <option>Akpakpa PK3</option>
+              <option>UAC (Université d'Abomey-Calavi)</option>
+            </select>
+          </div>
+          <div class="space-y-1.5 pt-1">
+            <label class="block text-[12px] font-semibold text-[#8E8E93]"
+              >Moyen de transport quotidien</label
+            >
+            <div class="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                class="min-h-12 px-3 rounded-xl border-2 border-[#D93A1F] bg-[#D93A1F]/5 text-foreground font-bold text-[13px] flex items-center justify-center gap-2"
+              >
+                <iconify-icon
+                  icon="ph:moped-bold"
+                  class="text-[#D93A1F]"
+                  width="20"
+                  height="20"
+                ></iconify-icon
+                >Moto-taxi (Zem)</button
+              ><button
+                type="button"
+                class="min-h-12 px-3 rounded-xl border border-[#E5E5EA] bg-card text-foreground font-medium text-[13px] flex items-center justify-center gap-2 active:bg-[#F2F2F7]"
+              >
+                <iconify-icon
+                  icon="ph:car-bold"
+                  class="text-[#8E8E93]"
+                  width="20"
+                  height="20"
+                ></iconify-icon
+                >Voiture / Taxi
+              </button>
+            </div>
+          </div>
+        </section>
+        <div class="bg-card border border-[#E5E5EA] rounded-2xl p-4 space-y-2 shadow-xs">
+          <span class="text-[12px] font-bold text-[#8E8E93] uppercase tracking-wider"
+            >Aperçu direct sur les logements</span
+          >
+          <div
+            class="bg-[#F2F2F7] rounded-xl p-3 border border-[#E5E5EA] flex items-center justify-between text-[13px]"
+          >
+            <div class="flex items-center gap-2">
+              <iconify-icon
+                icon="ph:navigation-arrow-fill"
+                class="text-[#00708A]"
+                width="18"
+                height="18"
+              ></iconify-icon
+              ><span class="font-semibold text-foreground">Logement à Fidjrossè</span>
+            </div>
+            <span class="font-bold text-foreground">~22 min de Ganhi</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="w-full min-h-14 bg-[#D93A1F] text-white font-heading font-bold text-[16px] rounded-full flex items-center justify-center gap-2 shadow-sm active:opacity-90"
+        >
+          <iconify-icon icon="ph:check-bold" width="20" height="20"></iconify-icon
+          ><span>Valider mon trajet quotidien</span>
+        </button>
+      </main>
+      <div class="fixed bottom-2 inset-x-0 flex justify-center pointer-events-none z-50">
+        <div class="h-1 w-36 bg-foreground/25 rounded-full"></div>
+      </div>
+    </div>
+  </body>
+</html>

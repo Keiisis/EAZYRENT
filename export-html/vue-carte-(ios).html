@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VueCarteIOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="min-h-screen bg-[#F2F2F7] text-black font-sans antialiased flex flex-col justify-between relative"
+    >
+      <div class="sticky top-0 z-30 bg-[#F2F2F7]/80 backdrop-blur-md border-b border-black/10">
+        <div class="h-11 px-6 flex items-center justify-between text-xs font-semibold text-black">
+          <span>9:41</span>
+          <div class="flex items-center gap-1.5">
+            <iconify-icon icon="solar:signal-cellular-bold" width="14" height="14"></iconify-icon
+            ><iconify-icon
+              icon="material-symbols:wifi-rounded"
+              width="14"
+              height="14"
+            ></iconify-icon
+            ><iconify-icon icon="solar:battery-charge-bold" width="18" height="18"></iconify-icon>
+          </div>
+        </div>
+        <div class="px-4 py-2 flex items-center gap-2">
+          <div
+            class="flex-1 min-h-12 bg-white rounded-full px-4 border border-black/10 shadow-xs flex items-center gap-2"
+          >
+            <iconify-icon
+              icon="solar:magnifer-linear"
+              class="text-black/50"
+              width="18"
+              height="18"
+            ></iconify-icon
+            ><span class="text-[14px] font-semibold text-black truncate"
+              >Fidjrossè · Calavi (42)</span
+            >
+          </div>
+          <a
+            href="#"
+            class="min-w-12 min-h-12 bg-white rounded-full border border-black/10 flex items-center justify-center text-black shadow-xs active:bg-black/5"
+            aria-label="Filtres"
+            ><iconify-icon icon="solar:tuning-4-bold" width="20" height="20"></iconify-icon></a
+          ><a
+            href="#"
+            class="min-w-12 min-h-12 bg-white rounded-full border border-black/10 flex items-center justify-center text-[#007AFF] shadow-xs active:bg-black/5"
+            aria-label="Mode liste"
+            ><iconify-icon icon="solar:list-bold" width="20" height="20"></iconify-icon
+          ></a>
+        </div>
+      </div>
+      <div class="flex-1 w-full relative bg-[#E5ECE9] min-h-[460px] overflow-hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="absolute inset-0 w-full h-full">
+          <path d="M 0 540 Q 180 520 400 550 L 400 800 L 0 800 Z" fill="#D3E5E8" />
+          <path d="M 0 460 Q 160 450 400 480" fill="none" stroke="#CBD5E1" stroke-width="8" />
+          <path d="M 60 0 Q 120 280 200 460" fill="none" stroke="#CBD5E1" stroke-width="6" />
+          <path d="M 0 260 Q 200 240 400 300" fill="none" stroke="#CBD5E1" stroke-width="7" />
+        </svg>
+        <div class="absolute bottom-36 left-10 z-10 flex flex-col items-center">
+          <div
+            class="px-3.5 py-1.5 rounded-full bg-[#D93A1F] text-white font-extrabold text-[13px] shadow-md flex items-center gap-1 border-2 border-white"
+          >
+            <iconify-icon icon="solar:camera-bold" width="16" height="16"></iconify-icon
+            ><span>35 000 F</span>
+          </div>
+          <div class="w-2.5 h-2.5 bg-[#D93A1F] rotate-45 -mt-1"></div>
+        </div>
+        <div class="absolute bottom-44 right-12 z-10 flex flex-col items-center">
+          <div
+            class="px-3 py-1 rounded-full bg-white text-black font-bold text-[12px] shadow-md border border-black/10"
+          >
+            <span class="text-[#006B4A]">●</span> 42 000 F
+          </div>
+          <div class="w-2 h-2 bg-white border-r border-b border-black/10 rotate-45 -mt-1"></div>
+        </div>
+        <div class="absolute top-44 left-24 z-10 flex flex-col items-center">
+          <div
+            class="px-3 py-1 rounded-full bg-white text-black font-bold text-[12px] shadow-md border border-black/10"
+          >
+            <span class="text-[#006B4A]">●</span> 30 000 F
+          </div>
+          <div class="w-2 h-2 bg-white border-r border-b border-black/10 rotate-45 -mt-1"></div>
+        </div>
+        <button
+          class="absolute bottom-40 right-4 z-10 min-w-12 min-h-12 rounded-full bg-white border border-black/10 shadow-md flex items-center justify-center text-[#007AFF] active:bg-black/5"
+          aria-label="Ma position"
+        >
+          <iconify-icon icon="solar:map-point-wave-bold" width="22" height="22"></iconify-icon>
+        </button>
+      </div>
+      <div class="p-4 bg-[#F2F2F7] border-t border-black/10 z-20 space-y-3">
+        <article
+          class="h-32 rounded-2xl bg-white border border-black/5 p-2 flex gap-3 relative shadow-xs"
+        >
+          <div class="relative w-28 shrink-0">
+            <img
+              alt="Chambre-salon Fidjrossè"
+              src="https://ggrhecslgdflloszjkwl.supabase.co/storage/v1/object/public/user-assets/yqwTzo2JarQ/components/fb5ANajxPq0.jpeg"
+              class="w-28 h-[84px] object-cover rounded-xl"
+            /><span
+              class="absolute left-1.5 bottom-1.5 rounded-md bg-[#00708A] px-2 py-0.5 text-[11px] font-black text-white"
+              >360</span
+            >
+          </div>
+          <div class="min-w-0 flex-1 pr-10">
+            <p
+              class="font-heading text-[18px] font-extrabold leading-tight tabular-nums text-black"
+            >
+              35 000 F <span class="font-sans text-[13px] font-semibold text-black/50">/mois</span>
+            </p>
+            <p class="text-[13px] text-black/60 truncate">Chambre-salon · Fidjrossè</p>
+            <p class="text-[12px] font-semibold text-[#006B4A]">● Vérifié aujourd'hui 09h12</p>
+            <p class="text-[12px] font-bold tabular-nums text-black">Entrée : 245 000 F</p>
+          </div>
+          <a
+            href="#"
+            class="absolute right-2.5 bottom-2.5 min-w-12 min-h-12 rounded-full bg-[#D93A1F] text-white flex items-center justify-center shadow-xs active:opacity-80"
+            aria-label="Voir la fiche"
+            ><iconify-icon icon="solar:arrow-right-bold" width="18" height="18"></iconify-icon
+          ></a>
+        </article>
+        <div class="h-1 w-36 bg-black/25 rounded-full mx-auto"></div>
+      </div>
+    </div>
+  </body>
+</html>

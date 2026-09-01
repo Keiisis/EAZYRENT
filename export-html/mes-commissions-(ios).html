@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MesCommissionsIOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --color-chart-1: var(--chart-1);
+        --color-chart-2: var(--chart-2);
+        --color-chart-3: var(--chart-3);
+        --color-chart-4: var(--chart-4);
+        --color-chart-5: var(--chart-5);
+
+        --font-font-sans: var(--font-sans);
+        --font-font-heading: var(--font-heading);
+        --font-font-serif: var(--font-serif);
+        --font-font-mono: var(--font-mono);
+      }
+
+      @theme {
+        --radius-xs: calc(var(--radius) - 8px);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+        --radius-2xl: calc(var(--radius) + 8px);
+        --radius-3xl: calc(var(--radius) + 16px);
+        --radius-4xl: calc(var(--radius) + 24px);
+      }
+
+      * {
+        corner-shape: var(--shape, round);
+      }
+
+      .rounded-full, .rounded-none,
+      .rounded-t-full, .rounded-t-none,
+      .rounded-r-full, .rounded-r-none,
+      .rounded-b-full, .rounded-b-none,
+      .rounded-l-full, .rounded-l-none,
+      .rounded-s-full, .rounded-s-none,
+      .rounded-e-full, .rounded-e-none,
+      .rounded-tl-full, .rounded-tl-none,
+      .rounded-tr-full, .rounded-tr-none,
+      .rounded-bl-full, .rounded-bl-none,
+      .rounded-br-full, .rounded-br-none,
+      .rounded-ss-full, .rounded-ss-none,
+      .rounded-se-full, .rounded-se-none,
+      .rounded-es-full, .rounded-es-none,
+      .rounded-ee-full, .rounded-ee-none {
+        corner-shape: round;
+      }
+
+      @utility rounded-* {
+        border-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-t-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-r-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-b-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-l-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tl-* {
+        border-top-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-tr-* {
+        border-top-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-bl-* {
+        border-bottom-left-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-br-* {
+        border-bottom-right-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-s-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-e-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ss-* {
+        border-start-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-se-* {
+        border-start-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-es-* {
+        border-end-start-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+      @utility rounded-ee-* {
+        border-end-end-radius: calc(--value(--radius-*, [length], [percentage]) * var(--shape-multiplier, 1));
+      }
+
+      :root {
+        --shape: squircle;
+        --shape-multiplier: 1;
+
+          --background: #F8FAFC;
+        --foreground: #0B0F19;
+        --primary: #D93A1F;
+        --primary-foreground: #FFFFFF;
+        --secondary: #FFFFFF;
+        --secondary-foreground: #0B0F19;
+        --muted: #E7EBF1;
+        --muted-foreground: #55617A;
+        --accent: #00708A;
+        --accent-foreground: #FFFFFF;
+        --destructive: #B42318;
+        --card: #FFFFFF;
+        --card-foreground: #0B0F19;
+        --popover: #FFFFFF;
+        --popover-foreground: #0B0F19;
+        --border: #CBD3DF;
+        --input: #FFFFFF;
+        --ring: #C4321A;
+        --chart-1: #C4321A;
+        --chart-2: #006B4A;
+        --chart-3: #00708A;
+        --chart-4: #8A5A00;
+        --chart-5: #55617A;
+
+        --font-sans: "Inter";
+        --font-heading: "Plus Jakarta Sans";
+        --font-serif: "Playfair Display";
+        --font-mono: "JetBrains Mono";
+
+        --radius: 1rem;
+      }
+
+      @supports (corner-shape: squircle) {
+        :root {
+          --shape-multiplier: 2.5;
+        }
+      }
+
+      /* Prevent layout shift for icons without explicit dimensions */
+      iconify-icon:not([width]):not([height]) {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+
+      /* Hide scrollbars */
+      *,
+      *::before,
+      *::after {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="min-h-screen bg-[#F2F2F7] text-[#000000] font-sans antialiased pb-28 safe-area-bottom"
+    >
+      <div class="sticky top-0 z-40 bg-[#F2F2F7]/80 backdrop-blur-md border-b border-[#C6C6C8]/60">
+        <div
+          class="flex justify-between items-center px-6 pt-3 pb-1 text-xs font-semibold text-foreground select-none"
+        >
+          <span>9:41</span>
+          <div class="flex items-center gap-1.5">
+            <iconify-icon icon="tabler:cell" width="14" height="14"></iconify-icon
+            ><iconify-icon
+              icon="material-symbols:wifi-rounded"
+              width="14"
+              height="14"
+            ></iconify-icon
+            ><iconify-icon icon="solar:battery-charge-bold" width="18" height="18"></iconify-icon>
+          </div>
+        </div>
+        <header class="px-4 py-2.5 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div
+              class="size-8 rounded-xl bg-[#00708A]/10 text-[#00708A] font-bold text-[14px] flex items-center justify-center"
+            >
+              D
+            </div>
+            <h1 class="font-heading text-[17px] font-bold text-foreground">Mes commissions</h1>
+          </div>
+          <span
+            class="text-[12px] font-semibold text-[#006B4A] bg-[#006B4A]/10 px-2.5 py-0.5 rounded-full flex items-center gap-1"
+            ><span>●</span> Compte actif</span
+          >
+        </header>
+      </div>
+      <main class="max-w-md mx-auto px-4 pt-4 space-y-4">
+        <div class="bg-card rounded-2xl border border-[#E5E5EA] p-4 space-y-4 shadow-xs">
+          <div>
+            <span class="text-[12px] font-bold uppercase tracking-wider text-[#8E8E93]"
+              >Solde retirable</span
+            >
+            <div
+              class="text-[34px] font-black text-foreground font-heading tabular-nums leading-tight"
+            >
+              12 000 F
+            </div>
+            <p class="text-[13px] text-[#8E8E93] mt-0.5">
+              <span class="font-bold text-[#00708A] tabular-nums">3 000 F</span> en attente de
+              validation
+            </p>
+          </div>
+          <button
+            class="w-full min-h-14 rounded-full bg-[#D93A1F] text-white font-heading font-bold text-[16px] flex items-center justify-center gap-2 shadow-sm active:opacity-90"
+          >
+            <iconify-icon icon="ph:money-bold" width="20" height="20"></iconify-icon>Retirer sur MTN
+            MoMo
+          </button>
+          <div
+            class="p-3 rounded-xl bg-[#F2F2F7] border border-[#E5E5EA] text-[13px] text-[#8E8E93] flex items-center gap-2"
+          >
+            <iconify-icon
+              icon="ph:info-bold"
+              class="text-foreground shrink-0"
+              width="18"
+              height="18"
+            ></iconify-icon
+            ><span>Les retraits partent sous 24h directement sur ton numéro béninois.</span>
+          </div>
+        </div>
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between px-1">
+            <h2 class="font-heading text-[17px] font-bold text-foreground">Historique des gains</h2>
+            <span class="text-[13px] text-[#8E8E93]">Août 2026</span>
+          </div>
+          <div
+            class="bg-card rounded-2xl border border-[#E5E5EA] divide-y divide-[#E5E5EA] overflow-hidden shadow-xs"
+          >
+            <div class="p-3.5 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div
+                  class="size-10 rounded-xl bg-[#006B4A]/10 text-[#006B4A] flex items-center justify-center shrink-0"
+                >
+                  <iconify-icon icon="ph:check-bold" width="18" height="18"></iconify-icon>
+                </div>
+                <div>
+                  <div class="text-[15px] font-bold text-foreground">Bien loué</div>
+                  <p class="text-[13px] text-[#8E8E93]">Chambre-salon Fidjrossè · 12 août</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[16px] font-extrabold text-[#006B4A] tabular-nums">+3 000 F</span>
+                <div class="text-[11px] text-[#006B4A] font-bold">Validé</div>
+              </div>
+            </div>
+            <div class="p-3.5 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div
+                  class="size-10 rounded-xl bg-[#00708A]/10 text-[#00708A] flex items-center justify-center shrink-0"
+                >
+                  <iconify-icon icon="ph:house-line-bold" width="18" height="18"></iconify-icon>
+                </div>
+                <div>
+                  <div class="text-[15px] font-bold text-foreground">Bien publié</div>
+                  <p class="text-[13px] text-[#8E8E93]">Chambre-salon Fidjrossè · 8 août</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[16px] font-extrabold text-[#006B4A] tabular-nums">+1 000 F</span>
+                <div class="text-[11px] text-[#006B4A] font-bold">Validé</div>
+              </div>
+            </div>
+            <div class="p-3.5 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div
+                  class="size-10 rounded-xl bg-[#F2F2F7] text-foreground flex items-center justify-center shrink-0"
+                >
+                  <iconify-icon icon="ph:arrow-up-right-bold" width="18" height="18"></iconify-icon>
+                </div>
+                <div>
+                  <div class="text-[15px] font-bold text-foreground">Retrait MoMo</div>
+                  <p class="text-[13px] text-[#8E8E93]">+229 97 12 34 56 · 5 août</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[16px] font-extrabold text-foreground tabular-nums"
+                  >−8 000 F</span
+                >
+                <div class="text-[11px] text-[#8E8E93] font-semibold">Envoyé ✓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <nav
+        class="fixed bottom-0 inset-x-0 bg-card/85 backdrop-blur-md border-t border-[#C6C6C8]/60 flex items-center justify-around h-20 px-4 pb-4 z-40 safe-area-bottom"
+      >
+        <a
+          href="#"
+          class="flex-1 min-h-12 flex flex-col items-center justify-center gap-0.5 text-[#8E8E93] text-[11px] font-semibold"
+          ><iconify-icon icon="ph:handshake-bold" width="22" height="22"></iconify-icon>Apports</a
+        ><a
+          href="#"
+          class="flex-1 min-h-12 flex flex-col items-center justify-center gap-0.5 text-[#D93A1F] text-[11px] font-bold"
+          ><iconify-icon icon="ph:wallet-bold" width="22" height="22"></iconify-icon>Gains</a
+        ><a
+          href="#"
+          class="flex-1 min-h-12 flex flex-col items-center justify-center gap-0.5 text-[#8E8E93] text-[11px] font-semibold"
+          ><iconify-icon icon="ph:user-circle-bold" width="22" height="22"></iconify-icon>Moi</a
+        >
+      </nav>
+      <div class="fixed bottom-2 inset-x-0 flex justify-center pointer-events-none z-50">
+        <div class="h-1 w-36 bg-foreground/25 rounded-full"></div>
+      </div>
+    </div>
+  </body>
+</html>

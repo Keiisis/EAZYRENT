@@ -203,7 +203,7 @@
     </style>
   </head>
   <body>
-    <div class="min-h-screen bg-background text-foreground font-sans pb-12">
+    <div class="min-h-screen bg-background text-foreground font-sans pb-12 safe-area-bottom">
       <header
         class="sticky top-0 z-30 bg-card border-b border-border px-4 min-h-14 flex items-center justify-between"
       >
@@ -228,8 +228,8 @@
             <span
               class="text-xs font-bold px-2.5 py-1 rounded-full bg-chart-4/10 text-chart-4 flex items-center gap-1"
               ><iconify-icon icon="ph:clock-countdown-bold" width="16" height="16"></iconify-icon
-              >Échéance dans 3 jours (5 Mai)</span
-            ><span class="text-xs font-semibold text-muted-foreground">Mois de Mai 2025</span>
+              >Échéance dans 3 jours (5 Août)</span
+            ><span class="text-xs font-semibold text-muted-foreground">Mois d'Août 2026</span>
           </div>
           <div class="flex items-start gap-3">
             <div class="size-12 rounded-xl bg-muted overflow-hidden shrink-0 border border-border">
@@ -244,7 +244,7 @@
                 Chambre-salon · Fidjrossè Kpota
               </h2>
               <p class="text-xs text-muted-foreground">Bailleur certifié : M. Sossou Euloge</p>
-              <p class="text-xs text-muted-foreground">Bail EAZYRENT n° BJ-2024-8841</p>
+              <p class="text-xs text-muted-foreground">Bail EAZYRENT n° BJ-2026-8841</p>
             </div>
           </div>
           <div
@@ -264,7 +264,7 @@
           </div>
           <div class="grid grid-cols-3 gap-2.5">
             <label
-              class="cursor-pointer border-2 border-primary bg-primary/5 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 text-center transition-all"
+              class="cursor-pointer border-2 border-primary bg-primary/5 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 text-center transition-all min-h-20"
               ><input type="radio" name="momo_provider" checked class="sr-only" />
               <div
                 class="size-9 rounded-full bg-[#FFCC00] text-black font-black text-xs flex items-center justify-center shadow-sm"
@@ -274,7 +274,7 @@
               <span class="font-heading font-extrabold text-xs text-foreground">MTN MoMo</span
               ><span class="text-[10px] text-muted-foreground font-semibold">*880#</span></label
             ><label
-              class="cursor-pointer border border-border bg-card rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 text-center hover:border-foreground transition-all"
+              class="cursor-pointer border border-border bg-card rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 text-center hover:border-foreground transition-all min-h-20"
               ><input type="radio" name="momo_provider" class="sr-only" />
               <div
                 class="size-9 rounded-full bg-[#005CA9] text-white font-black text-xs flex items-center justify-center shadow-sm"
@@ -284,7 +284,7 @@
               <span class="font-heading font-bold text-xs text-foreground">Moov Flooz</span
               ><span class="text-[10px] text-muted-foreground font-semibold">*155#</span></label
             ><label
-              class="cursor-pointer border border-border bg-card rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 text-center hover:border-foreground transition-all"
+              class="cursor-pointer border border-border bg-card rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 text-center hover:border-foreground transition-all min-h-20"
               ><input type="radio" name="momo_provider" class="sr-only" />
               <div
                 class="size-9 rounded-full bg-[#E30613] text-white font-black text-xs flex items-center justify-center shadow-sm"
@@ -335,6 +335,7 @@
           <iconify-icon icon="ph:lock-simple-bold" width="20" height="20"></iconify-icon
           ><span>Payer 35 000 F de loyer</span>
         </button>
+        <div class="h-1 w-32 bg-foreground/20 rounded-full mx-auto mt-2"></div>
       </main>
     </div>
   </body>

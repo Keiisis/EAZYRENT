@@ -203,10 +203,12 @@
     </style>
   </head>
   <body>
-    <main class="min-h-screen bg-background text-foreground px-4 pt-4 pb-28 font-sans">
+    <main
+      class="min-h-screen bg-background text-foreground px-4 pt-4 pb-28 font-sans safe-area-bottom"
+    >
       <header class="flex items-center gap-3 pb-3 border-b border-border">
         <button
-          class="min-w-12 min-h-12 flex items-center justify-center rounded-xl bg-card border border-border"
+          class="min-w-12 min-h-12 flex items-center justify-center rounded-xl bg-card border border-border active:bg-muted"
           aria-label="Retour"
         >
           <iconify-icon icon="ph:arrow-left-bold" width="20" height="20"></iconify-icon>
@@ -240,15 +242,15 @@
             class="font-heading text-[16px] font-black tracking-wider text-foreground px-2 flex-1"
             >EAZY-229-AGAV</span
           ><button
-            class="min-h-10 px-3 rounded-lg bg-card border border-border text-[13px] font-bold text-foreground flex items-center gap-1.5 shadow-sm"
+            class="min-h-12 px-4 rounded-xl bg-card border border-border text-[13px] font-bold text-foreground flex items-center gap-1.5 shadow-sm active:bg-muted"
           >
-            <iconify-icon icon="ph:copy-bold" width="16" height="16"></iconify-icon> Copier
+            <iconify-icon icon="ph:copy-bold" width="18" height="18"></iconify-icon> Copier
           </button>
         </div>
       </section>
       <section class="mt-4">
         <button
-          class="w-full min-h-[56px] rounded-full bg-[#006B4A] text-white font-heading text-[16px] font-extrabold flex items-center justify-center gap-2 shadow-md"
+          class="w-full min-h-[56px] rounded-full bg-[#006B4A] text-white font-heading text-[16px] font-extrabold flex items-center justify-center gap-2 shadow-md active:opacity-90"
         >
           <iconify-icon icon="mdi:whatsapp" width="24" height="24"></iconify-icon>Envoyer sur
           WhatsApp
@@ -284,6 +286,7 @@
           </div>
         </div>
       </section>
+      <div class="h-1 w-32 bg-foreground/20 rounded-full mx-auto mt-4"></div>
     </main>
   </body>
 </html>

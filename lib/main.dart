@@ -9,19 +9,39 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/config/app_config.dart';
 import 'core/di/injection.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Android-first, portrait uniquement : l'app se tient à une main, debout.
+  // Portrait uniquement : l'app se tient à une main, debout, dehors.
   // Seule la visionneuse 360 déverrouille l'orientation, et elle le fait
   // localement.
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  await Supabase.initialize(
+    url: AppConfig.supabaseUrl,
+    publishableKey: AppConfig.supabasePublishableKey,
+    debug: AppConfig.verboseLogs,
+    authOptions: const FlutterAuthClientOptions(
+      // CONSTITUTION P2 — l'absence de session est un état de plein droit.
+      // On restaure une session existante, on n'en exige jamais une.
+      autoRefreshToken: true,
+    ),
+  );
 
   await configureDependencies();
 
   runApp(const EazyrentApp());
 }
+
+/// Point d'accès unique au client Supabase.
+///
+/// Réservé à la couche `data` des features (`*/data/datasources/`).
+/// Un widget qui appelle ceci est un bug : la présentation ne parle jamais
+/// à une source de données (APP_STRUCTURE.md §4).
+SupabaseClient get supabase => Supabase.instance.client;

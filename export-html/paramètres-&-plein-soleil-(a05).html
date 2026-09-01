@@ -203,10 +203,12 @@
     </style>
   </head>
   <body>
-    <main class="min-h-screen bg-background text-foreground px-4 pt-4 pb-28 font-sans">
+    <main
+      class="min-h-screen bg-background text-foreground px-4 pt-4 pb-28 font-sans safe-area-bottom"
+    >
       <header class="flex items-center gap-3 pb-3 border-b border-border">
         <button
-          class="min-w-12 min-h-12 flex items-center justify-center rounded-xl bg-card border border-border"
+          class="min-w-12 min-h-12 flex items-center justify-center rounded-xl bg-card border border-border active:bg-muted"
           aria-label="Retour"
         >
           <iconify-icon icon="ph:arrow-left-bold" width="20" height="20"></iconify-icon>
@@ -270,7 +272,7 @@
           >
           <div class="space-y-2">
             <label
-              class="flex items-center justify-between p-3 rounded-xl bg-background border-2 border-primary cursor-pointer"
+              class="flex items-center justify-between p-3 rounded-xl bg-background border-2 border-primary cursor-pointer min-h-12"
               ><div class="flex items-center gap-2.5">
                 <div
                   class="w-4 h-4 rounded-full border-2 border-primary flex items-center justify-center"
@@ -287,7 +289,7 @@
                 >Recommandé</span
               ></label
             ><label
-              class="flex items-center justify-between p-3 rounded-xl bg-background border border-border cursor-pointer"
+              class="flex items-center justify-between p-3 rounded-xl bg-background border border-border cursor-pointer min-h-12"
               ><div class="flex items-center gap-2.5">
                 <div class="w-4 h-4 rounded-full border border-border"></div>
                 <div>
@@ -308,12 +310,13 @@
             <p class="text-[13px] text-muted-foreground">4 visites prêtes sans connexion (24 Mo)</p>
           </div>
           <button
-            class="min-h-10 px-3 rounded-xl border border-destructive text-destructive text-[13px] font-bold"
+            class="min-h-12 px-4 rounded-xl border border-destructive text-destructive text-[13px] font-bold active:bg-destructive/10 flex items-center"
           >
             Vider
           </button>
         </div>
       </section>
+      <div class="h-1 w-32 bg-foreground/20 rounded-full mx-auto mt-6"></div>
     </main>
   </body>
 </html>

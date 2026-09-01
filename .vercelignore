@@ -1,0 +1,15 @@
+# Vercel ne construit QUE le dossier web/.
+# Regler « Root Directory » = web dans les reglages du projet Vercel.
+# Ce fichier evite en plus d'envoyer le mobile dans le contexte de build.
+lib/
+android/
+ios/
+test/
+assets/
+export-html/
+graphify-out/
+*.md
+!web/**
+pubspec.yaml
+pubspec.lock
+analysis_options.yaml
