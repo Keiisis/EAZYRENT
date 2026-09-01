@@ -253,11 +253,26 @@ Parc cible : Android 10-13, 2 à 4 Go de RAM, GPU Mali-G52 et inférieurs (Tecno
 
 ## 7. 🗺️ Moteur Cartographique Haute Précision : Style Yango / Gozem
 
-Pour offrir une expérience fluide, ultra-précise et familière aux utilisateurs de la zone UEMOA (calquée sur les standards de **Yango** et **Gozem**), le module cartographique repose sur **`google_maps_flutter`** avec un moteur de rendu personnalisé :
+> ⚠️ **DÉCISION RÉVISÉE — `google_maps_flutter` est retiré du projet.**
+> La v1.0 imposait Google Maps, donc une `MAPS_API_KEY`, donc une carte qui
+> ne s'affiche pas tant que la clé n'existe pas — et une facturation à la
+> requête dès le premier utilisateur. Le module repose désormais sur
+> **`flutter_map`**, qui tire ses tuiles de n'importe quel serveur.
+>
+> **Aucune clé n'est obligatoire.** Sans jeton, la carte utilise
+> OpenStreetMap : gratuit, sans compte, sans quota contractuel. Avec un
+> `MAPBOX_TOKEN` public (`pk.*`), elle passe aux tuiles Mapbox. Si Mapbox
+> répond 401 — jeton expiré, quota dépassé — chaque tuile retombe sur OSM
+> (`fallbackUrl`) plutôt que de laisser un rectangle gris.
+>
+> La porte G4 (« une seule techno cartographique déclarée ») reste tenue :
+> il n'y a toujours qu'un moteur, ce n'est simplement plus le même.
+
+Pour offrir une expérience fluide, ultra-précise et familière aux utilisateurs de la zone UEMOA (calquée sur les standards de **Yango** et **Gozem**), le module cartographique repose sur **`flutter_map`** + **`flutter_map_animations`**, avec un moteur de rendu personnalisé :
 
 ```mermaid
 graph TD
-    UserGPS[Position GPS Utilisateur] --> MapController[GoogleMap Controller Flutter]
+    UserGPS[geolocator + geocoding] --> MapController[MapCtrl GetX + AnimatedMapController]
     SupaPostGIS[(Supabase PostGIS : ST_DWithin / ST_Distance)] -->|Requête Spatiale Rayon| MapController
     
     subgraph Yango_UI_Engine [Moteur d'Expérience Yango / Gozem]
@@ -278,7 +293,7 @@ graph TD
    - Lorsqu'un marqueur est sélectionné, il s'agrandit avec un halo terracotta vibrant et déclenche un retour haptique.
 2. **Synchronisation Bi-directionnelle Marqueurs ↔ Carrousel Horizontal** :
    - En bas de l'écran, un carrousel horizontal présente les fiches détaillées des biens visibles.
-   - *Faire défiler les fiches* déplace automatiquement la caméra Google Maps sur le bien correspondant avec une animation douce (`animateCamera`).
+   - *Faire défiler les fiches* déplace automatiquement la caméra sur le bien correspondant avec une animation douce (`AnimatedMapController.animateTo`).
    - *Cliquer sur un marqueur* fait défiler le carrousel sur la fiche correspondante.
 3. **Thème de Carte Sombre / Clair Personnalisé (Custom Map Style JSON)** :
    - Carte épurée sans encombrement inutile (masquage des commerces parasites, accentuation des axes routiers et repères de quartier connus).

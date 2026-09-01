@@ -342,6 +342,18 @@ abstract final class Elevation {
   static const sheet = <BoxShadow>[
     BoxShadow(color: Color(0x260B0F19), blurRadius: 24, offset: Offset(0, -4)),
   ];
+
+  /// Troisième ombre, et la seule exception à la règle des deux par écran.
+  ///
+  /// Elle n'existe QUE sur la carte, où le fond est une photo de tuiles :
+  /// routes, toits, végétation. Une pastille de prix posée à plat sur ce
+  /// bruit devient illisible — l'ombre n'est pas un effet, c'est ce qui rend
+  /// le chiffre déchiffrable. Elle reste plus courte et moins opaque que
+  /// `sheet` pour ne pas alourdir un écran qui en porte une par bien.
+  static const mapPin = <BoxShadow>[
+    BoxShadow(color: Color(0x330B0F19), blurRadius: 8, offset: Offset(0, 2)),
+  ];
+
   static const none = <BoxShadow>[];
 }
 

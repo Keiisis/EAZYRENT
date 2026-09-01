@@ -55,7 +55,6 @@ dependencies:
   # flutter_inappwebview: ^6.1.5
 
   # Carte — techno unique, décision tranchée (ARCHITECTURE.md §7)
-  google_maps_flutter: ^2.9.0
   geolocator: ^14.0.3
 
   # Images — vignettes redimensionnées CÔTÉ SERVEUR, jamais réduites après coup
@@ -74,6 +73,12 @@ dependencies:
   intl: ^0.20.3 # imposé par flutter_localizations du SDK 3.47
   share_plus: ^13.3.0
   sensors_plus: ^7.1.0 # gyroscope du tour + capteur de luminosité (Plein Soleil)
+  flutter_map: ^8.3.2
+  flutter_map_animations: ^0.10.0
+  geocoding: ^5.0.0
+  flutter_dotenv: ^6.0.1
+  get: ^4.7.3
+  latlong2: ^0.9.1
 
 # AUCUN SDK MARCHAND DE PAIEMENT (P11).
 # Une clé marchande embarquée dans un APK est une clé publiée.
@@ -100,6 +105,11 @@ flutter:
   assets:
     - assets/tour_engine/ # bundle Photo Sphere Viewer 5 + Three.js, local
     - assets/icons/
+    # Absent du dépôt (gitignore). L'application démarre sans lui : la carte
+    # bascule alors sur les tuiles OpenStreetMap, qui ne demandent aucun
+    # jeton. Un fichier de configuration manquant ne doit jamais empêcher
+    # quelqu'un de chercher un logement.
+    - .env
 
   # Sous-ensemble latin + latin-ext, 5 graisses au total ≈ 180 Ko.
   # Pas de variable font complète : le gain ne vaut pas 250 Ko sur un budget

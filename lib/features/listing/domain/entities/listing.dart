@@ -86,6 +86,8 @@ class Listing extends Equatable {
     this.mainImageUrl,
     this.commuteMinutes,
     this.isSponsored = false,
+    this.latitude,
+    this.longitude,
   });
 
   final String id;
@@ -110,6 +112,15 @@ class Listing extends Equatable {
 
   /// Un bien mis en avant porte la mention en clair. Jamais de tri payé caché.
   final bool isSponsored;
+
+  /// Nullables PAR CONSTRUCTION : beaucoup de biens sont saisis par téléphone,
+  /// sans qu'on soit passé sur place. Un bien sans coordonnées existe et se
+  /// loue ; il ne doit pas disparaître de l'application parce qu'il manque à
+  /// la carte. C'est la carte qui s'adapte, pas le parc qui se réduit.
+  final double? latitude;
+  final double? longitude;
+
+  bool get hasCoordinates => latitude != null && longitude != null;
 
   String get locationLabel => neighborhood ?? city;
 

@@ -24,6 +24,13 @@ Mode : Solo. Vérification = présence + absence de marqueurs factuels dans les 
   Mapbox et google_maps_flutter étaient déclarés simultanément dans PRD/ROADMAP vs ARCHITECTURE.
   CHECK: `node scripts/gate-scan.mjs --absent "Mapbox" PRD.md ROADMAP.md ARCHITECTURE.md`
   EXPECT: `GATE_OK_ABSENT`
+  **RÉVISÉE — l'oracle change, la porte tient.** Le moteur est désormais
+  `flutter_map`, et `google_maps_flutter` est retiré de `pubspec.yaml`. Mapbox
+  n'est plus une techno concurrente mais une SOURCE DE TUILES optionnelle
+  parmi deux, la seconde étant OpenStreetMap. Le CHECK doit donc devenir
+  `--absent "google_maps_flutter"` : chercher l'absence de « Mapbox »
+  échouerait maintenant sur une mention légitime.
+  PREUVE : `grep -n "google_maps_flutter" pubspec.yaml` → aucune occurrence.
 
 - [x] **G5 — Le paywall du Pass est techniquement défendable**
   La spec doit imposer des URL signées courtes générées par Edge Function + RLS sur `virtual_tour_scenes`, sinon l'URL du panorama rend le paiement contournable.

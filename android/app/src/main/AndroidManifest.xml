@@ -1,4 +1,33 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- INTERNET n'était déclaré QUE dans les manifestes debug et profile,
+         où l'outillage Flutter l'injecte automatiquement. Le manifeste
+         principal n'avait aucune permission : l'application aurait fonctionné
+         parfaitement pendant tout le développement, puis se serait retrouvée
+         totalement muette une fois publiée — ni Supabase, ni images, ni
+         tuiles de carte. La panne ne serait apparue qu'en production. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Lecture du réseau : distingue « pas de connexion » de « le serveur
+         ne répond pas ». Les deux appellent des messages différents, et P8
+         impose de dire lequel des deux se produit. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- Position : demandée UNIQUEMENT sur geste explicite (« Autour de moi »,
+         « Me localiser »), jamais au démarrage. COARSE suffit à trier des
+         biens à l'échelle du quartier ; FINE est déclarée parce que geolocator
+         l'exige pour les appareils qui n'exposent pas le mode approximatif. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!-- Notes vocales de la messagerie (F4). Rien n'enregistre sans que
+         l'utilisateur maintienne le bouton. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <!-- Notifications Android 13+. L'amorce (A06) précède TOUJOURS ce
+         dialogue : un refus système est définitif. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application
         android:label="eazyrent"
         android:name="${applicationName}"

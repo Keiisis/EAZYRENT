@@ -9,6 +9,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
@@ -22,6 +23,20 @@ Future<void> main() async {
   // Seule la visionneuse 360 déverrouille l'orientation, et elle le fait
   // localement.
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  // Le jeton Mapbox, s'il existe. L'absence de `.env` n'est PAS une erreur :
+  // la carte bascule alors sur OpenStreetMap, qui ne demande aucun jeton.
+  // Faire échouer le démarrage sur un fichier de configuration manquant
+  // reviendrait à empêcher quelqu'un de chercher un logement pour un défaut
+  // qui n'est pas le sien.
+  //
+  // ⚠️ Ce `.env` est embarqué comme asset : il sort le jeton de git, pas de
+  // l'APK. Voir l'en-tête de `.env.example`.
+  try {
+    await dotenv.load();
+  } catch (_) {
+    // Rien à faire : `MapCtrl` retombe sur OSM tout seul.
+  }
 
   await Supabase.initialize(
     url: AppConfig.supabaseUrl,

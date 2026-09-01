@@ -17,7 +17,7 @@ class ListingRemoteDataSource {
   static const _columns =
       'id, price_amount, property_type, neighborhood, city, '
       'advance_months, total_move_in_cost, main_image_url, is_available, '
-      'is_featured, virtual_tour_360_url';
+      'is_featured, virtual_tour_360_url, latitude, longitude';
 
   Future<List<Listing>> fetchFeed(
     SearchQuery q, {
@@ -96,6 +96,8 @@ class ListingRemoteDataSource {
       hasVerifiedTour: r['virtual_tour_360_url'] != null,
       isAvailable: r['is_available'] as bool? ?? true,
       isSponsored: r['is_featured'] as bool? ?? false,
+      latitude: (r['latitude'] as num?)?.toDouble(),
+      longitude: (r['longitude'] as num?)?.toDouble(),
       freshness: Freshness.from(checkedAt),
     );
   }
