@@ -5,12 +5,19 @@ import '../../../core/errors/failure.dart';
 import '../domain/entities/account.dart';
 
 abstract interface class AuthRepository {
-  /// Envoie un code par SMS. Aucun mot de passe, aucun e-mail.
-  Future<Either<Failure, Unit>> sendOtp(String phoneE164);
+  /// Envoie un code par E-MAIL. Aucun mot de passe.
+  ///
+  /// Le SMS aurait ete le bon canal sur ce marche — il est lu, l'e-mail
+  /// beaucoup moins. C'est un arbitrage de budget, pas de conception : les
+  /// passerelles SMS beninoises sont payantes des le premier envoi.
+  /// A rebasculer vers le SMS des que le budget le permet ; seul ce fichier
+  /// et deux ecrans changeront.
+  Future<Either<Failure, Unit>> sendOtp(String email);
 
   Future<Either<Failure, Account>> verifyOtp({
-    required String phoneE164,
+    required String email,
     required String code,
+    required String phoneE164,
     required UserRole intendedRole,
   });
 
@@ -27,9 +34,10 @@ class SupabaseAuthRepository implements AuthRepository {
   final sb.SupabaseClient _db;
 
   @override
-  Future<Either<Failure, Unit>> sendOtp(String phoneE164) async {
+  Future<Either<Failure, Unit>> sendOtp(String email) async {
     try {
-      await _db.auth.signInWithOtp(phone: phoneE164);
+      // shouldCreateUser: le compte se cree au premier code valide.
+      await _db.auth.signInWithOtp(email: email, shouldCreateUser: true);
       return const Right(unit);
     } on sb.AuthException catch (e) {
       return Left(_map(e));
@@ -40,15 +48,16 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<Either<Failure, Account>> verifyOtp({
-    required String phoneE164,
+    required String email,
     required String code,
+    required String phoneE164,
     required UserRole intendedRole,
   }) async {
     try {
       final res = await _db.auth.verifyOTP(
-        phone: phoneE164,
+        email: email,
         token: code,
-        type: sb.OtpType.sms,
+        type: sb.OtpType.email,
       );
       final user = res.user;
       if (user == null) {
@@ -60,7 +69,7 @@ class SupabaseAuthRepository implements AuthRepository {
       // bascule explicite.
       final existing = await _db
           .from('profiles')
-          .select('id, role, full_name, phone_number, is_phone_verified')
+          .select('id, role, full_name, phone_number, email, is_phone_verified')
           .eq('id', user.id)
           .maybeSingle();
 
@@ -70,14 +79,18 @@ class SupabaseAuthRepository implements AuthRepository {
           'role': intendedRole.dbValue,
           'full_name': '',
           'phone_number': phoneE164,
-          'is_phone_verified': true,
+          'email': email,
+          // Le code a valide l'E-MAIL, pas le numero. Le dire honnetement :
+          // un badge « telephone verifie » qui ne l'est pas serait un
+          // mensonge affiche a l'autre partie d'une transaction.
+          'is_phone_verified': false,
         });
         return Right(
           Account(
             id: user.id,
             role: intendedRole,
             phone: phoneE164,
-            isPhoneVerified: true,
+            email: email,
           ),
         );
       }
@@ -87,8 +100,9 @@ class SupabaseAuthRepository implements AuthRepository {
           id: user.id,
           role: UserRole.fromDb(existing['role'] as String?),
           phone: existing['phone_number'] as String? ?? phoneE164,
+          email: existing['email'] as String? ?? email,
           fullName: existing['full_name'] as String?,
-          isPhoneVerified: true,
+          isPhoneVerified: existing['is_phone_verified'] as bool? ?? false,
           hasAcceptedTerms: true,
         ),
       );
@@ -119,7 +133,7 @@ class SupabaseAuthRepository implements AuthRepository {
     try {
       final row = await _db
           .from('profiles')
-          .select('id, role, full_name, phone_number, is_phone_verified')
+          .select('id, role, full_name, phone_number, email, is_phone_verified')
           .eq('id', user.id)
           .maybeSingle();
       if (row == null) return const Right(null);
@@ -128,6 +142,7 @@ class SupabaseAuthRepository implements AuthRepository {
           id: user.id,
           role: UserRole.fromDb(row['role'] as String?),
           phone: row['phone_number'] as String? ?? '',
+          email: row['email'] as String?,
           fullName: row['full_name'] as String?,
           isPhoneVerified: row['is_phone_verified'] as bool? ?? false,
           hasAcceptedTerms: true,
@@ -161,12 +176,23 @@ class SupabaseAuthRepository implements AuthRepository {
       return const ValidationFailure('Code incorrect. Vérifie les 6 chiffres.');
     }
     if (m.contains('rate') || m.contains('limit')) {
+      // Cause la plus probable en pratique : le SMTP par defaut de Supabase
+      // est plafonne a quelques envois par heure. Brancher un SMTP dedie
+      // (Brevo, Resend) avant les premiers vrais utilisateurs.
       return const ValidationFailure(
-        'Trop de tentatives. Patiente une minute avant de réessayer.',
+        'Trop de demandes de code. Patiente quelques minutes.',
       );
     }
     return ServerFailure(debug: e.message);
   }
+}
+
+abstract final class EmailCheck {
+  static final _re = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$');
+
+  /// Validation volontairement permissive : rejeter une adresse valide est
+  /// pire que d'en accepter une fausse, que le code invalidera de toute facon.
+  static bool isValid(String v) => _re.hasMatch(v.trim());
 }
 
 /// Format béninois. `+229` est fixe : on ne demande pas à quelqu'un de

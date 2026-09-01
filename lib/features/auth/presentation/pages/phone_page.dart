@@ -8,20 +8,29 @@ import '../../data/auth_repository.dart';
 import '../../domain/entities/account.dart';
 import '../bloc/auth_cubit.dart';
 
-/// A2 / A4 — Saisie du numéro.
+/// A2 / A4 — Identité.
 ///
-/// UN SEUL champ. Pas de mot de passe, pas d'e-mail, pas de nom : le nom sera
-/// demandé plus tard, quand il servira à quelque chose.
+/// DEUX champs, et ils ne servent pas à la même chose. C'est dit à l'écran :
+/// un utilisateur à qui on demande deux coordonnées sans expliquer pourquoi
+/// soupçonne — à raison, sur ce marché — qu'on constitue un fichier.
 ///
-/// L'indicatif +229 est fixe et non modifiable — on ne demande pas à quelqu'un
-/// de Cotonou de chercher son pays dans une liste de 200 entrées.
+///   · L'E-MAIL reçoit le code. C'est le canal technique.
+///     Le SMS aurait été meilleur ici : il est lu, l'e-mail beaucoup moins.
+///     Mais les passerelles SMS béninoises sont payantes dès le premier envoi.
+///     Arbitrage de budget, pas de conception — à rebasculer plus tard.
+///
+///   · LE NUMÉRO est l'identité produit. C'est par lui que passeront les
+///     rappels de visite, les échéances de loyer et les quittances, sur
+///     WhatsApp — le canal réellement lu ici.
+///
+/// Toujours pas de mot de passe, pas de nom : le nom viendra quand il servira.
 class PhoneScreen extends StatefulWidget {
   const PhoneScreen({required this.role, this.isSignIn = false, super.key});
 
   final UserRole role;
 
-  /// Connexion : volontairement plus dépouillé que la création de compte.
-  /// Quelqu'un qui revient sait ce qu'il fait.
+  /// Connexion : plus dépouillé. Quelqu'un qui revient sait ce qu'il fait,
+  /// et son numéro est déjà connu — on ne le redemande pas.
   final bool isSignIn;
 
   @override
@@ -29,27 +38,31 @@ class PhoneScreen extends StatefulWidget {
 }
 
 class _PhoneScreenState extends State<PhoneScreen> {
-  final _controller = TextEditingController();
+  final _phone = TextEditingController();
+  final _email = TextEditingController();
   bool _accepted = false;
 
-  String get _digits => _controller.text.replaceAll(RegExp(r'\D'), '');
-  bool get _canSubmit =>
-      PhoneBj.isValid(_digits) && (widget.isSignIn || _accepted);
+  String get _digits => _phone.text.replaceAll(RegExp(r'\D'), '');
+  bool get _phoneOk => widget.isSignIn || PhoneBj.isValid(_digits);
+  bool get _emailOk => EmailCheck.isValid(_email.text);
+  bool get _canSubmit => _emailOk && _phoneOk && (widget.isSignIn || _accepted);
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  /// Le bouton désactivé affiche TOUJOURS sa raison. Un bouton grisé muet est
-  /// un cul-de-sac (UI_DESIGN_SYSTEM §7).
+  /// Un bouton désactivé affiche TOUJOURS sa raison — et une seule à la fois,
+  /// la première qui bloque. Lister trois reproches d'un coup décourage.
   String? get _blockedReason {
-    if (!PhoneBj.isValid(_digits)) return 'Entre ton numéro à 8 ou 10 chiffres';
+    if (!_emailOk) return 'Entre une adresse e-mail valide';
+    if (!_phoneOk) return 'Entre ton numéro à 8 ou 10 chiffres';
     if (!widget.isSignIn && !_accepted) {
       return 'Accepte les conditions pour continuer';
     }
     return null;
+  }
+
+  @override
+  void dispose() {
+    _phone.dispose();
+    _email.dispose();
+    super.dispose();
   }
 
   @override
@@ -64,7 +77,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(Space.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -72,13 +85,12 @@ class _PhoneScreenState extends State<PhoneScreen> {
                   Text(
                     widget.isSignIn
                         ? 'Content de te revoir'
-                        : 'Ton numéro de téléphone',
+                        : 'On fait connaissance',
                     style: AppText.titleL.copyWith(color: p.inkStrong),
                   ),
 
                   if (!widget.isSignIn) ...[
                     const SizedBox(height: Space.xs),
-                    // Le profil choisi reste visible et modifiable.
                     Row(
                       children: [
                         Text(
@@ -86,7 +98,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
                           style: AppText.bodyM.copyWith(color: p.inkMuted),
                         ),
                         TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => Navigator.of(context).maybePop(),
                           child: const Text('changer'),
                         ),
                       ],
@@ -96,34 +108,53 @@ class _PhoneScreenState extends State<PhoneScreen> {
                   const SizedBox(height: Space.lg),
 
                   TextField(
-                    controller: _controller,
-                    keyboardType: TextInputType.phone,
+                    controller: _email,
+                    keyboardType: TextInputType.emailAddress,
+                    autofillHints: const [AutofillHints.email],
                     autofocus: true,
-                    style: AppText.amount.copyWith(color: p.inkStrong),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                      _GroupByTwo(),
-                    ],
-                    decoration: InputDecoration(
-                      labelText: 'Numéro',
-                      prefixText: '${PhoneBj.prefix}  ',
-                      prefixStyle: AppText.amount.copyWith(color: p.inkMuted),
-                      hintText: '97 12 34 56',
+                    style: AppText.bodyL.copyWith(color: p.inkStrong),
+                    decoration: const InputDecoration(
+                      labelText: 'Ton e-mail',
+                      hintText: 'nom@exemple.com',
                     ),
                     onChanged: (_) => setState(() {}),
                   ),
-
-                  const SizedBox(height: Space.xs),
+                  const SizedBox(height: Space.xxs),
                   Text(
-                    'On t\'envoie un code par SMS.',
+                    "C'est là qu'arrive ton code.",
                     style: AppText.bodyM.copyWith(color: p.inkMuted),
                   ),
 
                   if (!widget.isSignIn) ...[
+                    const SizedBox(height: Space.lg),
+                    TextField(
+                      controller: _phone,
+                      keyboardType: TextInputType.phone,
+                      style: AppText.amount.copyWith(color: p.inkStrong),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                        _GroupByTwo(),
+                      ],
+                      decoration: InputDecoration(
+                        labelText: 'Ton numéro',
+                        prefixText: '${PhoneBj.prefix}  ',
+                        prefixStyle: AppText.amount.copyWith(color: p.inkMuted),
+                        hintText: '97 12 34 56',
+                      ),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: Space.xxs),
+                    // On dit POURQUOI on demande le numéro. Sans raison
+                    // affichée, la demande est perçue comme du fichage — et
+                    // sur ce marché ce soupçon est fondé.
+                    Text(
+                      'Il sert à te joindre pour les visites et les quittances. '
+                      'On ne le montre pas aux autres utilisateurs.',
+                      style: AppText.bodyM.copyWith(color: p.inkMuted),
+                    ),
+
                     const SizedBox(height: Space.md),
-                    // Case NON pré-cochée : un consentement pré-coché n'est
-                    // pas un consentement (loi n°2017-20).
                     CheckboxListTile(
                       value: _accepted,
                       onChanged: (v) => setState(() => _accepted = v ?? false),
@@ -144,13 +175,14 @@ class _PhoneScreenState extends State<PhoneScreen> {
                     ),
                   ],
 
-                  const Spacer(),
+                  const SizedBox(height: Space.xl),
 
                   FilledButton(
                     onPressed: _canSubmit && !cubit.busy
                         ? () => context.read<AuthCubit>().sendOtp(
-                            _digits,
-                            widget.role,
+                            email: _email.text,
+                            phoneDigits: _digits,
+                            intendedRole: widget.role,
                           )
                         : null,
                     style: FilledButton.styleFrom(

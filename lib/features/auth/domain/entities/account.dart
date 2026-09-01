@@ -37,6 +37,7 @@ class Account extends Equatable {
     required this.id,
     required this.role,
     required this.phone,
+    this.email,
     this.fullName,
     this.isPhoneVerified = false,
     this.hasAcceptedTerms = false,
@@ -45,6 +46,10 @@ class Account extends Equatable {
   final String id;
   final UserRole role;
   final String phone;
+
+  /// Sert a l'authentification, pas a joindre l'utilisateur.
+  final String? email;
+
   final String? fullName;
   final bool isPhoneVerified;
 
@@ -79,12 +84,22 @@ final class Anonymous extends AuthState {
   const Anonymous();
 }
 
+/// Le code part par E-MAIL (pas de budget SMS au lancement), mais le NUMERO
+/// reste collecte : c'est lui l'identite sur ce marche, et c'est par lui que
+/// passeront les rappels de visite, de loyer et de quittance via WhatsApp.
+///
+/// L'e-mail est le canal technique. Le telephone est la donnee produit.
 final class AwaitingOtp extends AuthState {
-  const AwaitingOtp({required this.phone, required this.intendedRole});
+  const AwaitingOtp({
+    required this.email,
+    required this.phone,
+    required this.intendedRole,
+  });
+  final String email;
   final String phone;
   final UserRole intendedRole;
   @override
-  List<Object?> get props => [phone, intendedRole];
+  List<Object?> get props => [email, phone, intendedRole];
 }
 
 final class NeedsConsent extends AuthState {

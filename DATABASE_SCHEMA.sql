@@ -379,8 +379,23 @@ CREATE VIEW public.public_profiles AS
 SELECT id, full_name, avatar_url, role, kyc_status, created_at
 FROM public.profiles;  -- phone_number et email volontairement exclus
 
-CREATE POLICY "Own profile readable"   ON public.profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Own profile updatable"  ON public.profiles FOR UPDATE USING (auth.uid() = id);
+-- Droits de table : le minimum, et seulement pour les comptes connectes.
+-- `anon` n'obtient RIEN. La revocation v2.0 etait la bonne intention mais
+-- trop large : elle empechait aussi l'utilisateur de creer SA PROPRE ligne
+-- au premier code valide. Le principe n'est pas « personne ne touche
+-- profiles », c'est « chacun ne touche que sa propre ligne ».
+GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
+
+CREATE POLICY "Own profile readable"  ON public.profiles
+  FOR SELECT TO authenticated USING (auth.uid() = id);
+
+-- WITH CHECK : on ne peut pas creer une ligne au nom d'un autre, meme en
+-- forgeant la requete.
+CREATE POLICY "Own profile insert"    ON public.profiles
+  FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "Own profile updatable" ON public.profiles
+  FOR UPDATE TO authenticated USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
 
 -- Listings : lecture publique des biens disponibles
 CREATE POLICY "Active listings are viewable by all" ON public.listings FOR SELECT USING (is_available = true OR auth.uid() = owner_id);

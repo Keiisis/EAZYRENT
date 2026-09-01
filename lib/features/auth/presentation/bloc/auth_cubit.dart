@@ -25,19 +25,43 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
-  Future<void> sendOtp(String digits, UserRole intendedRole) async {
+  /// Le code part par e-mail ; le numero est retenu pour le profil.
+  /// Deux donnees, deux roles : l'e-mail authentifie, le telephone identifie.
+  Future<void> sendOtp({
+    required String email,
+    required String phoneDigits,
+    required UserRole intendedRole,
+  }) async {
     _lastFailure = null;
     _busy = true;
     emit(state);
 
-    final phone = PhoneBj.toE164(digits);
-    final r = await _repo.sendOtp(phone);
+    final phone = PhoneBj.toE164(phoneDigits);
+    final mail = email.trim();
+    final r = await _repo.sendOtp(mail);
 
     _busy = false;
-    r.match((f) {
-      _lastFailure = f;
-      emit(const Anonymous());
-    }, (_) => emit(AwaitingOtp(phone: phone, intendedRole: intendedRole)));
+    r.match(
+      (f) {
+        _lastFailure = f;
+        emit(const Anonymous());
+      },
+      (_) => emit(
+        AwaitingOtp(email: mail, phone: phone, intendedRole: intendedRole),
+      ),
+    );
+  }
+
+  /// Renvoi du code, sans repasser par la saisie.
+  Future<void> resend() async {
+    final s = state;
+    if (s is! AwaitingOtp) return;
+    _lastFailure = null;
+    final r = await _repo.sendOtp(s.email);
+    r.match((f) => _lastFailure = f, (_) {});
+    emit(
+      AwaitingOtp(email: s.email, phone: s.phone, intendedRole: s.intendedRole),
+    );
   }
 
   Future<void> verify(String code) async {
@@ -49,8 +73,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(s);
 
     final r = await _repo.verifyOtp(
-      phoneE164: s.phone,
+      email: s.email,
       code: code,
+      phoneE164: s.phone,
       intendedRole: s.intendedRole,
     );
 
@@ -60,7 +85,13 @@ class AuthCubit extends Cubit<AuthState> {
         _lastFailure = f;
         // On reste sur l'écran de code : un échec ne renvoie jamais
         // l'utilisateur au début de son parcours.
-        emit(AwaitingOtp(phone: s.phone, intendedRole: s.intendedRole));
+        emit(
+          AwaitingOtp(
+            email: s.email,
+            phone: s.phone,
+            intendedRole: s.intendedRole,
+          ),
+        );
       },
       (acc) =>
           emit(acc.hasAcceptedTerms ? Authenticated(acc) : NeedsConsent(acc)),

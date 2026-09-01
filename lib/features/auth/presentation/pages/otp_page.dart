@@ -11,12 +11,12 @@ import '../bloc/auth_cubit.dart';
 
 /// A3 — Saisie du code.
 ///
-/// Écran à fort taux d'échec : le SMS tarde, le code expire, on se trompe de
-/// chiffre. Chaque issue doit rester ouverte.
+/// Écran à fort taux d'échec : l'e-mail tombe en indésirables, le code expire,
+/// on se trompe de chiffre. Chaque issue doit rester ouverte.
 ///
-/// Le compte à rebours est PROLONGEABLE, et au deuxième échec on propose un
-/// appel plutôt qu'un SMS — sur un réseau béninois, un SMS qui ne passe pas
-/// ne passera pas davantage à la troisième tentative.
+/// Le compte à rebours est PROLONGEABLE. Et au deuxième échec on rappelle de
+/// regarder les indésirables : c'est de loin la premiere cause de « je n'ai
+/// rien recu » avec un code par e-mail, bien avant l'adresse mal saisie.
 class OtpScreen extends StatefulWidget {
   const OtpScreen({required this.state, super.key});
 
@@ -92,7 +92,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   Row(
                     children: [
                       Text(
-                        'Envoyé au ${widget.state.phone}',
+                        'Envoyé à ${widget.state.email}',
                         style: AppText.bodyM.copyWith(color: p.inkMuted),
                       ),
                       TextButton(
@@ -155,23 +155,29 @@ class _OtpScreenState extends State<OtpScreen> {
                   else
                     TextButton(
                       onPressed: () {
-                        context.read<AuthCubit>().sendOtp(
-                          widget.state.phone.replaceAll(RegExp(r'\D'), ''),
-                          widget.state.intendedRole,
-                        );
+                        context.read<AuthCubit>().resend();
                         _startCountdown();
                       },
                       child: const Text('Renvoyer le code'),
                     ),
 
-                  // Au deuxième échec, on change de canal plutôt que de
-                  // répéter ce qui ne marche pas.
+                  // Au deuxième échec, on donne la cause la plus probable
+                  // plutôt que de répéter « réessaie ».
                   if (_attempts >= 2) ...[
-                    const SizedBox(height: Space.xs),
-                    OutlinedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.phone_in_talk_outlined),
-                      label: const Text('Recevoir un appel à la place'),
+                    const SizedBox(height: Space.sm),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.info_outline, size: 15, color: p.inkMuted),
+                        const SizedBox(width: Space.xs),
+                        Expanded(
+                          child: Text(
+                            'Regarde aussi tes indésirables : le code y tombe '
+                            'souvent.',
+                            style: AppText.bodyM.copyWith(color: p.inkMuted),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
 
