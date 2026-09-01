@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../listing/domain/entities/listing.dart';
 import '../widgets/paywall_sheet.dart';
+import 'tour_viewer_page.dart';
 
 /// S06a — La preview verrouillée.
 ///
@@ -215,12 +216,29 @@ class _Unlock extends StatelessWidget {
               ),
               const SizedBox(height: Space.sm),
               FilledButton(
-                onPressed: () => showModalBottomSheet<void>(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => PaywallSheet(listing: listing),
-                ),
+                // Le paywall décide, puis on OUVRE. C'est le serveur qui
+                // tranchera vraiment (Edge Function, CONSTITUTION P4) — cet
+                // enchaînement ne fait qu'amener l'utilisateur devant la
+                // porte, il ne l'ouvre pas lui-même.
+                onPressed: () async {
+                  final navigator = Navigator.of(context);
+                  await showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => PaywallSheet(listing: listing),
+                  );
+                  await navigator.push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => TourViewerScreen(
+                        listingId: listing.id,
+                        listingLabel:
+                            '${listing.propertyType} · '
+                            '${listing.neighborhood ?? listing.city}',
+                      ),
+                    ),
+                  );
+                },
                 style: FilledButton.styleFrom(
                   backgroundColor: Accents.actionVivid,
                   // Sur terracotta vif, le label est OBSIDIENNE (5,79:1).

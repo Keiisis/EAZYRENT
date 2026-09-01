@@ -14,6 +14,7 @@ import '../../features/auth/data/auth_repository.dart';
 import '../../features/listing/data/datasources/listing_remote_datasource.dart';
 import '../../features/listing/data/repositories/listing_repository_impl.dart';
 import '../../features/listing/domain/repositories/listing_repository.dart';
+import '../../features/tour/data/tour_repository.dart';
 import '../moments/moment.dart';
 import '../moments/savings_counter.dart';
 import '../notifications/notification_policy.dart';
@@ -47,6 +48,12 @@ Future<void> configureDependencies() async {
     )
     ..registerLazySingleton<AuthRepository>(
       () => SupabaseAuthRepository(getIt<SupabaseClient>()),
+    )
+    // Le SEUL chemin vers un panorama. Il n'expose aucune méthode qui lise
+    // `virtual_tour_scenes` : tout passe par l'Edge Function, qui décide
+    // côté serveur (CONSTITUTION P4).
+    ..registerLazySingleton<TourRepository>(
+      () => SupabaseTourRepository(getIt<SupabaseClient>()),
     );
 
   // TODO(E0.1) : brancher $initGetIt(getIt) une fois build_runner exécuté.

@@ -104,3 +104,28 @@ final class BlockedByComplianceFailure extends Failure {
   @override
   String get userMessage => 'Cette fonctionnalité arrive bientôt.';
 }
+
+/// La visite n'a pas été payée. C'est un refus MÉTIER, pas une panne : il ne
+/// dit jamais « erreur », il dit ce qu'il faut faire.
+///
+/// Il ne peut venir QUE du serveur (Edge Function, 402). Le client ne décide
+/// jamais lui-même s'il a payé — c'est tout l'objet de CONSTITUTION P4.
+final class TourNotPaidFailure extends Failure {
+  const TourNotPaidFailure({super.debug});
+
+  @override
+  String get userMessage =>
+      'Cette visite n\'est pas encore débloquée sur ton compte.';
+}
+
+/// Le bien est marqué « Visite Vérifiée » mais aucune scène n'est publiée.
+/// C'est une incohérence de NOTRE côté, jamais de celui de l'utilisateur :
+/// le message le dit, et le remboursement est automatique.
+final class TourEmptyFailure extends Failure {
+  const TourEmptyFailure({super.debug});
+
+  @override
+  String get userMessage =>
+      'Les images de cette visite ne sont pas encore en ligne. '
+      'Ta visite ne t\'a pas été décomptée.';
+}

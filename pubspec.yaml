@@ -81,6 +81,7 @@ dependencies:
   latlong2: ^0.9.1
   http: ^1.6.0
   image_picker: ^1.2.3
+  panorama_viewer: ^2.0.7
 
 # AUCUN SDK MARCHAND DE PAIEMENT (P11).
 # Une clé marchande embarquée dans un APK est une clé publiée.

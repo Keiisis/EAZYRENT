@@ -481,3 +481,49 @@ de `export-html/` avec `lib/features/`.*
   l'écran. À l'échec, « aucun montant n'a été débité » passe AVANT toute
   proposition de réessai, et l'autre opérateur est proposé d'emblée : un échec
   MTN est le plus souvent un incident réseau MTN, pas un problème d'argent.
+
+---
+
+## Phase Visionneuse 360 — le cœur du produit
+
+- [x] **G51 — La visionneuse « tour complet » existe et se construit**
+  Elle était bloquée depuis le début par `flutter_inappwebview`, incompatible
+  AGP 9. Le blocage n'était pas dans l'écran, il était dans le choix du moteur.
+  **MET.** Le webview est abandonné, pour trois raisons dont la première suffit
+  à elle seule : `assets/tour_engine/` était RESTÉ VIDE — le bundle Photo
+  Sphere Viewer + Three.js n'a jamais été livré. On se serait embarqué un
+  moteur JavaScript qu'on ne relit pas, pour afficher une sphère texturée, sur
+  un Mali-G52.
+  `panorama_viewer` rend la même sphère équirectangulaire en Dart, gyroscope
+  compris, sans moteur JS et sans conflit de build.
+  PREUVE : `flutter build apk` réussit avec `panorama_viewer` + `flutter_cube`
+  + `dchs_motion_sensors` sous AGP 9.1.0.
+
+- [x] **G52 — Une visite payée ne montre JAMAIS un écran noir muet**
+  C'est l'incident le plus cher du produit : quelqu'un vient de payer 1 000 F.
+  **MET, vérifié sur l'appareil.** Edge Function non déployée → la visionneuse
+  affiche « On n'arrive pas à charger. Réessaie. » avec « Réessayer » et
+  « Revenir ». Chaque refus a son message : 402 dit que la visite n'est pas
+  débloquée, une liste de scènes vide dit que les images ne sont pas en ligne
+  ET que le crédit n'a pas été décompté.
+
+- [x] **G53 — Le paywall reste incontournable**
+  `TourRepository` n'expose AUCUNE méthode qui lise `virtual_tour_scenes`. Le
+  seul chemin est l'Edge Function `get-tour-access`, qui identifie l'appelant
+  par son JWT — jamais par un identifiant qu'il envoie —, vérifie le pass ou
+  débite un crédit EN BASE, et ne rend que des URL signées 60 minutes.
+  `panorama_url`, le chemin permanent, n'est jamais renvoyé au client.
+  ÉCART CORRIGÉ EN COURS DE ROUTE : la première version de la fonction
+  interrogeait `tour_accesses` et `tour_credits`, deux tables que j'avais
+  INVENTÉES. Les vraies sont `virtual_tour_access_passes` (§5.3),
+  `visit_credits` (§5.4) et `virtual_tour_hotspots` (§5.2). Écrire du SQL sans
+  relire le schéma produit du code qui ne casse qu'au déploiement.
+
+- [ ] **G54 — Un panorama réel s'affiche dans la visionneuse**
+  NON TENUE, et elle ne peut pas l'être depuis cette machine : il n'existe
+  aujourd'hui aucun panorama dans le stockage, aucun pass payé en base, et
+  l'Edge Function n'est pas déployée. Le chemin d'erreur est vérifié, le
+  chemin nominal ne l'est pas. À rejouer après :
+    1. `supabase functions deploy get-tour-access`
+    2. création du bucket `panoramas`
+    3. import d'un tour depuis l'admin web (à construire)
