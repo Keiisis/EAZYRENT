@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/widgets/molecules/listing_card.dart';
+import '../../../listing/presentation/pages/listing_detail_page.dart';
 import '../bloc/feed_cubit.dart';
 
 /// S02 — l'écran d'atterrissage permanent.
@@ -127,7 +128,17 @@ class _Ready extends StatelessWidget {
               itemBuilder: (_, i) => Padding(
                 padding: const EdgeInsets.only(bottom: Space.feedGap),
                 child: RepaintBoundary(
-                  child: ListingCard(listing: state.listings[i], onTap: () {}),
+                  child: ListingCard(
+                    listing: state.listings[i],
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => ListingDetailScreen(
+                          listing: state.listings[i],
+                          agentName: 'Rachid',
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
