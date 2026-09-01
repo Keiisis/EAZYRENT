@@ -45,6 +45,12 @@ class _AuthFlowState extends State<AuthFlow> {
         if (state is NeedsConsent) return const ConsentScreen();
         if (state is AwaitingOtp) return OtpScreen(state: state);
 
+        // L'anonyme a demande un compte depuis le feed : on ouvre le tunnel
+        // par-dessus l'application, sans lui faire perdre sa navigation.
+        if (state is SignUpRequested) {
+          return const PhoneScreen(role: UserRole.tenant);
+        }
+
         // Anonyme : soit il a déjà choisi de naviguer, soit on lui demande
         // ce qu'il vient faire.
         if (_browsingAnonymously) return widget.onEnterApp(null);

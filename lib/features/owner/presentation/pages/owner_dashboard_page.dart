@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
 import 'publish_listing_page.dart';
+import 'visit_requests_page.dart';
 
 /// C1 — Tableau de bord bailleur.
 ///
@@ -79,6 +80,13 @@ class OwnerDashboardScreen extends StatelessWidget {
                       value: '$totalRequests',
                       label: 'demandes',
                       highlight: totalRequests > 0,
+                      onTap: totalRequests > 0
+                          ? () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const VisitRequestsScreen(),
+                              ),
+                            )
+                          : null,
                     ),
                   ],
                 ),
@@ -128,29 +136,34 @@ class _Stat extends StatelessWidget {
     required this.value,
     required this.label,
     this.highlight = false,
+    this.onTap,
   });
 
   final String value;
   final String label;
   final bool highlight;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
     return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            value,
-            style: AppText.displayM.copyWith(
-              // Une demande en attente est la seule chose qui mérite la
-              // couleur d'action sur cet écran.
-              color: highlight ? p.action : p.inkStrong,
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              value,
+              style: AppText.displayM.copyWith(
+                // Une demande en attente est la seule chose qui mérite la
+                // couleur d'action sur cet écran.
+                color: highlight ? p.action : p.inkStrong,
+              ),
             ),
-          ),
-          Text(label, style: AppText.bodyM.copyWith(color: p.inkMuted)),
-        ],
+            Text(label, style: AppText.bodyM.copyWith(color: p.inkMuted)),
+          ],
+        ),
       ),
     );
   }

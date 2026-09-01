@@ -113,4 +113,9 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void cancelOtp() => emit(const Anonymous());
+
+  /// Le chercheur anonyme demande lui-meme un compte, depuis le moment ou il
+  /// vient de garder un bien. On repasse par le tunnel avec le role
+  /// `tenant` deja choisi — il n'a pas a le redire.
+  void requestSignUp() => emit(const SignUpRequested());
 }

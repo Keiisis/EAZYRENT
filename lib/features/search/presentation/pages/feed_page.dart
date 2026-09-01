@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/widgets/molecules/listing_card.dart';
+import '../../../auth/domain/entities/account.dart';
+import '../../../auth/presentation/bloc/auth_cubit.dart';
+import '../../../auth/presentation/widgets/save_prompt_sheet.dart';
 import '../../../listing/presentation/pages/listing_detail_page.dart';
 import '../../../shortlist/presentation/bloc/shortlist_cubit.dart';
 import '../bloc/feed_cubit.dart';
@@ -145,9 +148,26 @@ class _Ready extends StatelessWidget {
                     isSaved: context.watch<ShortlistCubit>().state.contains(
                       state.listings[i].id,
                     ),
-                    onSave: () => context.read<ShortlistCubit>().toggle(
-                      state.listings[i],
-                    ),
+                    onSave: () {
+                      final shortlist = context.read<ShortlistCubit>();
+                      shortlist.toggle(state.listings[i]);
+
+                      // Le compte est demandé AU MOMENT où il veut garder
+                      // quelque chose — il devient un service rendu, pas un
+                      // péage (UX_CORE_SPEC §4.1). Jamais avant, jamais deux
+                      // fois pour le même palier.
+                      final auth = context.read<AuthCubit>();
+                      final hasAccount = auth.state is Authenticated;
+                      if (shortlist.shouldPromptSignUp(
+                        hasAccount: hasAccount,
+                      )) {
+                        SavePromptSheet.show(
+                          context,
+                          savedCount: shortlist.state.saved.length,
+                          onCreateAccount: auth.requestSignUp,
+                        );
+                      }
+                    },
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (_) => ListingDetailScreen(

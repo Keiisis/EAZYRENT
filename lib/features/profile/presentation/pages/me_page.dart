@@ -6,6 +6,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../auth/domain/entities/account.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
+import '../../../kyc/presentation/pages/kyc_page.dart';
 import '../../../shortlist/presentation/bloc/shortlist_cubit.dart';
 
 /// S12 — Moi.
@@ -90,6 +91,25 @@ class MeScreen extends StatelessWidget {
                 _SectionTitle('Mes biens'),
                 _Row(icon: Icons.home_work_outlined, label: 'Tableau de bord'),
                 _Row(icon: Icons.add_home_outlined, label: 'Publier un bien'),
+              ],
+
+              // Le KYC n'existe que pour ceux qui recoivent de l'argent.
+              // Le demander a un chercheur n'aurait aucun sens.
+              if (account != null && account.role != UserRole.tenant) ...[
+                _SectionTitle('Vérification'),
+                _Row(
+                  icon: Icons.badge_outlined,
+                  label: 'Vérifier mon identité',
+                  subtitle: account.role == UserRole.owner
+                      ? 'Pièce, preuve sur le bien, compte de versement'
+                      : 'Pièce et compte de versement',
+                  trailing: _pill(context, 'À faire'),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => KycScreen(role: account.role),
+                    ),
+                  ),
+                ),
               ],
 
               _SectionTitle('Aide'),
@@ -245,12 +265,14 @@ class _Row extends StatelessWidget {
     required this.label,
     this.subtitle,
     this.trailing,
+    this.onTap,
   });
 
   final IconData icon;
   final String label;
   final String? subtitle;
   final Widget? trailing;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -258,7 +280,7 @@ class _Row extends StatelessWidget {
     return InkWell(
       // Les destinations sont branchées écran par écran, pas d'un bloc :
       // une ligne qui ne mène nulle part est pire qu'une ligne absente.
-      onTap: () {},
+      onTap: onTap ?? () {},
       child: Container(
         constraints: BoxConstraints(minHeight: Touch.target(p.isHighContrast)),
         padding: const EdgeInsets.symmetric(

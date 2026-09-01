@@ -84,6 +84,13 @@ final class Anonymous extends AuthState {
   const Anonymous();
 }
 
+/// L'anonyme a demande un compte de lui-meme — typiquement apres avoir garde
+/// un bien. Distinct de `Anonymous` : ici on OUVRE le tunnel, on ne se
+/// contente pas de ne pas etre connecte.
+final class SignUpRequested extends AuthState {
+  const SignUpRequested();
+}
+
 /// Le code part par E-MAIL (pas de budget SMS au lancement), mais le NUMERO
 /// reste collecte : c'est lui l'identite sur ce marche, et c'est par lui que
 /// passeront les rappels de visite, de loyer et de quittance via WhatsApp.

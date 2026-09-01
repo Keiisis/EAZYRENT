@@ -58,7 +58,23 @@ class ShortlistCubit extends Cubit<ShortlistState> {
   final MomentBus _moments;
   final StageResolver _resolver;
 
+  /// Paliers auxquels on a deja propose la creation de compte. On ne
+  /// represente jamais la meme proposition : insister transforme un service
+  /// en harcelement.
+  final Set<int> _promptedAt = {};
+
   UserStage get stage => _resolver.resolve(state.facts);
+
+  /// Vrai une seule fois par seuil : au 1er bien garde, puis au 3e.
+  /// Renvoie false si un compte existe deja — c'est a l'appelant de le dire.
+  bool shouldPromptSignUp({required bool hasAccount}) {
+    if (hasAccount) return false;
+    final n = state.saved.length;
+    if (n != 1 && n != 3) return false;
+    if (_promptedAt.contains(n)) return false;
+    _promptedAt.add(n);
+    return true;
+  }
 
   void toggle(Listing listing) {
     final already = state.contains(listing.id);
