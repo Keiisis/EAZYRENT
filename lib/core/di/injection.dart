@@ -10,6 +10,7 @@ import 'package:injectable/injectable.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../features/auth/data/auth_repository.dart';
 import '../../features/listing/data/datasources/listing_remote_datasource.dart';
 import '../../features/listing/data/repositories/listing_repository_impl.dart';
 import '../../features/listing/domain/repositories/listing_repository.dart';
@@ -39,6 +40,9 @@ Future<void> configureDependencies() async {
     )
     ..registerLazySingleton<ListingRepository>(
       () => ListingRepositoryImpl(getIt<ListingRemoteDataSource>()),
+    )
+    ..registerLazySingleton<AuthRepository>(
+      () => SupabaseAuthRepository(getIt<SupabaseClient>()),
     );
 
   // TODO(E0.1) : brancher $initGetIt(getIt) une fois build_runner exécuté.

@@ -8,6 +8,9 @@ import 'core/progression/stage_resolver.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/design_tokens.dart';
 import 'core/widgets/app_shell.dart';
+import 'features/auth/data/auth_repository.dart';
+import 'features/auth/presentation/auth_flow.dart';
+import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'features/listing/domain/repositories/listing_repository.dart';
 import 'features/search/presentation/bloc/feed_cubit.dart';
 import 'features/search/presentation/pages/feed_page.dart';
@@ -65,8 +68,11 @@ class _EazyrentAppState extends State<EazyrentApp> {
             create: (_) =>
                 ShortlistCubit(getIt<MomentBus>(), getIt<StageResolver>()),
           ),
+          BlocProvider(
+            create: (_) => AuthCubit(getIt<AuthRepository>())..restore(),
+          ),
         ],
-        child: const _Root(),
+        child: AuthFlow(onEnterApp: (_) => const _Root()),
       ),
     );
   }
