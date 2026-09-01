@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../features/auth/domain/entities/account.dart';
 import '../progression/user_stage.dart';
 import '../theme/app_theme.dart';
 import '../theme/design_tokens.dart';
@@ -18,19 +19,29 @@ import '../theme/design_tokens.dart';
 /// AUCUN onglet grisé. Une fonction verrouillée n'existe pas à l'écran.
 class AppShell extends StatefulWidget {
   const AppShell({
+    required this.role,
     required this.stage,
     required this.search,
     required this.shortlist,
     required this.messages,
     required this.me,
+    required this.ownerHome,
+    required this.brokerHome,
     super.key,
   });
+
+  /// Chaque profil a SA navigation. Un propriétaire n'a pas d'onglet
+  /// « Chercher » : il ne cherche pas, il surveille. Un démarcheur n'a pas
+  /// de « Ma liste » : il n'accumule pas des biens pour lui.
+  final UserRole role;
 
   final UserStage stage;
   final Widget search;
   final Widget shortlist;
   final Widget messages;
   final Widget me;
+  final Widget ownerHome;
+  final Widget brokerHome;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -39,8 +50,53 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int _index = 0;
 
-  /// Les onglets visibles au palier courant, dans l'ordre canonique.
-  List<_Tab> _tabs() => [
+  /// Les onglets visibles, selon le RÔLE d'abord, le palier ensuite.
+  List<_Tab> _tabs() => switch (widget.role) {
+    UserRole.owner => [
+      _Tab(
+        icon: Icons.home_work_outlined,
+        activeIcon: Icons.home_work,
+        label: 'Mes biens',
+        page: widget.ownerHome,
+      ),
+      _Tab(
+        icon: Icons.chat_bubble_outline,
+        activeIcon: Icons.chat_bubble,
+        label: 'Messages',
+        page: widget.messages,
+      ),
+      _Tab(
+        icon: Icons.person_outline,
+        activeIcon: Icons.person,
+        label: 'Moi',
+        page: widget.me,
+      ),
+    ],
+    UserRole.broker => [
+      _Tab(
+        icon: Icons.handshake_outlined,
+        activeIcon: Icons.handshake,
+        label: 'Mes apports',
+        page: widget.brokerHome,
+      ),
+      _Tab(
+        icon: Icons.chat_bubble_outline,
+        activeIcon: Icons.chat_bubble,
+        label: 'Messages',
+        page: widget.messages,
+      ),
+      _Tab(
+        icon: Icons.person_outline,
+        activeIcon: Icons.person,
+        label: 'Moi',
+        page: widget.me,
+      ),
+    ],
+    UserRole.tenant => _tenantTabs(),
+  };
+
+  /// Le locataire est le seul dont la navigation grandit avec le palier.
+  List<_Tab> _tenantTabs() => [
     _Tab(
       icon: Icons.search,
       activeIcon: Icons.search,

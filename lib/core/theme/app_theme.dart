@@ -71,6 +71,11 @@ abstract final class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: p.surfaceSunken,
+        // Le libellé du champ actif reste NEUTRE. En terracotta il se lit
+        // comme une erreur — la couleur d'action ne doit signaler qu'une
+        // action, jamais un état de saisie.
+        labelStyle: AppText.bodyM.copyWith(color: p.inkMuted),
+        floatingLabelStyle: AppText.label.copyWith(color: p.inkMuted),
         // Étiquette persistante, jamais un placeholder seul : un placeholder
         // qui disparaît à la saisie laisse l'utilisateur sans repère.
         floatingLabelBehavior: FloatingLabelBehavior.always,

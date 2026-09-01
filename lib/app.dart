@@ -9,9 +9,12 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/design_tokens.dart';
 import 'core/widgets/app_shell.dart';
 import 'features/auth/data/auth_repository.dart';
+import 'features/auth/domain/entities/account.dart';
 import 'features/auth/presentation/auth_flow.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
+import 'features/broker/presentation/pages/broker_home_page.dart';
 import 'features/listing/domain/repositories/listing_repository.dart';
+import 'features/owner/presentation/pages/owner_dashboard_page.dart';
 import 'features/profile/presentation/pages/me_page.dart';
 import 'features/search/presentation/bloc/feed_cubit.dart';
 import 'features/search/presentation/pages/feed_page.dart';
@@ -73,7 +76,7 @@ class _EazyrentAppState extends State<EazyrentApp> {
             create: (_) => AuthCubit(getIt<AuthRepository>())..restore(),
           ),
         ],
-        child: AuthFlow(onEnterApp: (_) => const _Root()),
+        child: AuthFlow(onEnterApp: (account) => _Root(account: account)),
       ),
     );
   }
@@ -82,12 +85,19 @@ class _EazyrentAppState extends State<EazyrentApp> {
 /// La coque écoute le palier : garder un bien fait apparaître « Ma liste »,
 /// acheter un pass fait apparaître « Messages ». La règle 10 est visible.
 class _Root extends StatelessWidget {
-  const _Root();
+  const _Root({this.account});
+
+  /// `null` = anonyme. Un anonyme est forcement un chercheur : les deux
+  /// autres profils ont du s'identifier pour arriver ici.
+  final Account? account;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ShortlistCubit, ShortlistState>(
       builder: (context, _) => AppShell(
+        role: account?.role ?? UserRole.tenant,
+        ownerHome: const OwnerDashboardScreen(),
+        brokerHome: const BrokerHomeScreen(),
         stage: context.read<ShortlistCubit>().stage,
         search: const FeedScreen(),
         shortlist: const ShortlistScreen(),
