@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'core/di/injection.dart';
 import 'core/theme/app_theme.dart';
+import 'features/listing/domain/repositories/listing_repository.dart';
+import 'features/search/presentation/bloc/feed_cubit.dart';
+import 'features/search/presentation/pages/feed_page.dart';
 
 enum AppThemeMode { light, dark, sunlight }
 
@@ -43,27 +48,13 @@ class _EazyrentAppState extends State<EazyrentApp> {
       builder: (context, child) =>
           MediaQuery.withClampedTextScaling(minScaleFactor: 1.0, child: child!),
 
-      home: const _Placeholder(),
-    );
-  }
-}
-
-/// Remplacé par le routeur en story E0.1. Présent pour que `flutter run`
-/// produise quelque chose de vérifiable dès le premier commit.
-class _Placeholder extends StatelessWidget {
-  const _Placeholder();
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.palette;
-    return Scaffold(
-      body: Center(
-        child: Text(
-          'EAZYRENT',
-          style: Theme.of(
-            context,
-          ).textTheme.displayLarge?.copyWith(color: p.inkStrong),
-        ),
+      // Le feed est l'écran d'atterrissage permanent (UX_CORE_SPEC.md §5.1).
+      // Le routeur go_router le remplacera en story E0.1 ; l'écran, lui,
+      // ne bougera pas.
+      home: BlocProvider(
+        create: (_) =>
+            FeedCubit(getIt<ListingRepository>())..load(const SearchQuery()),
+        child: const FeedScreen(),
       ),
     );
   }

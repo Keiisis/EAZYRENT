@@ -8,6 +8,11 @@
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../features/listing/data/datasources/listing_remote_datasource.dart';
+import '../../features/listing/data/repositories/listing_repository_impl.dart';
+import '../../features/listing/domain/repositories/listing_repository.dart';
 import '../moments/moment.dart';
 import '../moments/savings_counter.dart';
 import '../notifications/notification_policy.dart';
@@ -24,6 +29,17 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<NotificationPolicy>(DefaultNotificationPolicy.new)
     ..registerLazySingleton<MomentBus>(MomentBus.new)
     ..registerLazySingleton<SavingsCounter>(SavingsCounter.new);
+
+  // Feature `listing` — le seul point où la couche data est câblée.
+  // La présentation ne connaît que l'interface de domaine.
+  getIt
+    ..registerLazySingleton<SupabaseClient>(() => Supabase.instance.client)
+    ..registerLazySingleton<ListingRemoteDataSource>(
+      () => ListingRemoteDataSource(getIt<SupabaseClient>()),
+    )
+    ..registerLazySingleton<ListingRepository>(
+      () => ListingRepositoryImpl(getIt<ListingRemoteDataSource>()),
+    );
 
   // TODO(E0.1) : brancher $initGetIt(getIt) une fois build_runner exécuté.
 }
