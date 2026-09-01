@@ -54,5 +54,8 @@ export function freshness(checkedAt: string | null): {
   if (days <= 0) return { label: `Verifie aujourd'hui a ${hhmm}`, tone: 'ok' }
   if (days === 1) return { label: `Verifie hier a ${hhmm}`, tone: 'ok' }
   if (days <= 7) return { label: `Verifie il y a ${days} jours`, tone: 'warn' }
-  return { label: `Non confirme depuis ${days} jours`, tone: 'stale' }
+  // Miroir du raccourci applique cote mobile : la carte de 384 dp coupait
+  // « Non confirme depuis 12 jours » sur le nombre de jours, c'est-a-dire sur
+  // la seule partie qui dit a quel point l'information est vieille.
+  return { label: `Non confirme · ${days} jours`, tone: 'stale' }
 }

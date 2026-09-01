@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/entities/listing.dart';
+import '../../domain/entities/property_type.dart';
 import '../../domain/repositories/listing_repository.dart';
 
 /// Seul endroit de la feature qui parle à Supabase.
@@ -28,7 +29,10 @@ class ListingRemoteDataSource {
     if (q.neighborhoods.isNotEmpty) {
       req = req.inFilter('neighborhood', q.neighborhoods);
     }
-    if (q.propertyType != null) req = req.eq('property_type', q.propertyType!);
+    // Le filtre part en CODE de base, jamais en libellé français : la colonne
+    // contient `apartment`, pas « Chambre-salon ».
+    final typeCode = PropertyTypes.codeOf(q.propertyType);
+    if (typeCode != null) req = req.eq('property_type', typeCode);
     if (q.minRentFcfa != null) req = req.gte('price_amount', q.minRentFcfa!);
     if (q.maxRentFcfa != null) req = req.lte('price_amount', q.maxRentFcfa!);
     if (q.maxMoveInCostFcfa != null) {
@@ -83,7 +87,7 @@ class ListingRemoteDataSource {
     return Listing(
       id: r['id'] as String,
       monthlyRentFcfa: asInt(r['price_amount']) ?? 0,
-      propertyType: _label(r['property_type'] as String?),
+      propertyType: PropertyTypes.labelOf(r['property_type'] as String?),
       neighborhood: r['neighborhood'] as String?,
       city: r['city'] as String? ?? 'Cotonou',
       advanceMonths: asInt(r['advance_months']),
@@ -95,14 +99,4 @@ class ListingRemoteDataSource {
       freshness: Freshness.from(checkedAt),
     );
   }
-
-  /// Vocabulaire local. Jamais « T2 » ni « F3 ».
-  String _label(String? t) => switch (t) {
-    'room' => 'Chambre',
-    'apartment' => 'Chambre-salon',
-    'villa_house' => 'Villa',
-    'land' => 'Terrain',
-    'commercial' => 'Boutique',
-    _ => 'Logement',
-  };
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../onboarding/presentation/pages/onboarding_page.dart';
+import '../../search/presentation/bloc/feed_cubit.dart';
 import '../domain/entities/account.dart';
 import 'bloc/auth_cubit.dart';
 import 'pages/consent_page.dart';
@@ -32,6 +34,12 @@ class _AuthFlowState extends State<AuthFlow> {
   /// Vrai dès que l'utilisateur a choisi de naviguer sans compte.
   bool _browsingAnonymously = false;
 
+  /// Étapes du chercheur anonyme : trois questions, puis une attente courte
+  /// et nommée, puis le feed. Le propriétaire et le démarcheur ne les
+  /// traversent pas — ils ne cherchent pas, ils déposent.
+  _TenantEntry _entry = _TenantEntry.questions;
+  String? _firstQuartier;
+
   /// Rôle visé pendant le tunnel. Sert au moment d'écrire `profiles.role`.
   UserRole _intendedRole = UserRole.tenant;
   bool _isSignIn = false;
@@ -53,7 +61,29 @@ class _AuthFlowState extends State<AuthFlow> {
 
         // Anonyme : soit il a déjà choisi de naviguer, soit on lui demande
         // ce qu'il vient faire.
-        if (_browsingAnonymously) return widget.onEnterApp(null);
+        if (_browsingAnonymously) {
+          return switch (_entry) {
+            // RÈGLE UX 9. Sans ces trois questions, le premier écran du
+            // produit est « tous les quartiers » : un catalogue, c'est-à-dire
+            // exactement ce que la personne vient de quitter sur WhatsApp.
+            _TenantEntry.questions => OnboardingScreen(
+              onDone: (query) {
+                context.read<FeedCubit>().load(query);
+                setState(() {
+                  _firstQuartier = query.neighborhoods.isEmpty
+                      ? null
+                      : query.neighborhoods.first;
+                  _entry = _TenantEntry.handoff;
+                });
+              },
+            ),
+            _TenantEntry.handoff => OnboardingHandoff(
+              quartier: _firstQuartier,
+              onFinished: () => setState(() => _entry = _TenantEntry.feed),
+            ),
+            _TenantEntry.feed => widget.onEnterApp(null),
+          };
+        }
 
         if (_isSignIn || _intendedRole != UserRole.tenant) {
           return PopScope(
@@ -83,3 +113,8 @@ class _AuthFlowState extends State<AuthFlow> {
     );
   }
 }
+
+/// Les trois temps de l'entrée d'un chercheur. Un enum plutôt que deux
+/// booléens : deux booléens autorisent l'état « attente ET feed », qui n'a
+/// aucun sens et finit toujours par arriver.
+enum _TenantEntry { questions, handoff, feed }

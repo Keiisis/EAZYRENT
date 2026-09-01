@@ -189,6 +189,78 @@ bute sur un écran manquant en cours de parcours.*
 
 ---
 
+## Phase Derniers écrans manquants
+
+*Portes écrites avant l'exécution.*
+
+- [x] **G34 — La règle UX 9 existe à l'écran, pas seulement dans la spec**
+  L'onboarding en 3 questions / 90 secondes est le seul endroit où le produit
+  apprend ce que la personne cherche. Sans lui, le feed montre « tous les
+  quartiers » à quelqu'un qui n'en veut qu'un — et la première impression du
+  produit est un catalogue, pas une réponse.
+  CHECK: le feed après onboarding porte le quartier choisi, pas
+  « Tous les quartiers ».
+  EXPECT: vérifié sur le Galaxy A56, capture à l'appui.
+  **MET — et la porte a attrapé DEUX bugs réels que la relecture n'aurait pas
+  vus.** Premier passage sur l'appareil : l'en-tête affichait « Fidjrossè »
+  au-dessus de biens de Cadjèhoun, Agla et Godomey.
+    · CAUSE 1 — `FeedCubit._fetch()` relisait `_query` AU RETOUR de l'appel.
+      Le chargement du démarrage (requête vide) et celui de l'onboarding se
+      chevauchaient : la réponse non filtrée s'affichait sous l'étiquette de
+      la requête filtrée. Corrigé — la requête envoyée voyage avec sa réponse,
+      et une réponse périmée est JETÉE. Verrouillé par
+      `test/features/feed_race_test.dart`.
+    · CAUSE 2 — le filtre de type envoyait « Chambre-salon » à une colonne
+      `property_type_enum` qui contient `apartment` : zéro résultat, sans
+      message. `PropertyTypes` est désormais la seule table de traduction, et
+      l'interface ne propose plus que les cinq types que la base sait
+      représenter. Trois tests le verrouillent.
+  PREUVE : capture finale — en-tête « Fidjrossè », 2 biens, tous deux à
+  Fidjrossè. `flutter test` → 26/26.
+
+- [x] **G35 — Aucune permission système n'est demandée à froid**
+  Une permission refusée est refusée pour toujours : Android ne redemande
+  plus. L'amorce doit dire ce qu'on va envoyer AVANT que le dialogue système
+  n'apparaisse, et laisser refuser sans rien casser.
+  CHECK: `grep -rn "Permission.request\|requestPermission" lib/` — chaque
+  appel est précédé d'un écran d'amorce.
+  **MET.** Sortie : aucune occurrence — aucune permission n'est encore
+  demandée. Les deux points d'amorce existent et sont branchés AVANT tout
+  futur appel système : `PermissionPrimingSheet` sur « Alerte quartier », et
+  la feuille d'explication de position sur « Autour de moi » dans
+  l'onboarding. Elles disent quoi, combien, et quand on se taira.
+
+- [x] **G36 — Le démarrage ne vole pas de temps**
+  « Un splash animé de 2 s est 2 s volées à quelqu'un qui cherche un toit. »
+  CHECK: aucune animation, aucun délai artificiel au démarrage.
+  **MET.** Aucun écran de marque n'existe : `main.dart` ouvre directement le
+  tunnel. Le seul délai du produit est l'attente NOMMÉE entre l'onboarding et
+  le feed (1,6 s, « On regarde ce qui est libre à Fidjrossè… ») — elle porte
+  une information et un quartier réel, ce qui est exactement la condition que
+  la spec pose pour l'autoriser.
+
+- [x] **G37 — Le bailleur peut ouvrir SON annonce**
+  Le tableau de bord liste les biens ; P02 manquait, donc un bailleur ne
+  pouvait pas voir le détail de sa propre annonce ni la corriger.
+  **MET.** `my_listing_page.dart` (P02), ouvert en touchant un bien du tableau
+  de bord. « Marquer comme loué » est placé juste après la preuve de demande,
+  jamais relégué en bas : un bien loué qui reste en ligne détruit la
+  fraîcheur du parc, c'est-à-dire le produit lui-même.
+
+- [x] **G38 — Ce qui est affiché tient dans la carte**
+  Porte ajoutée APRÈS coup, parce que le premier lancement sur l'appareil l'a
+  imposée : trois des quatre lignes de la carte étaient tronquées.
+  **MET, sur mesure et non sur estimation.** Le Galaxy A56 fait 1080 px à
+  450 dpi, soit **384 dp**, et non les 412 supposés au dessin — la colonne de
+  texte ne recevait que 180 dp. Trois corrections, toutes chiffrées :
+  vignette 112 → 96 dp, écart 12 → 8 dp, « 3 mois av. » → « 3 mois », et
+  « Non confirmé depuis 12 jours » → « Non confirmé · 12 jours » (miroir
+  appliqué à `web/lib/format.ts` pour que les deux surfaces disent la même
+  chose). PREUVE : captures avant/après — de « Fidjros… », « Vérifié
+  aujourd'hui 05h… », « Entrée : 245 000 F · 3 m… » à zéro troncature.
+
+---
+
 ## Écrans construits dans cette passe
 
 | Réf | Écran | Fichier |

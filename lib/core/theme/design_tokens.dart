@@ -286,7 +286,20 @@ abstract final class Touch {
 
 abstract final class Sizes {
   static const listingCardHeight = 128.0; // constante : permet itemExtent fixe
-  static const listingThumbWidth = 112.0;
+
+  /// 96, et non 112.
+  ///
+  /// MESURÉ sur un Galaxy A56 : 1080 px à 450 dpi = **384 dp de large**, pas
+  /// les 412 supposés au dessin. Avec une vignette de 112, il ne restait que
+  /// 180 dp de texte — et trois des quatre lignes de la carte étaient
+  /// tronquées : « Fidjros… », « Vérifié aujourd'hui 05h… », « Entrée :
+  /// 245 000 F · 3 m… ».
+  ///
+  /// Une ligne coupée ne tient pas sa promesse : le coût d'entrée est LE
+  /// chiffre qui élimine 80 % des biens, et la fraîcheur est ce que le
+  /// produit vend. La photo, elle, « sert à disqualifier vite, pas à
+  /// décider » — c'est donc elle qui cède les 16 dp.
+  static const listingThumbWidth = 96.0;
   static const focusRing = 2.0;
   static const focusOffset = 2.0;
 }

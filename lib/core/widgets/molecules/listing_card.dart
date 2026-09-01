@@ -48,7 +48,9 @@ class ListingCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _Thumb(listing: listing, palette: p),
-              const SizedBox(width: Space.sm),
+              // 8 dp, pas 12 : sur 384 dp de large, chaque point rendu à la
+              // colonne de texte est une ligne qui cesse d'être tronquée.
+              const SizedBox(width: Space.xs),
               Expanded(
                 child: _Body(listing: listing, palette: p),
               ),
@@ -209,8 +211,11 @@ class _Body extends StatelessWidget {
         // 4. Le coût d'entrée — le chiffre qui élimine 80 % des biens.
         if (listing.totalMoveInCostFcfa != null)
           Text(
+            // « mois av. » devient « mois » : après « Entrée : », l'abréviation
+            // n'apprend rien et coûtait quatre caractères, c'est-à-dire la
+            // troncature de tout le reste de la ligne.
             'Entrée : ${MoneyFcfa.short(listing.totalMoveInCostFcfa!)}'
-            '${listing.advanceMonths != null ? " · ${listing.advanceMonths} mois av." : ""}',
+            '${listing.advanceMonths != null ? " · ${listing.advanceMonths} mois" : ""}',
             style: AppText.bodyM.copyWith(
               color: palette.inkStrong,
               fontWeight: FontWeight.w600,

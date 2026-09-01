@@ -78,15 +78,27 @@ class FeedCubit extends Cubit<FeedState> {
   Future<void> load(SearchQuery query) async {
     _query = query;
     emit(const FeedLoading());
-    await _fetch();
+    await _fetch(query);
   }
 
   /// Rechargement silencieux : on ne repasse pas par le squelette si on a
   /// déjà du contenu à l'écran.
-  Future<void> refresh() => _fetch();
+  Future<void> refresh() => _fetch(_query);
 
-  Future<void> _fetch() async {
-    final result = await _repository.getFeed(_query);
+  /// La requête ENVOYÉE voyage avec sa réponse.
+  ///
+  /// Sans ce paramètre, `_fetch` relisait `_query` au RETOUR de l'appel : deux
+  /// chargements qui se chevauchent — celui du démarrage et celui de
+  /// l'onboarding — faisaient afficher les résultats du premier sous
+  /// l'étiquette du second. Le bandeau annonçait « Fidjrossè » au-dessus de
+  /// biens de Godomey et d'Agla.
+  ///
+  /// C'est la pire faute possible ici : le produit vend le fait que ce qui est
+  /// affiché est vrai. Une réponse périmée est donc JETÉE, pas affichée.
+  Future<void> _fetch(SearchQuery requested) async {
+    final result = await _repository.getFeed(requested);
+
+    if (requested != _query) return;
 
     result.match(
       (failure) => emit(
@@ -100,13 +112,13 @@ class FeedCubit extends Cubit<FeedState> {
       ),
       (page) {
         if (page.listings.isEmpty) {
-          emit(FeedEmpty(query: _query));
+          emit(FeedEmpty(query: requested));
           return;
         }
         emit(
           FeedReady(
             listings: page.listings,
-            query: _query,
+            query: requested,
             fromCache: page.fromCache,
             cachedAt: page.cachedAt,
           ),

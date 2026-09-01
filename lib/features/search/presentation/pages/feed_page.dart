@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/widgets/molecules/listing_card.dart';
 import '../../../alerts/presentation/pages/alerts_page.dart';
+import '../../../alerts/presentation/widgets/permission_priming_sheet.dart';
 import '../../../auth/domain/entities/account.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../auth/presentation/widgets/save_prompt_sheet.dart';
@@ -51,9 +52,26 @@ class FeedScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const AlertsScreen())),
+        // A06 — l'amorce passe AVANT le dialogue système. Android ne redemande
+        // jamais une permission refusée : on ne laisse arriver au dialogue que
+        // les gens qui ont déjà dit oui ici. Un refus ici ne coûte rien, il
+        // est réversible ; un refus là-bas est définitif.
+        onPressed: () async {
+          final navigator = Navigator.of(context);
+          final state = context.read<FeedCubit>().state;
+          final quartier =
+              state is FeedReady && state.query.neighborhoods.isNotEmpty
+              ? state.query.neighborhoods.first
+              : 'ce quartier';
+          await PermissionPrimingSheet.show(
+            context,
+            quartier: quartier,
+            onAccept: () {},
+          );
+          await navigator.push(
+            MaterialPageRoute<void>(builder: (_) => const AlertsScreen()),
+          );
+        },
         backgroundColor: p.actionFill,
         foregroundColor: p.actionOnFill,
         icon: const Icon(Icons.notifications_none),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
+import 'my_listing_page.dart';
 import 'publish_listing_page.dart';
 import 'request_tour_page.dart';
 import 'visit_requests_page.dart';
@@ -181,159 +182,175 @@ class _ListingRow extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: Space.sm),
-      child: Container(
-        padding: const EdgeInsets.all(Space.sm),
-        decoration: BoxDecoration(
-          color: p.surfaceRaised,
-          border: Border.all(color: p.lineHair),
-          borderRadius: const BorderRadius.all(Radii.card),
+      // P02 — le bien s'ouvre. Sans ça, un bailleur ne pouvait ni corriger un
+      // prix, ni retirer un bien loué : un catalogue gonflé plutôt que vrai.
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => MyListingScreen(
+              title: '${listing.title} · ${listing.neighborhood}',
+              rentFcfa: listing.rent,
+              views: listing.views,
+              requests: listing.requests,
+              hasTour: listing.hasTour,
+            ),
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.all(Radii.input),
-                  child: SizedBox(
-                    width: 72,
-                    height: 72,
-                    child: listing.imageUrl != null
-                        ? CachedNetworkImage(
-                            imageUrl: listing.imageUrl!,
-                            fit: BoxFit.cover,
-                          )
-                        : ColoredBox(
-                            color: p.surfaceSunken,
-                            child: Center(
-                              child: Text(
-                                'Sans\nphoto',
-                                textAlign: TextAlign.center,
-                                style: AppText.caption.copyWith(
-                                  color: p.inkMuted,
+        borderRadius: const BorderRadius.all(Radii.card),
+        child: Container(
+          padding: const EdgeInsets.all(Space.sm),
+          decoration: BoxDecoration(
+            color: p.surfaceRaised,
+            border: Border.all(color: p.lineHair),
+            borderRadius: const BorderRadius.all(Radii.card),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.all(Radii.input),
+                    child: SizedBox(
+                      width: 72,
+                      height: 72,
+                      child: listing.imageUrl != null
+                          ? CachedNetworkImage(
+                              imageUrl: listing.imageUrl!,
+                              fit: BoxFit.cover,
+                            )
+                          : ColoredBox(
+                              color: p.surfaceSunken,
+                              child: Center(
+                                child: Text(
+                                  'Sans\nphoto',
+                                  textAlign: TextAlign.center,
+                                  style: AppText.caption.copyWith(
+                                    color: p.inkMuted,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                    ),
                   ),
-                ),
-                const SizedBox(width: Space.sm),
-                Expanded(
+                  const SizedBox(width: Space.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${listing.title} · ${listing.neighborhood}',
+                          style: AppText.bodyL.copyWith(color: p.inkStrong),
+                        ),
+                        Text(
+                          '${MoneyFcfa.short(listing.rent)} /mois',
+                          style: AppText.bodyM.copyWith(color: p.inkMuted),
+                        ),
+                        const SizedBox(height: Space.xxs),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.visibility_outlined,
+                              size: 14,
+                              color: p.inkMuted,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              '${listing.views} vues',
+                              style: AppText.label.copyWith(color: p.inkMuted),
+                            ),
+                            const SizedBox(width: Space.sm),
+                            if (listing.requests > 0) ...[
+                              Icon(
+                                Icons.event_available_outlined,
+                                size: 14,
+                                color: p.action,
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                '${listing.requests} demandes',
+                                style: AppText.label.copyWith(color: p.action),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: Space.xxs),
+                        Row(
+                          children: [
+                            Icon(
+                              listing.hasTour
+                                  ? Icons.check_circle
+                                  : Icons.photo_outlined,
+                              size: 14,
+                              color: listing.hasTour ? p.success : p.inkMuted,
+                            ),
+                            const SizedBox(width: Space.xxs),
+                            Text(
+                              listing.hasTour
+                                  ? 'Visite 360 active'
+                                  : 'Photos seulement',
+                              style: AppText.label.copyWith(
+                                color: listing.hasTour ? p.success : p.inkMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              // C2 — LA PREUVE DE DEMANDE.
+              //
+              // L'offre de tournage n'arrive QU'APRÈS que la demande soit
+              // prouvée. Demander 5 000 F à un propriétaire qui n'a encore rien
+              // reçu ferait échouer l'offre ; la lui proposer devant 23 vues
+              // réelles la rend évidente.
+              //
+              // ⚠️ Aucune statistique comparative ici (« 4× plus de demandes »)
+              // tant qu'elle n'aura pas été mesurée sur de vrais biens.
+              if (!listing.hasTour && listing.views > 0) ...[
+                const SizedBox(height: Space.sm),
+                Container(
+                  padding: const EdgeInsets.all(Space.sm),
+                  decoration: BoxDecoration(
+                    color: p.surfaceSunken,
+                    borderRadius: const BorderRadius.all(Radii.input),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${listing.title} · ${listing.neighborhood}',
-                        style: AppText.bodyL.copyWith(color: p.inkStrong),
+                        '${listing.views} personnes ont vu ton bien cette semaine.',
+                        style: AppText.bodyM.copyWith(color: p.inkBase),
                       ),
-                      Text(
-                        '${MoneyFcfa.short(listing.rent)} /mois',
-                        style: AppText.bodyM.copyWith(color: p.inkMuted),
-                      ),
-                      const SizedBox(height: Space.xxs),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.visibility_outlined,
-                            size: 14,
-                            color: p.inkMuted,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            '${listing.views} vues',
-                            style: AppText.label.copyWith(color: p.inkMuted),
-                          ),
-                          const SizedBox(width: Space.sm),
-                          if (listing.requests > 0) ...[
-                            Icon(
-                              Icons.event_available_outlined,
-                              size: 14,
-                              color: p.action,
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              '${listing.requests} demandes',
-                              style: AppText.label.copyWith(color: p.action),
-                            ),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: Space.xxs),
-                      Row(
-                        children: [
-                          Icon(
-                            listing.hasTour
-                                ? Icons.check_circle
-                                : Icons.photo_outlined,
-                            size: 14,
-                            color: listing.hasTour ? p.success : p.inkMuted,
-                          ),
-                          const SizedBox(width: Space.xxs),
-                          Text(
-                            listing.hasTour
-                                ? 'Visite 360 active'
-                                : 'Photos seulement',
-                            style: AppText.label.copyWith(
-                              color: listing.hasTour ? p.success : p.inkMuted,
+                      const SizedBox(height: Space.xs),
+                      OutlinedButton(
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => RequestTourScreen(
+                              listingTitle: listing.title,
+                              views: listing.views,
                             ),
                           ),
-                        ],
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: Size(0, Touch.target(p.isHighContrast)),
+                          foregroundColor: p.action,
+                          side: BorderSide(color: p.action),
+                        ),
+                        child: const Text(
+                          'Ajouter une Visite Vérifiée — 5 000 F',
+                        ),
                       ),
                     ],
                   ),
                 ),
               ],
-            ),
-
-            // C2 — LA PREUVE DE DEMANDE.
-            //
-            // L'offre de tournage n'arrive QU'APRÈS que la demande soit
-            // prouvée. Demander 5 000 F à un propriétaire qui n'a encore rien
-            // reçu ferait échouer l'offre ; la lui proposer devant 23 vues
-            // réelles la rend évidente.
-            //
-            // ⚠️ Aucune statistique comparative ici (« 4× plus de demandes »)
-            // tant qu'elle n'aura pas été mesurée sur de vrais biens.
-            if (!listing.hasTour && listing.views > 0) ...[
-              const SizedBox(height: Space.sm),
-              Container(
-                padding: const EdgeInsets.all(Space.sm),
-                decoration: BoxDecoration(
-                  color: p.surfaceSunken,
-                  borderRadius: const BorderRadius.all(Radii.input),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${listing.views} personnes ont vu ton bien cette semaine.',
-                      style: AppText.bodyM.copyWith(color: p.inkBase),
-                    ),
-                    const SizedBox(height: Space.xs),
-                    OutlinedButton(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => RequestTourScreen(
-                            listingTitle: listing.title,
-                            views: listing.views,
-                          ),
-                        ),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: Size(0, Touch.target(p.isHighContrast)),
-                        foregroundColor: p.action,
-                        side: BorderSide(color: p.action),
-                      ),
-                      child: const Text(
-                        'Ajouter une Visite Vérifiée — 5 000 F',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
-          ],
+          ),
         ),
       ),
     );

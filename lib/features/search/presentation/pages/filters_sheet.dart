@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
+import '../../../listing/domain/entities/property_type.dart';
 import '../../../listing/domain/repositories/listing_repository.dart';
 
 /// S04 — Filtres.
@@ -53,7 +54,10 @@ class _FiltersSheetState extends State<FiltersSheet> {
   static const _entryMax = 600000.0;
   static const _rentMax = 200000.0;
 
-  static const _types = ['Chambre-salon', 'Studio', 'Appartement', 'Villa'];
+  // Exactement les types que la base connaît. « Studio » et « Appartement »
+  // n'existent pas dans `property_type_enum` : les proposer produisait un
+  // filtre qui ne rendait jamais rien.
+  static const _types = PropertyTypes.labels;
   static const _quartiers = [
     'Fidjrossè',
     'Godomey',

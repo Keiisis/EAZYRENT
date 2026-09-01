@@ -50,8 +50,16 @@ class Freshness extends Equatable {
         tone: FreshnessTone.warn,
       );
     }
+    // « Non confirmé · 12 jours », et non « Non confirmé depuis 12 jours » :
+    // le libellé long dépassait la colonne de la carte sur un écran de
+    // 384 dp et se faisait couper en « Non confirmé depuis 12 jo… ».
+    //
+    // La coupure tombait sur le NOMBRE DE JOURS, c'est-à-dire sur la seule
+    // partie qui dit à quel point l'information est vieille. Le point médian
+    // rend les deux moitiés, et n'enlève rien : « depuis » ne portait aucun
+    // sens que la structure ne porte déjà.
     return Freshness(
-      label: 'Non confirmé depuis $days jours',
+      label: 'Non confirmé · $days jours',
       tone: FreshnessTone.stale,
     );
   }
