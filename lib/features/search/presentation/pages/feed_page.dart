@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/widgets/molecules/listing_card.dart';
 import '../../../listing/presentation/pages/listing_detail_page.dart';
+import '../../../shortlist/presentation/bloc/shortlist_cubit.dart';
 import '../bloc/feed_cubit.dart';
 
 /// S02 — l'écran d'atterrissage permanent.
@@ -141,6 +142,12 @@ class _Ready extends StatelessWidget {
                 child: RepaintBoundary(
                   child: ListingCard(
                     listing: state.listings[i],
+                    isSaved: context.watch<ShortlistCubit>().state.contains(
+                      state.listings[i].id,
+                    ),
+                    onSave: () => context.read<ShortlistCubit>().toggle(
+                      state.listings[i],
+                    ),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (_) => ListingDetailScreen(

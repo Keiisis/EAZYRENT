@@ -3,10 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/di/injection.dart';
+import 'core/moments/moment.dart';
+import 'core/progression/stage_resolver.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/design_tokens.dart';
+import 'core/widgets/app_shell.dart';
 import 'features/listing/domain/repositories/listing_repository.dart';
 import 'features/search/presentation/bloc/feed_cubit.dart';
 import 'features/search/presentation/pages/feed_page.dart';
+import 'features/shortlist/presentation/bloc/shortlist_cubit.dart';
+import 'features/shortlist/presentation/pages/shortlist_page.dart';
 
 enum AppThemeMode { light, dark, sunlight }
 
@@ -48,13 +54,60 @@ class _EazyrentAppState extends State<EazyrentApp> {
       builder: (context, child) =>
           MediaQuery.withClampedTextScaling(minScaleFactor: 1.0, child: child!),
 
-      // Le feed est l'écran d'atterrissage permanent (UX_CORE_SPEC.md §5.1).
-      // Le routeur go_router le remplacera en story E0.1 ; l'écran, lui,
-      // ne bougera pas.
-      home: BlocProvider(
-        create: (_) =>
-            FeedCubit(getIt<ListingRepository>())..load(const SearchQuery()),
-        child: const FeedScreen(),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) =>
+                FeedCubit(getIt<ListingRepository>())
+                  ..load(const SearchQuery()),
+          ),
+          BlocProvider(
+            create: (_) =>
+                ShortlistCubit(getIt<MomentBus>(), getIt<StageResolver>()),
+          ),
+        ],
+        child: const _Root(),
+      ),
+    );
+  }
+}
+
+/// La coque écoute le palier : garder un bien fait apparaître « Ma liste »,
+/// acheter un pass fait apparaître « Messages ». La règle 10 est visible.
+class _Root extends StatelessWidget {
+  const _Root();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ShortlistCubit, ShortlistState>(
+      builder: (context, _) => AppShell(
+        stage: context.read<ShortlistCubit>().stage,
+        search: const FeedScreen(),
+        shortlist: const ShortlistScreen(),
+        messages: const _Placeholder(label: 'Messages'),
+        me: const _Placeholder(label: 'Moi'),
+      ),
+    );
+  }
+}
+
+/// Écrans pas encore construits. Ils ne prétendent pas exister : ils disent
+/// ce qu'ils seront. Une coquille vide sans explication est pire qu'absente.
+class _Placeholder extends StatelessWidget {
+  const _Placeholder({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(Space.lg),
+        child: Text(
+          '$label — à construire',
+          style: AppText.bodyL.copyWith(color: p.inkMuted),
+        ),
       ),
     );
   }
