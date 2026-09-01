@@ -51,6 +51,16 @@ void main() {
       );
     });
 
+    test('UN SEUL bien gardé ouvre deja P1', () {
+      // Trouve au premier lancement : garder un bien creait une liste que
+      // rien ne permettait d'ouvrir. Un palier ne doit jamais cacher ce que
+      // l'utilisateur vient de produire.
+      expect(
+        r.resolve(const ProgressionFacts(savedListings: 1)),
+        UserStage.p1Eveille,
+      );
+    });
+
     test('2 biens gardés OU 1 pass acheté ouvrent P2', () {
       expect(
         r.resolve(const ProgressionFacts(completedTours: 1, savedListings: 2)),

@@ -22,9 +22,17 @@ class DefaultStageResolver implements StageResolver {
     if (f.savedListings >= 2 || f.purchasedPasses >= 1) {
       return UserStage.p2Chasseur;
     }
-    // Le seuil du palier 1 est UN TOUR TERMINÉ, pas la création de compte.
-    // C'est la valeur vécue qui fait progresser, pas l'inscription (P2).
-    if (f.completedTours >= 1) return UserStage.p1Eveille;
+    // P1 s'ouvre sur UN TOUR TERMINÉ ou UN PREMIER BIEN GARDÉ.
+    //
+    // Le premier lancement réel a montré le trou : garder un bien créait une
+    // liste que rien ne permettait d'ouvrir, parce que l'onglet « Ma liste »
+    // n'apparaissait qu'à deux biens. On offrait une action dont le résultat
+    // restait invisible — le contraire d'une micro-victoire.
+    //
+    // Un palier ne doit jamais cacher ce que l'utilisateur vient de produire.
+    if (f.completedTours >= 1 || f.savedListings >= 1) {
+      return UserStage.p1Eveille;
+    }
 
     return UserStage.p0Curieux;
   }

@@ -79,3 +79,19 @@ SELECT
 -- Le second est la porte G19 : 6 scènes existent, la clé publiable n'en voit
 -- aucune. Tant que `scenes_360` valait 0, ce test ne prouvait rien.
 -- ============================================================================
+
+-- ============================================================================
+-- CORRECTIF 2 — deux biens s'affichaient en noir
+--
+-- Fidjrossè partageait exactement la meme URL qu'Agla (aux parametres pres).
+-- Les deux URL renvoient bien 200 image/jpeg : ce n'est pas la donnee qui est
+-- invalide, c'est le cache d'images web qui trebuche sur la collision.
+-- On donne a chaque bien une photo qui lui est propre.
+-- ============================================================================
+UPDATE public.listings SET main_image_url =
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800'
+WHERE id = 'a0000001-0000-4000-8000-000000000001';
+
+UPDATE public.listings SET main_image_url =
+  'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800'
+WHERE id = 'a0000002-0000-4000-8000-000000000002';
