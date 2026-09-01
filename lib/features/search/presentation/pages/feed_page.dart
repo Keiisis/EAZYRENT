@@ -4,12 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/widgets/molecules/listing_card.dart';
+import '../../../alerts/presentation/pages/alerts_page.dart';
 import '../../../auth/domain/entities/account.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../auth/presentation/widgets/save_prompt_sheet.dart';
+import '../../../listing/domain/repositories/listing_repository.dart';
 import '../../../listing/presentation/pages/listing_detail_page.dart';
 import '../../../shortlist/presentation/bloc/shortlist_cubit.dart';
 import '../bloc/feed_cubit.dart';
+import 'filters_sheet.dart';
+import 'map_page.dart';
 
 /// S02 — l'écran d'atterrissage permanent.
 ///
@@ -47,7 +51,9 @@ class FeedScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const AlertsScreen())),
         backgroundColor: p.actionFill,
         foregroundColor: p.actionOnFill,
         icon: const Icon(Icons.notifications_none),
@@ -59,9 +65,38 @@ class FeedScreen extends StatelessWidget {
 }
 
 class _SearchBar extends StatelessWidget {
-  const _SearchBar({required this.label});
+  const _SearchBar({required this.label, required this.state});
 
   final String label;
+  final FeedReady state;
+
+  /// Le compteur vivant de la feuille de filtres. Il compte sur les biens
+  /// déjà chargés : exact quand on resserre, prudent quand on élargit.
+  int _countFor(SearchQuery q) => state.listings.where((l) {
+    if (q.propertyType != null && l.propertyType != q.propertyType) {
+      return false;
+    }
+    if (q.neighborhoods.isNotEmpty &&
+        !q.neighborhoods.contains(l.neighborhood)) {
+      return false;
+    }
+    if (q.maxRentFcfa != null && l.monthlyRentFcfa > q.maxRentFcfa!) {
+      return false;
+    }
+    if (q.minRentFcfa != null && l.monthlyRentFcfa < q.minRentFcfa!) {
+      return false;
+    }
+    // Un coût d'entrée inconnu ne disqualifie pas le bien : c'est une donnée
+    // manquante, pas un dépassement.
+    final cost = l.totalMoveInCostFcfa;
+    if (q.maxMoveInCostFcfa != null &&
+        cost != null &&
+        cost > q.maxMoveInCostFcfa!) {
+      return false;
+    }
+    if (q.verifiedTourOnly && !l.hasVerifiedTour) return false;
+    return true;
+  }).length;
 
   @override
   Widget build(BuildContext context) {
@@ -84,14 +119,27 @@ class _SearchBar extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              final cubit = context.read<FeedCubit>();
+              final next = await FiltersSheet.show(
+                context,
+                initial: state.query,
+                countFor: _countFor,
+              );
+              if (next != null) await cubit.load(next);
+            },
             tooltip: 'Filtres',
             icon: Icon(Icons.tune, color: p.inkBase),
           ),
-          // La carte est une BASCULE, pas un onglet (UX_CORE_SPEC §5.2).
+          // La carte est une BASCULE, pas un onglet (UX_CORE_SPEC §5.2) :
+          // elle reçoit LES MÊMES résultats, jamais une nouvelle requête.
           IconButton(
-            onPressed: () {},
-            tooltip: 'Voir sur la carte',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => MapScreen(listings: state.listings),
+              ),
+            ),
+            tooltip: 'Voir par quartier',
             icon: Icon(Icons.map_outlined, color: p.inkBase),
           ),
         ],
@@ -115,7 +163,7 @@ class _Ready extends StatelessWidget {
 
     return Column(
       children: [
-        _SearchBar(label: label),
+        _SearchBar(label: label, state: state),
 
         if (state.fromCache)
           _Banner(

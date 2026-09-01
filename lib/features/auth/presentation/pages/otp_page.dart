@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
+import '../../../support/presentation/pages/help_page.dart';
 import '../../domain/entities/account.dart';
 import '../bloc/auth_cubit.dart';
 
@@ -178,6 +179,22 @@ class _OtpScreenState extends State<OtpScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    // A5 — la sortie de secours. Quelqu'un qui a changé de
+                    // numéro ou perdu l'accès à sa boîte n'a AUCUN moyen de
+                    // s'en sortir seul : sans cette porte, le compte est
+                    // perdu et la personne aussi.
+                    TextButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const HelpScreen(),
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        minimumSize: Size(0, Touch.target(p.isHighContrast)),
+                        foregroundColor: p.inkMuted,
+                      ),
+                      child: const Text('Je n\'ai plus accès à cette adresse'),
                     ),
                   ],
 

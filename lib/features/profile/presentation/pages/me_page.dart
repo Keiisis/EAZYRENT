@@ -4,10 +4,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/progression/user_stage.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
+import '../../../alerts/presentation/pages/alerts_page.dart';
+import '../../../alerts/presentation/pages/notification_center_page.dart';
+import '../../../alerts/presentation/pages/notification_settings_page.dart';
 import '../../../auth/domain/entities/account.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
+import '../../../broker/presentation/pages/commissions_page.dart';
 import '../../../kyc/presentation/pages/kyc_page.dart';
+import '../../../owner/presentation/pages/earnings_page.dart';
+import '../../../passes/presentation/pages/passes_page.dart';
+import '../../../passes/presentation/pages/payment_history_page.dart';
 import '../../../shortlist/presentation/bloc/shortlist_cubit.dart';
+import '../../../support/presentation/pages/data_rights_page.dart';
+import '../../../support/presentation/pages/help_page.dart';
+import '../../../support/presentation/pages/legal_page.dart';
+import '../../../tenancy/presentation/pages/my_home_page.dart';
+import '../../../tenancy/presentation/pages/receipts_page.dart';
 
 /// S12 — Moi.
 ///
@@ -50,48 +62,96 @@ class MeScreen extends StatelessWidget {
                     context,
                     '${shortlist.state.purchasedPasses} pass',
                   ),
+                  onTap: () => _go(
+                    context,
+                    PassesScreen(remaining: shortlist.state.purchasedPasses),
+                  ),
                 ),
-                _Row(icon: Icons.history, label: 'Historique de paiements'),
+                _Row(
+                  icon: Icons.history,
+                  label: 'Historique de paiements',
+                  onTap: () => _go(context, const PaymentHistoryScreen()),
+                ),
               ],
 
               // ── Ce qui le fait revenir ─────────────────────────────────
               _SectionTitle('Mes alertes'),
+              // Le centre de notifications est commun aux TROIS profils : une
+              // bannière balayée sur un téléphone partagé est perdue partout
+              // ailleurs.
+              _Row(
+                icon: Icons.inbox_outlined,
+                label: 'Notifications',
+                onTap: () => _go(context, const NotificationCenterScreen()),
+              ),
               _Row(
                 icon: Icons.notifications_none,
                 label: 'Alertes et recherches',
                 trailing: _pill(context, 'Aucune'),
+                onTap: () => _go(context, const AlertsScreen()),
               ),
-              _Row(icon: Icons.tune, label: 'Réglages de notification'),
+              _Row(
+                icon: Icons.tune,
+                label: 'Réglages de notification',
+                onTap: () => _go(context, const NotificationSettingsScreen()),
+              ),
 
               // ── Contexte d'usage : jamais enterré ──────────────────────
               _SectionTitle('Affichage et données'),
-              _Row(
+              const _ToggleRow(
                 icon: Icons.wb_sunny_outlined,
                 label: 'Mode Plein Soleil',
                 subtitle: 'Contraste maximal pour lire dehors',
-                trailing: Switch(value: false, onChanged: (_) {}),
+                initial: false,
               ),
-              _Row(
+              const _ToggleRow(
                 icon: Icons.data_saver_on,
                 label: 'Mode Léger',
                 subtitle: 'Moins de données. Activé hors Wi-Fi.',
-                trailing: Switch(value: true, onChanged: (_) {}),
+                initial: true,
               ),
 
               // ── Locataire installé : l'onglet change de métier ─────────
               if (stage >= UserStage.p4Locataire) ...[
                 _SectionTitle('Mon logement'),
-                _Row(icon: Icons.payments_outlined, label: 'Payer mon loyer'),
-                _Row(icon: Icons.receipt_long, label: 'Mes quittances'),
-                _Row(icon: Icons.assignment_outlined, label: 'Mon bail'),
+                _Row(
+                  icon: Icons.payments_outlined,
+                  label: 'Payer mon loyer',
+                  onTap: () => _go(context, const MyHomeScreen()),
+                ),
+                _Row(
+                  icon: Icons.receipt_long,
+                  label: 'Mes quittances',
+                  onTap: () => _go(context, const ReceiptsScreen()),
+                ),
+                _Row(
+                  icon: Icons.assignment_outlined,
+                  label: 'Mon bail',
+                  onTap: () => _go(context, const MyHomeScreen()),
+                ),
               ],
 
-              // ── Bailleur ───────────────────────────────────────────────
-              if (stage >= UserStage.p5Bailleur) ...[
-                _SectionTitle('Mes biens'),
-                _Row(icon: Icons.home_work_outlined, label: 'Tableau de bord'),
-                _Row(icon: Icons.add_home_outlined, label: 'Publier un bien'),
-              ],
+              // ── L'argent, selon le rôle ────────────────────────────────
+              if (account?.role == UserRole.owner)
+                _Row(
+                  icon: Icons.account_balance_wallet_outlined,
+                  label: 'Mes encaissements',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const OwnerEarningsScreen(),
+                    ),
+                  ),
+                ),
+              if (account?.role == UserRole.broker)
+                _Row(
+                  icon: Icons.payments_outlined,
+                  label: 'Mes commissions',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const CommissionsScreen(),
+                    ),
+                  ),
+                ),
 
               // Le KYC n'existe que pour ceux qui recoivent de l'argent.
               // Le demander a un chercheur n'aurait aucun sens.
@@ -113,9 +173,32 @@ class MeScreen extends StatelessWidget {
               ],
 
               _SectionTitle('Aide'),
-              _Row(icon: Icons.help_outline, label: 'Aide et litige'),
-              _Row(icon: Icons.description_outlined, label: 'Conditions'),
-              _Row(icon: Icons.shield_outlined, label: 'Politique de données'),
+              _Row(
+                icon: Icons.help_outline,
+                label: 'Aide et litige',
+                onTap: () => _go(context, const HelpScreen()),
+              ),
+              _Row(
+                icon: Icons.description_outlined,
+                label: 'Conditions',
+                onTap: () =>
+                    _go(context, const LegalScreen(doc: LegalDoc.terms)),
+              ),
+              _Row(
+                icon: Icons.shield_outlined,
+                label: 'Politique de données',
+                onTap: () =>
+                    _go(context, const LegalScreen(doc: LegalDoc.privacy)),
+              ),
+              // L'export et la suppression ne sont pas enterrés dans un
+              // sous-menu : une sortie facile est ce qui rend l'entrée sans
+              // risque.
+              _Row(
+                icon: Icons.folder_open_outlined,
+                label: 'Mes données',
+                subtitle: 'Export et suppression de compte',
+                onTap: () => _go(context, const DataRightsScreen()),
+              ),
 
               const SizedBox(height: Space.md),
 
@@ -170,6 +253,11 @@ class MeScreen extends StatelessWidget {
       ),
     );
   }
+
+  /// Un seul point de navigation : une ligne de « Moi » ouvre un écran, elle
+  /// ne fait jamais rien.
+  void _go(BuildContext context, Widget page) =>
+      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
 
   Widget _pill(BuildContext context, String text) {
     final p = context.palette;
@@ -259,28 +347,69 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
+/// Une bascule d'affichage. L'état est local jusqu'à ce que E0.1 branche le
+/// `ThemeController` — mais l'interrupteur BOUGE dès maintenant. Un
+/// interrupteur qui ne réagit pas au doigt se lit comme une application
+/// cassée, pas comme une fonction à venir.
+///
+/// Toute la ligne est tactile, pas seulement l'interrupteur : viser un
+/// rectangle de 32 dp sur un écran de 5 pouces, une main occupée, échoue.
+class _ToggleRow extends StatefulWidget {
+  const _ToggleRow({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.initial,
+  });
+
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final bool initial;
+
+  @override
+  State<_ToggleRow> createState() => _ToggleRowState();
+}
+
+class _ToggleRowState extends State<_ToggleRow> {
+  late bool _value = widget.initial;
+
+  @override
+  Widget build(BuildContext context) => _Row(
+    icon: widget.icon,
+    label: widget.label,
+    subtitle: widget.subtitle,
+    trailing: Switch(
+      value: _value,
+      onChanged: (v) => setState(() => _value = v),
+    ),
+    onTap: () => setState(() => _value = !_value),
+  );
+}
+
 class _Row extends StatelessWidget {
   const _Row({
     required this.icon,
     required this.label,
     this.subtitle,
     this.trailing,
-    this.onTap,
+    required this.onTap,
   });
 
   final IconData icon;
   final String label;
   final String? subtitle;
   final Widget? trailing;
-  final VoidCallback? onTap;
+
+  /// Obligatoire. Une ligne sans destination est une promesse non tenue :
+  /// le compilateur l'interdit désormais.
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
     return InkWell(
-      // Les destinations sont branchées écran par écran, pas d'un bloc :
-      // une ligne qui ne mène nulle part est pire qu'une ligne absente.
-      onTap: onTap ?? () {},
+      onTap: onTap,
       child: Container(
         constraints: BoxConstraints(minHeight: Touch.target(p.isHighContrast)),
         padding: const EdgeInsets.symmetric(

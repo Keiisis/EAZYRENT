@@ -5,8 +5,10 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
 import '../../../../core/widgets/molecules/listing_card.dart';
+import '../../../listing/presentation/pages/listing_detail_page.dart';
 import '../bloc/shortlist_cubit.dart';
 import 'duel_page.dart';
+import 'family_council_page.dart';
 
 /// S08 — Ma liste.
 ///
@@ -49,27 +51,68 @@ class ShortlistScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // Le Duel n'apparaît qu'à partir de 2 biens gardés.
+                  // Le Duel n'apparaît qu'à partir de 2 biens gardés — et le
+                  // Conseil de famille avec lui : on ne demande pas un avis
+                  // sur un bien unique, on le demande sur un choix.
                   if (state.canDuel)
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: Space.md,
                         vertical: Space.xs,
                       ),
-                      child: OutlinedButton.icon(
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => DuelScreen(
-                              a: state.saved[0],
-                              b: state.saved[1],
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => DuelScreen(
+                                    a: state.saved[0],
+                                    b: state.saved[1],
+                                  ),
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: Size(
+                                  0,
+                                  Touch.target(p.isHighContrast),
+                                ),
+                              ),
+                              icon: const Icon(Icons.compare_arrows),
+                              label: const Text('Comparer'),
                             ),
                           ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: Size(0, Touch.target(p.isHighContrast)),
-                        ),
-                        icon: const Icon(Icons.compare_arrows),
-                        label: const Text('Comparer 2 biens'),
+                          const SizedBox(width: Space.xs),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => FamilyCouncilScreen(
+                                    items: [
+                                      for (final l in state.saved)
+                                        CouncilItem(
+                                          title: l.propertyType,
+                                          quartier: l.neighborhood ?? l.city,
+                                          rent: l.monthlyRentFcfa,
+                                          entryCost:
+                                              l.totalMoveInCostFcfa ??
+                                              l.monthlyRentFcfa,
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: Size(
+                                  0,
+                                  Touch.target(p.isHighContrast),
+                                ),
+                              ),
+                              icon: const Icon(Icons.share_outlined),
+                              label: const Text('Demander un avis'),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -83,7 +126,12 @@ class ShortlistScreen extends StatelessWidget {
                         child: ListingCard(
                           listing: state.saved[i],
                           isSaved: true,
-                          onTap: () {},
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) =>
+                                  ListingDetailScreen(listing: state.saved[i]),
+                            ),
+                          ),
                           onSave: () => context.read<ShortlistCubit>().remove(
                             state.saved[i].id,
                           ),

@@ -144,6 +144,90 @@ Mode : Solo. Vérification = présence + absence de marqueurs factuels dans les 
 
 ---
 
+## Phase Rôles complets
+
+*Portes écrites avant l'exécution. Objectif : qu'aucun des trois profils ne
+bute sur un écran manquant en cours de parcours.*
+
+- [x] **G30 — Le propriétaire va de la publication à l'encaissement sans trou**
+  Publier → voir la demande → accepter un RDV → encaisser. Chaque étape a son
+  écran, aucune ne renvoie sur un placeholder.
+  **MET.** `publish_listing_page.dart` (C7) → `owner_dashboard_page.dart` (C1)
+  → `visit_requests_page.dart` (C3) → `request_tour_page.dart` (C4, construit)
+  → `earnings_page.dart` (C6, construit). C4 est atteignable depuis le bouton
+  « Ajouter une Visite Vérifiée — 5 000 F » du tableau de bord, C6 depuis
+  « Moi → Mes encaissements ».
+  PREUVE : `flutter analyze` → `No issues found!` ; `grep -rn "onPressed: () {}"
+  lib/features/owner/` → plus aucune occurrence sur le chemin C1→C4.
+
+- [x] **G31 — Le démarcheur va de l'apport au retrait sans trou**
+  Apporter → suivre le statut → voir sa commission → retirer.
+  Un apporteur payé en retard part, et il en parle.
+  **MET.** `submit_listing_page.dart` (D2) → `broker_home_page.dart` (D1, échelle
+  de statuts) → `commissions_page.dart` (D4, construit), atteignable depuis
+  « Moi → Mes commissions ». Le disponible et l'en-attente sont deux montants
+  distincts, et le délai de retrait (24 h) est écrit dans l'écran.
+
+- [x] **G32 — Plus aucun onglet ne dit « à construire »**
+  `Messages` était le dernier placeholder, et il est partagé par les TROIS
+  profils. Un onglet vide dans la barre principale est une promesse non tenue.
+  CHECK: `grep -rn "à construire" lib/`
+  EXPECT: aucune occurrence
+  **MET.** Sortie réelle : `aucune occurrence`. `_Placeholder` a été supprimé de
+  `lib/app.dart` ; l'onglet rend `ConversationsScreen(role: …)`, avec un état
+  vide et une action différents par rôle, et `thread_page.dart` derrière.
+
+- [x] **G33 — Toute destination citée dans « Moi » mène quelque part**
+  Une ligne qui ne mène nulle part est pire qu'une ligne absente.
+  **MET, et rendu non régressable :** `_Row.onTap` est passé de `VoidCallback?`
+  avec repli `() {}` à `required VoidCallback`. Une ligne sans destination ne
+  compile plus. Les deux bascules d'affichage (Plein Soleil, Léger) sont
+  devenues `_ToggleRow`, qui réagit au doigt sur toute la ligne.
+  PREUVE : `flutter analyze` → `No issues found!` (le compilateur a d'abord
+  refusé les deux lignes non branchées : `missing_required_argument`
+  aux lignes 92 et 98 — c'est exactement ce que la porte devait attraper).
+
+---
+
+## Écrans construits dans cette passe
+
+| Réf | Écran | Fichier |
+| :--- | :--- | :--- |
+| S03 | Par quartier (substitut de carte) | `search/…/map_page.dart` |
+| S04 | Filtres, compteur vivant | `search/…/filters_sheet.dart` |
+| S10 | Messages | `messaging/…/conversations_page.dart` |
+| S10b | Une conversation | `messaging/…/thread_page.dart` |
+| S11 | Demande de RDV | `visit/…/booking_page.dart` |
+| S13 | Conseil de famille | `shortlist/…/family_council_page.dart` |
+| S15 | Mon logement | `tenancy/…/my_home_page.dart` |
+| — | Mes quittances | `tenancy/…/receipts_page.dart` |
+| S16 | Mes passes et crédits | `passes/…/passes_page.dart` |
+| S17 | Alertes et recherches | `alerts/…/alerts_page.dart` |
+| S18 | Signaler + confirmation | `listing/…/report_listing_page.dart` |
+| S19 | Point d'ancrage | `alerts/…/anchor_point_page.dart` |
+| S20 | Centre de notifications | `alerts/…/notification_center_page.dart` |
+| S21 | Réglages par type | `alerts/…/notification_settings_page.dart` |
+| S22 | Aide et litige | `support/…/help_page.dart` |
+| S23 | Mes données (export + suppression) | `support/…/data_rights_page.dart` |
+| S24 | Historique de paiements | `passes/…/payment_history_page.dart` |
+| — | Conditions / Politique | `support/…/legal_page.dart` |
+| C4 | Demander un tournage 360 | `owner/…/request_tour_page.dart` |
+| C6 | Encaissements | `owner/…/earnings_page.dart` |
+| D4 | Mes commissions | `broker/…/commissions_page.dart` |
+| A5 | Sortie de secours OTP | ajoutée dans `auth/…/otp_page.dart` |
+
+**Écart nommé — S03.** La tuile Google Maps n'est PAS branchée : elle exige une
+clé `MAPS_API_KEY` que le projet n'a pas, et une carte sans clé s'affiche en
+rectangle gris, c'est-à-dire comme une application cassée. L'écran rend le
+service que la carte devait rendre (prix par quartier, badge 360, nombre de
+biens, sélection synchronisée) mais **ce n'est pas la carte**. À rouvrir dès
+que la clé existe.
+
+**Écart nommé — couche data.** Les modules `owner`, `broker`, `messaging`,
+`tenancy`, `passes` et `alerts` affichent des données de démonstration
+déclarées comme telles en commentaire. Le parcours est vérifiable, les
+chiffres ne le sont pas.
+
 ## Portée des CHECK et preuve réelle
 
 **Ces CHECK n'ont pas été exécutés.** Le script `scripts/gate-scan.mjs` n'existe pas dans ce dépôt documentaire : les commandes ci-dessus décrivent l'oracle voulu, à rendre exécutable dès l'initialisation du dépôt Flutter. Les gates G1→G5 sont marquées met **sur preuve de relecture ciblée**, pas sur exécution — l'écart est nommé, conformément à la discipline.

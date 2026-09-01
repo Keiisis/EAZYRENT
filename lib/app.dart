@@ -6,7 +6,6 @@ import 'core/di/injection.dart';
 import 'core/moments/moment.dart';
 import 'core/progression/stage_resolver.dart';
 import 'core/theme/app_theme.dart';
-import 'core/theme/design_tokens.dart';
 import 'core/widgets/app_shell.dart';
 import 'features/auth/data/auth_repository.dart';
 import 'features/auth/domain/entities/account.dart';
@@ -14,6 +13,7 @@ import 'features/auth/presentation/auth_flow.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'features/broker/presentation/pages/broker_home_page.dart';
 import 'features/listing/domain/repositories/listing_repository.dart';
+import 'features/messaging/presentation/pages/conversations_page.dart';
 import 'features/owner/presentation/pages/owner_dashboard_page.dart';
 import 'features/profile/presentation/pages/me_page.dart';
 import 'features/search/presentation/bloc/feed_cubit.dart';
@@ -101,30 +101,8 @@ class _Root extends StatelessWidget {
         stage: context.read<ShortlistCubit>().stage,
         search: const FeedScreen(),
         shortlist: const ShortlistScreen(),
-        messages: const _Placeholder(label: 'Messages'),
+        messages: ConversationsScreen(role: account?.role ?? UserRole.tenant),
         me: const MeScreen(),
-      ),
-    );
-  }
-}
-
-/// Écrans pas encore construits. Ils ne prétendent pas exister : ils disent
-/// ce qu'ils seront. Une coquille vide sans explication est pire qu'absente.
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.palette;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(Space.lg),
-        child: Text(
-          '$label — à construire',
-          style: AppText.bodyL.copyWith(color: p.inkMuted),
-        ),
       ),
     );
   }

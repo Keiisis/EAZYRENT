@@ -5,7 +5,9 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
 import '../../../tour/presentation/pages/tour_preview_page.dart';
+import '../../../visit/presentation/pages/booking_page.dart';
 import '../../domain/entities/listing.dart';
+import 'report_listing_page.dart';
 
 /// S05 — Fiche de bien.
 ///
@@ -81,12 +83,35 @@ class _Header extends StatelessWidget {
       expandedHeight: 240,
       pinned: true,
       backgroundColor: p.surfaceBase,
-      leading: const _RoundIcon(icon: Icons.arrow_back, tooltip: 'Retour'),
-      actions: const [
-        _RoundIcon(icon: Icons.favorite_border, tooltip: 'Garder ce bien'),
+      leading: _RoundIcon(
+        icon: Icons.arrow_back,
+        tooltip: 'Retour',
+        onPressed: () => Navigator.of(context).maybePop(),
+      ),
+      actions: [
+        const _RoundIcon(
+          icon: Icons.favorite_border,
+          tooltip: 'Garder ce bien',
+        ),
         // Le partage est de PREMIER RANG, pas dans un menu à trois points :
         // WhatsApp est le canal d'acquisition n°1 du produit.
-        _RoundIcon(icon: Icons.share, tooltip: 'Partager'),
+        const _RoundIcon(icon: Icons.share, tooltip: 'Partager'),
+        // « Plus libre ? » est une ACTION DE PREMIER RANG, pas un lien de
+        // bas de page : c'est ce signalement qui tient la fraîcheur du parc.
+        _RoundIcon(
+          icon: Icons.flag_outlined,
+          tooltip: 'Ce bien n\'est plus libre',
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => ReportListingScreen(
+                listingTitle:
+                    '${listing.propertyType} · '
+                    '${listing.neighborhood ?? listing.city}',
+                tourWasPaid: listing.hasVerifiedTour,
+              ),
+            ),
+          ),
+        ),
         SizedBox(width: Space.xs),
       ],
       flexibleSpace: FlexibleSpaceBar(
@@ -131,10 +156,11 @@ class _Header extends StatelessWidget {
 }
 
 class _RoundIcon extends StatelessWidget {
-  const _RoundIcon({required this.icon, required this.tooltip});
+  const _RoundIcon({required this.icon, required this.tooltip, this.onPressed});
 
   final IconData icon;
   final String tooltip;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -145,7 +171,7 @@ class _RoundIcon extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: IconButton(
-        onPressed: () {},
+        onPressed: onPressed ?? () {},
         tooltip: tooltip,
         icon: Icon(icon, color: const Color(0xFF0B0F19), size: 20),
       ),
@@ -414,7 +440,19 @@ class _ActionBar extends StatelessWidget {
           children: [
             Expanded(
               child: OutlinedButton(
-                onPressed: () {},
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => BookingScreen(
+                      listingTitle:
+                          '${listing.propertyType} · '
+                          '${listing.neighborhood ?? listing.city}',
+                      // La phrase de succès change selon qu'on a vu le bien
+                      // en 360 ou non : « tu sais déjà tout » ne se dit pas
+                      // à quelqu'un qui n'a rien vu.
+                      tourDone: listing.hasVerifiedTour,
+                    ),
+                  ),
+                ),
                 style: OutlinedButton.styleFrom(
                   minimumSize: Size(0, Touch.target(p.isHighContrast)),
                 ),

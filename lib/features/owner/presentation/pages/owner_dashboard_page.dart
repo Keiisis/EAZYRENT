@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
 import 'publish_listing_page.dart';
+import 'request_tour_page.dart';
 import 'visit_requests_page.dart';
 
 /// C1 — Tableau de bord bailleur.
@@ -311,7 +312,14 @@ class _ListingRow extends StatelessWidget {
                     ),
                     const SizedBox(height: Space.xs),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => RequestTourScreen(
+                            listingTitle: listing.title,
+                            views: listing.views,
+                          ),
+                        ),
+                      ),
                       style: OutlinedButton.styleFrom(
                         minimumSize: Size(0, Touch.target(p.isHighContrast)),
                         foregroundColor: p.action,
