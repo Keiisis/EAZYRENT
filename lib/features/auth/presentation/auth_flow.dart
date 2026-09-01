@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../onboarding/presentation/pages/location_priming_page.dart';
 import '../../onboarding/presentation/pages/onboarding_page.dart';
 import '../../search/presentation/bloc/feed_cubit.dart';
 import '../domain/entities/account.dart';
@@ -31,6 +32,12 @@ class AuthFlow extends StatefulWidget {
 }
 
 class _AuthFlowState extends State<AuthFlow> {
+  /// L'amorce de position passe AVANT tout le reste, y compris avant le
+  /// choix du profil : c'est la demande la plus coûteuse à rater, parce
+  /// qu'Android ne redonne jamais une permission refusée. Elle ne s'affiche
+  /// qu'une fois par lancement, et ne bloque personne.
+  bool _locationAsked = false;
+
   /// Vrai dès que l'utilisateur a choisi de naviguer sans compte.
   bool _browsingAnonymously = false;
 
@@ -46,6 +53,12 @@ class _AuthFlowState extends State<AuthFlow> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_locationAsked) {
+      return LocationPrimingScreen(
+        onDone: () => setState(() => _locationAsked = true),
+      );
+    }
+
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         // Un compte valide court-circuite tout le tunnel.

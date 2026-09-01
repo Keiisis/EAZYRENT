@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
+import '../../../navigation/presentation/pages/navigation_page.dart';
 import '../../../tour/presentation/pages/tour_preview_page.dart';
 import '../../../visit/presentation/pages/booking_page.dart';
 import '../../domain/entities/listing.dart';
@@ -96,6 +98,23 @@ class _Header extends StatelessWidget {
         // Le partage est de PREMIER RANG, pas dans un menu à trois points :
         // WhatsApp est le canal d'acquisition n°1 du produit.
         const _RoundIcon(icon: Icons.share, tooltip: 'Partager'),
+        // « Y aller » n'apparaît QUE si le bien a des coordonnées : proposer
+        // un guidage vers un point inconnu enverrait quelqu'un nulle part.
+        if (listing.hasCoordinates)
+          _RoundIcon(
+            icon: Icons.near_me,
+            tooltip: 'Y aller',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => NavigationScreen(
+                  destination: LatLng(listing.latitude!, listing.longitude!),
+                  destinationLabel:
+                      '${listing.propertyType} · '
+                      '${listing.neighborhood ?? listing.city}',
+                ),
+              ),
+            ),
+          ),
         // « Plus libre ? » est une ACTION DE PREMIER RANG, pas un lien de
         // bas de page : c'est ce signalement qui tient la fraîcheur du parc.
         _RoundIcon(
@@ -438,7 +457,16 @@ class _ActionBar extends StatelessWidget {
         top: false,
         child: Row(
           children: [
+            // 4 contre 5, et non 1 contre 2.
+            //
+            // MESURÉ sur un écran de 384 dp : la barre dispose de 340 dp une
+            // fois les marges retirées. À 1:2, « Demander RDV » recevait
+            // 113 dp pour un libellé qui en demande 137 — il se coupait au
+            // milieu du mot, en « Demande / r RDV ». À 4:5, il obtient
+            // 151 dp et tient sur une ligne, sans que « Visiter en 360° »
+            // cesse d'être le bouton dominant.
             Expanded(
+              flex: 4,
               child: OutlinedButton(
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -461,7 +489,7 @@ class _ActionBar extends StatelessWidget {
             ),
             const SizedBox(width: Space.sm),
             Expanded(
-              flex: 2,
+              flex: 5,
               // LE seul bouton terracotta de l'écran.
               child: FilledButton.icon(
                 onPressed: listing.hasVerifiedTour

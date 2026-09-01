@@ -268,6 +268,75 @@ bute sur un écran manquant en cours de parcours.*
 
 ---
 
+## Phase Navigation et capture de position
+
+*Portes écrites avant l'exécution.*
+
+- [x] **G39 — Les quatre temps de trajet viennent d'un calcul d'itinéraire réel**
+  Pas d'une distance à vol d'oiseau divisée par une vitesse moyenne. Un temps
+  inventé sur un produit qui vend l'exactitude est pire qu'aucun temps.
+  CHECK: chaque mode interroge un moteur d'itinéraire et rend une géométrie.
+  EXPECT: quatre durées distinctes sur un vrai trajet Cotonou, vérifiées.
+  **MET, sur l'appareil.** Cadjéhoun → Fidjrossè, position GPS réelle : zem
+  8 min · à pied 31 min · vélo 11 min · voiture 8 min, 3,2 km, ± 24 m, tracé
+  suivant les rues, instruction en français. Moteur : Valhalla (FOSSGIS),
+  seul moteur gratuit exposant un profil `motorcycle` — Mapbox Directions n'en
+  a aucun, et le zémidjan est le mode dominant ici.
+
+- [x] **G40 — Aucun chiffre présenté comme mesuré ne l'est par estimation**
+  Valhalla n'a pas de données de trafic sur Cotonou : ses temps sont en
+  circulation libre, et son profil `motorcycle` ne modélise pas le faufilage
+  du zémidjan. L'écran doit le DIRE, pas le masquer.
+  CHECK: la mention de l'absence de trafic est visible sur l'écran, pas dans
+  une aide.
+  **MET.** Mesuré AVANT de coder : sur Ganhi → Fidjrossè, Valhalla rend
+  exactement la même durée pour `motorcycle` et `auto` (13 min, 6,33 km). Le
+  profil moto ne modélise pas le faufilage, et il n'existe aucune donnée de
+  trafic sur Cotonou. Un coefficient « zem = voiture x 0,7 » aurait produit un
+  chiffre plus flatteur, tout aussi faux, avec en plus l'apparence de la
+  mesure. L'écran affiche le chiffre du moteur et écrit sa limite.
+
+- [x] **G41 — La position exacte d'un bien porte sa provenance**
+  Une épingle posée depuis un bureau et un relevé GPS pris devant le portail
+  n'ont pas la même valeur. Confondre les deux revient à vendre une
+  vérification qu'on n'a pas faite.
+  CHECK: `location_source` est enregistré et affiché.
+  **MET.** `MIGRATION_GEO.sql` ajoute `location_source_enum` (`gps_onsite` /
+  `manual_pin` / `geocoded`), l'horodatage, l'auteur, et une colonne calculée
+  `has_verified_location` vraie UNIQUEMENT pour un relevé sur place sous 40 m.
+  L'écran de publication affiche les trois états avec trois phrases
+  distinctes.
+
+- [x] **G42 — La précision du relevé est montrée, et un relevé mauvais est refusé**
+  Un point à ±200 m envoie quelqu'un dans la rue d'à côté. L'écran de capture
+  doit afficher la précision en mètres et refuser d'enregistrer au-delà d'un
+  seuil.
+  **MET.** Seuil à 40 m. Bouton inactif au-delà, raison écrite dessus.
+  Précision affichée en continu ET dessinée en cercle à l'échelle réelle. Le
+  relevé garde la MEILLEURE mesure sur 6 secondes, pas la première : la
+  première position d'un GPS froid est presque toujours la pire, et c'est
+  celle que la plupart des applications enregistrent.
+
+- [x] **G43 — Le suivi en temps réel s'arrête tout seul**
+  Un flux GPS laissé ouvert vide une batterie en une heure. Le flux se ferme à
+  la sortie de l'écran, et se coupe à l'arrivée.
+  CHECK: `positionStream` a un `cancel()` sur tous les chemins de sortie.
+  **MET.** `onClose()` ferme le flux à la sortie ; `_onPosition` le coupe
+  lui-même dès l'arrivée (35 m). `distanceFilter` de 10 m plutôt qu'un débit
+  continu.
+
+- [x] **G44 — La demande de position au démarrage est précédée d'une amorce**
+  L'utilisateur veut la demande au lancement ; Android ne redonne jamais une
+  permission refusée. Les deux se concilient : l'amorce explique AVANT, le
+  dialogue système vient après, et un refus laisse l'application utilisable.
+  **MET, vérifié sur l'appareil.** `LocationPrimingScreen` s'affiche en
+  premier, avant même le choix du profil, et le dialogue Android qui suit
+  propose bien « Exacte » — capture à l'appui. « Plus tard » n'est pas un
+  piège : on entre sans position, et on redemande au moment où elle rend un
+  service visible.
+
+---
+
 ## Écrans construits dans cette passe
 
 | Réf | Écran | Fichier |

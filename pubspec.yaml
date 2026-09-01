@@ -79,6 +79,8 @@ dependencies:
   flutter_dotenv: ^6.0.1
   get: ^4.7.3
   latlong2: ^0.9.1
+  http: ^1.6.0
+  image_picker: ^1.2.3
 
 # AUCUN SDK MARCHAND DE PAIEMENT (P11).
 # Une clé marchande embarquée dans un APK est une clé publiée.

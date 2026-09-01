@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
+import '../../../listing/presentation/pages/capture_location_page.dart';
 
 /// C7 — Publier un bien.
 ///
@@ -45,6 +46,10 @@ class _PublishListingScreenState extends State<PublishListingScreen> {
   final _rent = TextEditingController();
   int _advanceMonths = 2;
   bool _priceFirm = false;
+
+  /// Facultative. Un bien sans position se loue ; un bien qu'on ne trouve
+  /// pas ne se visite pas. On propose, on n'impose pas.
+  CapturedLocation? _location;
 
   int get _rentValue =>
       int.tryParse(_rent.text.replaceAll(RegExp(r'\D'), '')) ?? 0;
@@ -165,6 +170,29 @@ class _PublishListingScreenState extends State<PublishListingScreen> {
                   rent: _rentValue,
                   advanceMonths: _advanceMonths,
                   total: _moveInCost,
+                ),
+
+                // La position exacte, AVANT « prix ferme ».
+                //
+                // Un bien sans position se loue quand même — c'est pour ça
+                // qu'elle n'est pas obligatoire. Mais elle est proposée ici,
+                // dans le flux, et pas reléguée dans un écran d'édition que
+                // personne n'ouvre : un bailleur qui publie depuis chez lui
+                // est PRÉCISÉMENT la personne bien placée pour relever.
+                const SizedBox(height: Space.lg),
+                _LocationRow(
+                  captured: _location,
+                  onCapture: () async {
+                    final res = await Navigator.of(context)
+                        .push<CapturedLocation>(
+                          MaterialPageRoute<CapturedLocation>(
+                            builder: (_) => CaptureLocationScreen(
+                              initial: _location?.point,
+                            ),
+                          ),
+                        );
+                    if (res != null) setState(() => _location = res);
+                  },
                 ),
 
                 const SizedBox(height: Space.md),
@@ -378,6 +406,94 @@ class _Line extends StatelessWidget {
                     color: p.inkBase,
                     fontFeatures: Fonts.tabular,
                   ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// La ligne « position » du formulaire de publication.
+///
+/// Elle dit CE QU'ON A, pas ce qu'il faudrait avoir. Trois états, trois
+/// phrases différentes : rien, épingle à la main, relevé sur place. Le
+/// troisième est le seul qui donne droit au badge — et l'écart entre les
+/// deux derniers est écrit, pas suggéré.
+class _LocationRow extends StatelessWidget {
+  const _LocationRow({required this.captured, required this.onCapture});
+
+  final CapturedLocation? captured;
+  final VoidCallback onCapture;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final c = captured;
+
+    final (icon, title, body, tone) = switch (c?.source) {
+      null => (
+        Icons.location_off_outlined,
+        'Position non renseignée',
+        'Sans elle, personne ne peut se faire guider jusqu\'au portail.',
+        p.inkMuted,
+      ),
+      LocationSource.gpsOnsite => (
+        Icons.gps_fixed,
+        'Relevé sur place · ± ${c!.accuracyMeters?.round() ?? "?"} m',
+        c.placeLabel ?? 'Position vérifiable.',
+        p.success,
+      ),
+      LocationSource.manualPin => (
+        Icons.push_pin_outlined,
+        'Épingle placée à la main',
+        'Utilisable, mais le bien ne portera pas le badge de position '
+            'vérifiée.',
+        p.warn,
+      ),
+      LocationSource.geocoded => (
+        Icons.travel_explore,
+        'Déduite de l\'adresse',
+        'La moins fiable des trois.',
+        p.warn,
+      ),
+    };
+
+    return Container(
+      padding: const EdgeInsets.all(Space.sm),
+      decoration: BoxDecoration(
+        color: p.surfaceSunken,
+        borderRadius: const BorderRadius.all(Radii.card),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 20, color: tone),
+              const SizedBox(width: Space.xs),
+              Expanded(
+                child: Text(
+                  title,
+                  style: AppText.bodyL.copyWith(
+                    color: p.inkStrong,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              if (c?.gatePhoto != null)
+                Icon(Icons.photo_camera, size: 18, color: p.success),
+            ],
+          ),
+          const SizedBox(height: Space.xxs),
+          Text(body, style: AppText.bodyM.copyWith(color: p.inkMuted)),
+          const SizedBox(height: Space.xs),
+          OutlinedButton.icon(
+            onPressed: onCapture,
+            style: OutlinedButton.styleFrom(
+              minimumSize: Size(0, Touch.target(p.isHighContrast)),
+            ),
+            icon: const Icon(Icons.map_outlined, size: 18),
+            label: Text(c == null ? 'Placer le bien' : 'Corriger'),
           ),
         ],
       ),
