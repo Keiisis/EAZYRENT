@@ -35,14 +35,24 @@ export function freshness(checkedAt: string | null): {
   if (!checkedAt) return { label: 'Non verifie', tone: 'stale' }
 
   const d = new Date(checkedAt)
-  const days = Math.floor((Date.now() - d.getTime()) / 86_400_000)
+  const now = new Date()
+
+  // JOUR CALENDAIRE, pas heures ecoulees. Une verification de 23h48 vue a
+  // 07h48 date de 8 heures, mais elle a eu lieu HIER. Meme correctif que
+  // Freshness.from() cote mobile : les deux surfaces doivent dire la meme
+  // chose du meme bien, y compris quand elles se trompent... surtout quand
+  // elles risquent de se tromper.
+  const midnight = (x: Date) =>
+    new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime()
+  const days = Math.round((midnight(now) - midnight(d)) / 86_400_000)
+
   const hhmm = d.toLocaleTimeString('fr-FR', {
     hour: '2-digit',
     minute: '2-digit',
   })
 
-  if (days === 0) return { label: `Verifie aujourd'hui a ${hhmm}`, tone: 'ok' }
-  if (days === 1) return { label: 'Verifie hier', tone: 'ok' }
+  if (days <= 0) return { label: `Verifie aujourd'hui a ${hhmm}`, tone: 'ok' }
+  if (days === 1) return { label: `Verifie hier a ${hhmm}`, tone: 'ok' }
   if (days <= 7) return { label: `Verifie il y a ${days} jours`, tone: 'warn' }
   return { label: `Non confirme depuis ${days} jours`, tone: 'stale' }
 }

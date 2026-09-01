@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
+import '../../../tour/presentation/pages/tour_preview_page.dart';
 import '../../domain/entities/listing.dart';
 
 /// S05 — Fiche de bien.
@@ -106,7 +107,12 @@ class _Header extends StatelessWidget {
                 bottom: Space.md,
                 child: Center(
                   child: FilledButton.icon(
-                    onPressed: () {},
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            TourPreviewScreen(listing: listing, roomsTotal: 6),
+                      ),
+                    ),
                     style: FilledButton.styleFrom(
                       backgroundColor: Accents.infoVivid,
                       foregroundColor: const Color(0xFF0B0F19),
@@ -420,7 +426,16 @@ class _ActionBar extends StatelessWidget {
               flex: 2,
               // LE seul bouton terracotta de l'écran.
               child: FilledButton.icon(
-                onPressed: () {},
+                onPressed: listing.hasVerifiedTour
+                    ? () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => TourPreviewScreen(
+                            listing: listing,
+                            roomsTotal: 6,
+                          ),
+                        ),
+                      )
+                    : null,
                 icon: const Icon(Icons.play_arrow),
                 label: Text(
                   listing.hasVerifiedTour

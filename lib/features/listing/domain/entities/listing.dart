@@ -20,10 +20,20 @@ class Freshness extends Equatable {
         tone: FreshnessTone.stale,
       );
     }
-    final ref = now ?? DateTime.now();
-    final days = ref.difference(checkedAt).inDays;
-    final hh = checkedAt.hour.toString().padLeft(2, '0');
-    final mm = checkedAt.minute.toString().padLeft(2, '0');
+    final ref = (now ?? DateTime.now()).toLocal();
+    final at = checkedAt.toLocal();
+
+    // JOUR CALENDAIRE, pas heures écoulées. Une vérification de 23h48 vue à
+    // 07h48 date de 8 heures — mais elle a eu lieu HIER. Compter en heures
+    // écoulées faisait dire « vérifié aujourd'hui 23h48 » à 7 h du matin.
+    // Sur un produit qui vend la précision de sa datation, se tromper de jour
+    // détruit précisément la confiance que cette ligne existe pour bâtir.
+    final today = DateTime(ref.year, ref.month, ref.day);
+    final checkDay = DateTime(at.year, at.month, at.day);
+    final days = today.difference(checkDay).inDays;
+
+    final hh = at.hour.toString().padLeft(2, '0');
+    final mm = at.minute.toString().padLeft(2, '0');
 
     if (days <= 0) {
       return Freshness(
@@ -32,7 +42,7 @@ class Freshness extends Equatable {
       );
     }
     if (days == 1) {
-      return const Freshness(label: 'Vérifié hier', tone: FreshnessTone.ok);
+      return Freshness(label: 'Vérifié hier ${hh}h$mm', tone: FreshnessTone.ok);
     }
     if (days <= 7) {
       return Freshness(
