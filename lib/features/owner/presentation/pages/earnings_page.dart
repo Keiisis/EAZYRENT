@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/money_fcfa.dart';
+import '../../data/owner_repository.dart';
+import '../bloc/owner_cubit.dart';
 
 /// C6 — Encaissements.
 ///
@@ -10,33 +14,32 @@ import '../../../../core/utils/money_fcfa.dart';
 /// une demande → encaisser. Sans cet écran, le bailleur ne sait pas si son
 /// loyer est arrivé, et il retourne aux espèces.
 ///
-/// LA COMMISSION EST AFFICHÉE EN CLAIR, ligne par ligne. La cacher dans un
-/// net global serait le meilleur moyen de perdre la confiance d'un bailleur
-/// béninois — habitué à des intermédiaires dont il ne comprend jamais les
-/// prélèvements. On montre le brut, le prélèvement, et le net.
+/// LA COMMISSION EST AFFICHÉE EN CLAIR, ligne par ligne, juste sous le loyer
+/// qu'elle prélève. La cacher dans un net global serait le meilleur moyen de
+/// perdre la confiance d'un bailleur béninois — habitué à des intermédiaires
+/// dont il ne comprend jamais les prélèvements.
+///
+/// LES CHIFFRES VIENNENT DE `rent_payments`, par la jointure du bail. Ils
+/// étaient inventés : un relevé faux est pire qu'absent, parce qu'on compte
+/// dessus.
 class OwnerEarningsScreen extends StatelessWidget {
   const OwnerEarningsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => EarningsCubit(getIt<OwnerRepository>())..load(),
+      child: const _EarningsView(),
+    );
+  }
+}
+
+class _EarningsView extends StatelessWidget {
+  const _EarningsView();
+
+  @override
+  Widget build(BuildContext context) {
     final p = context.palette;
-
-    // Démonstration tant que le module owner n'a pas sa couche data.
-    const received = 145000;
-    const pending = 35000;
-    const late = 0;
-
-    const movements = [
-      _Movement(
-        'Loyer mars · Chambre-salon Fidjrossè',
-        45000,
-        _Kind.rent,
-        '12 mars',
-      ),
-      _Movement('Commission EAZYRENT', -4500, _Kind.fee, '12 mars'),
-      _Movement('Loyer mars · Studio Godomey', 25000, _Kind.rent, '1 mars'),
-      _Movement('Commission EAZYRENT', -2500, _Kind.fee, '1 mars'),
-    ];
 
     return Scaffold(
       backgroundColor: p.surfaceBase,
@@ -51,53 +54,23 @@ class OwnerEarningsScreen extends StatelessWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
-            child: ListView(
-              padding: const EdgeInsets.all(Space.md),
-              children: [
-                Text(
-                  MoneyFcfa.short(received),
-                  style: AppText.displayL.copyWith(color: p.inkStrong),
+            child: BlocBuilder<EarningsCubit, EarningsState>(
+              builder: (context, state) => switch (state) {
+                EarningsLoading() => const Center(
+                  child: CircularProgressIndicator(),
                 ),
-                Text(
-                  'reçus ce mois-ci',
-                  style: AppText.bodyL.copyWith(color: p.inkMuted),
+                EarningsError(:final failure) => _Error(
+                  message: failure.userMessage,
+                  onRetry: context.read<EarningsCubit>().load,
                 ),
-
-                const SizedBox(height: Space.md),
-                Row(
-                  children: [
-                    _Side(
-                      label: 'En attente',
-                      value: MoneyFcfa.short(pending),
-                      color: p.warn,
-                    ),
-                    const SizedBox(width: Space.sm),
-                    _Side(
-                      label: 'Retard',
-                      value: late == 0 ? 'Aucun' : MoneyFcfa.short(late),
-                      color: late == 0 ? p.success : p.danger,
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: Space.lg),
-                Text(
-                  'MOUVEMENTS',
-                  style: AppText.label.copyWith(color: p.inkMuted),
-                ),
-                const SizedBox(height: Space.xs),
-                for (final m in movements) _MovementRow(movement: m),
-
-                const SizedBox(height: Space.lg),
-                OutlinedButton.icon(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: Size(0, Touch.target(p.isHighContrast)),
-                  ),
-                  icon: const Icon(Icons.file_download_outlined),
-                  label: const Text('Exporter mes états'),
-                ),
-              ],
+                EarningsReady(:final earnings) =>
+                  earnings.movements.isEmpty
+                      ? const _Empty()
+                      : RefreshIndicator(
+                          onRefresh: context.read<EarningsCubit>().load,
+                          child: _Body(earnings: earnings),
+                        ),
+              },
             ),
           ),
         ),
@@ -106,48 +79,50 @@ class OwnerEarningsScreen extends StatelessWidget {
   }
 }
 
-enum _Kind { rent, fee }
+class _Body extends StatelessWidget {
+  const _Body({required this.earnings});
 
-class _Movement {
-  const _Movement(this.label, this.amount, this.kind, this.date);
-  final String label;
-  final int amount;
-  final _Kind kind;
-  final String date;
-}
-
-class _Side extends StatelessWidget {
-  const _Side({required this.label, required this.value, required this.color});
-
-  final String label;
-  final String value;
-  final Color color;
+  final OwnerEarnings earnings;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(Space.sm),
-        decoration: BoxDecoration(
-          color: p.surfaceSunken,
-          borderRadius: const BorderRadius.all(Radii.card),
+
+    return ListView(
+      padding: const EdgeInsets.all(Space.md),
+      children: [
+        Text(
+          MoneyFcfa.short(earnings.receivedThisMonth),
+          style: AppText.displayL.copyWith(
+            color: p.inkStrong,
+            fontFeatures: Fonts.tabular,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: AppText.label.copyWith(color: p.inkMuted)),
-            Text(
-              value,
-              style: AppText.bodyL.copyWith(
-                color: color,
-                fontWeight: FontWeight.w700,
-                fontFeatures: Fonts.tabular,
-              ),
-            ),
-          ],
+        Text(
+          'nets reçus ce mois-ci',
+          style: AppText.bodyL.copyWith(color: p.inkMuted),
         ),
-      ),
+        const SizedBox(height: Space.xxs),
+        Text(
+          'Commission déduite. Le détail est ci-dessous, ligne par ligne.',
+          style: AppText.caption.copyWith(color: p.inkMuted),
+        ),
+
+        const SizedBox(height: Space.lg),
+        Text('MOUVEMENTS', style: AppText.label.copyWith(color: p.inkMuted)),
+        const SizedBox(height: Space.xs),
+        for (final m in earnings.movements) _MovementRow(movement: m),
+
+        const SizedBox(height: Space.lg),
+        OutlinedButton.icon(
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            minimumSize: Size(0, Touch.target(p.isHighContrast)),
+          ),
+          icon: const Icon(Icons.file_download_outlined),
+          label: const Text('Exporter mes états'),
+        ),
+      ],
     );
   }
 }
@@ -155,12 +130,12 @@ class _Side extends StatelessWidget {
 class _MovementRow extends StatelessWidget {
   const _MovementRow({required this.movement});
 
-  final _Movement movement;
+  final OwnerMovement movement;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final isFee = movement.kind == _Kind.fee;
+    final m = movement;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: Space.xs),
@@ -171,33 +146,110 @@ class _MovementRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  movement.label,
+                  m.label,
                   style: AppText.bodyL.copyWith(
-                    // La commission est visible mais discrète : on ne la cache
-                    // pas, on ne la met pas en avant non plus.
-                    color: isFee ? p.inkMuted : p.inkStrong,
+                    // La commission est visible mais discrète : on ne la
+                    // cache pas, on ne la met pas en avant non plus.
+                    color: m.isFee ? p.inkMuted : p.inkStrong,
                   ),
                 ),
                 Text(
-                  movement.date,
+                  _date(m.paidAt),
                   style: AppText.caption.copyWith(color: p.inkMuted),
                 ),
               ],
             ),
           ),
           Text(
-            '${movement.amount > 0 ? '' : '−'}'
-            '${MoneyFcfa.short(movement.amount.abs())}',
+            '${m.amountFcfa < 0 ? '−' : ''}'
+            '${MoneyFcfa.short(m.amountFcfa.abs())}',
             style: AppText.bodyL.copyWith(
-              color: isFee ? p.inkMuted : p.success,
+              color: m.isFee ? p.inkMuted : p.success,
               fontWeight: FontWeight.w600,
               fontFeatures: Fonts.tabular,
             ),
           ),
-          if (!isFee) ...[
+          if (!m.isFee) ...[
             const SizedBox(width: Space.xs),
             Icon(Icons.check_circle, size: 16, color: p.success),
           ],
+        ],
+      ),
+    );
+  }
+
+  String _date(DateTime d) {
+    const mois = [
+      'janvier',
+      'février',
+      'mars',
+      'avril',
+      'mai',
+      'juin',
+      'juillet',
+      'août',
+      'septembre',
+      'octobre',
+      'novembre',
+      'décembre',
+    ];
+    final l = d.toLocal();
+    return '${l.day} ${mois[l.month - 1]}';
+  }
+}
+
+class _Empty extends StatelessWidget {
+  const _Empty();
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Padding(
+      padding: const EdgeInsets.all(Space.lg),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Aucun loyer encaissé pour l\'instant.',
+            style: AppText.titleM.copyWith(color: p.inkStrong),
+          ),
+          const SizedBox(height: Space.sm),
+          Text(
+            'Les loyers apparaîtront ici dès qu\'un locataire paiera depuis '
+            'l\'application. La quittance part au même moment, de son côté.',
+            style: AppText.bodyL.copyWith(color: p.inkMuted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Error extends StatelessWidget {
+  const _Error({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Padding(
+      padding: const EdgeInsets.all(Space.lg),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(message, style: AppText.bodyL.copyWith(color: p.inkStrong)),
+          const SizedBox(height: Space.lg),
+          FilledButton(
+            onPressed: onRetry,
+            style: FilledButton.styleFrom(
+              minimumSize: Size(0, Touch.target(p.isHighContrast)),
+            ),
+            child: const Text('Réessayer'),
+          ),
         ],
       ),
     );

@@ -60,17 +60,15 @@ class MeScreen extends StatelessWidget {
               // ── Ce que l'utilisateur possède déjà ───────────────────────
               if (stage >= UserStage.p1Eveille) ...[
                 _SectionTitle('Mes visites'),
+                // AUCUNE PASTILLE DE SOLDE ICI. `shortlist.state
+                // .purchasedPasses` est un compteur de session, remis à zéro
+                // à chaque lancement : afficher « 0 pass » à quelqu'un qui en
+                // a trois, c'est lui faire croire qu'on les a pris. Le vrai
+                // solde vit dans `PassesScreen`, qui interroge la base.
                 _Row(
                   icon: Icons.confirmation_number_outlined,
                   label: 'Mes passes et crédits',
-                  trailing: _pill(
-                    context,
-                    '${shortlist.state.purchasedPasses} pass',
-                  ),
-                  onTap: () => _go(
-                    context,
-                    PassesScreen(remaining: shortlist.state.purchasedPasses),
-                  ),
+                  onTap: () => _go(context, const PassesScreen()),
                 ),
                 _Row(
                   icon: Icons.history,

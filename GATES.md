@@ -672,3 +672,59 @@ code source du template :*
   À exécuter : `npx supabase login`, puis
   `npx supabase link --project-ref nwavznnpvxgvigxbnscv`, puis
   `npx supabase functions deploy get-tour-access create-payment verify-payment`.
+
+---
+
+## Phase Branchement des écrans sur leurs dépôts
+
+*Portes écrites avant l'exécution. Le code data existe déjà (G62, G63) ;
+c'est l'affichage qui ment encore.*
+
+- [x] **G65 — Plus aucune donnée de démonstration dans le parcours bailleur**
+  CHECK: `grep -rn "Démonstration tant que" lib/features/owner lib/features/passes`
+  EXPECT: aucune occurrence.
+  **MET.** Sortie réelle : `aucune occurrence`.
+  Le premier passage en laissait UNE — `earnings_page.dart`. Elle n'était pas
+  dans les cinq écrans demandés, mais elle est dans le parcours bailleur, donc
+  la porte n'était pas tenue. Plutôt que d'affaiblir la porte, `earnings()` a
+  été ajouté au dépôt : il lit `rent_payments` par la jointure du bail —
+  `rent_payments` n'a pas de `owner_id`, c'est `lease_contracts` qui en a un.
+
+- [x] **G66 — Les cinq écrans portent leurs cinq états**
+  chargement / vide / erreur / prêt, et l'état vide propose une ISSUE. Un
+  bailleur sans bien ne doit pas voir une liste blanche : il doit voir
+  « Publier un bien ».
+  **MET.** Les états sont SCELLÉS (`sealed class`), donc le `switch` du widget
+  est exhaustif : oublier un état ne compile pas. Le squelette de chargement
+  est aux DIMENSIONS RÉELLES des cartes — quand les données arrivent, rien ne
+  saute.
+
+- [x] **G67 — Une action du bailleur écrit VRAIMENT en base**
+  Accepter un rendez-vous, retirer un bien : l'écran ne doit pas se contenter
+  de changer sa propre couleur. Une action locale qui ne persiste pas est
+  pire qu'un bouton absent — elle fait croire que c'est fait.
+  CHECK: `setAvailability` et `answerRequest` sont appelés, et l'écran
+  recharge depuis la base après.
+  **MET.** `OwnerCubit.setAvailability` et `.answer` appellent le dépôt PUIS
+  rechargent — on ne modifie jamais l'état local en pariant sur le succès.
+  Un bien qu'on croit retiré et qui reste en ligne fait déplacer quelqu'un
+  pour rien : c'est précisément ce que le produit vend d'éviter.
+  P02 relit d'ailleurs le bien dans l'état COURANT plutôt que dans son
+  paramètre : après « marquer comme loué », c'est cette version-là qui est
+  vraie.
+
+- [x] **G68 — Un solde de crédits n'est jamais inventé**
+  L'écran des passes affiche ce que `PassesRepository` rend, y compris zéro.
+  Aucun nombre codé en dur.
+  **MET, et une pastille menteuse a été retirée en chemin.** « Moi » affichait
+  `${shortlist.state.purchasedPasses} pass` — un compteur de SESSION, remis à
+  zéro à chaque lancement. Afficher « 0 pass » à quelqu'un qui en a trois,
+  c'est lui faire croire qu'on les a pris. La pastille est supprimée : le
+  solde vit dans l'écran qui interroge la base.
+
+- [ ] **G69 — Le parcours bailleur vérifié sur l'appareil**
+  NON TENUE, et pas de mon fait : le tableau de bord est derrière la création
+  de compte, dont l'OTP passe par e-mail — et le SMTP Supabase n'est pas
+  configuré. Le tunnel d'authentification s'ouvre correctement (capture), la
+  suite est inatteignable.
+  À rejouer après configuration du SMTP et du gabarit `{{ .Token }}`.

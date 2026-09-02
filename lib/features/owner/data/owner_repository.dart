@@ -71,7 +71,44 @@ class VisitRequest extends Equatable {
   List<Object?> get props => [id, status];
 }
 
+/// Un encaissement, tel qu'un bailleur le lit sur son relevé.
+///
+/// LA COMMISSION EST UNE LIGNE À PART, jamais fondue dans un net. Un bailleur
+/// béninois est habitué à des intermédiaires dont il ne comprend jamais les
+/// prélèvements : montrer le brut, le prélèvement et le net est ce qui
+/// distingue le produit de ce qu'il connaît.
+class OwnerMovement extends Equatable {
+  const OwnerMovement({
+    required this.label,
+    required this.amountFcfa,
+    required this.paidAt,
+    required this.isFee,
+  });
+
+  final String label;
+  final int amountFcfa;
+  final DateTime paidAt;
+  final bool isFee;
+
+  @override
+  List<Object?> get props => [label, amountFcfa, paidAt, isFee];
+}
+
+class OwnerEarnings extends Equatable {
+  const OwnerEarnings({
+    required this.receivedThisMonth,
+    required this.movements,
+  });
+
+  final int receivedThisMonth;
+  final List<OwnerMovement> movements;
+
+  @override
+  List<Object?> get props => [receivedThisMonth, movements];
+}
+
 abstract interface class OwnerRepository {
+  Future<Either<Failure, OwnerEarnings>> earnings();
   Future<Either<Failure, List<OwnerListing>>> myListings();
   Future<Either<Failure, List<VisitRequest>>> visitRequests();
   Future<Either<Failure, void>> setAvailability(String listingId, bool online);
@@ -210,6 +247,83 @@ class SupabaseOwnerRepository implements OwnerRepository {
       ? 'Bien'
       : '${PropertyTypes.labelOf(l['property_type'] as String?)} · '
             '${l['neighborhood'] ?? l['city']}';
+
+  @override
+  Future<Either<Failure, OwnerEarnings>> earnings() async {
+    final me = _me;
+    if (me == null) return const Left(NotAuthenticatedFailure());
+
+    try {
+      // `rent_payments` n'a pas de `owner_id` : on passe par le bail, qui,
+      // lui, en a un. C'est le schéma (§10), pas un contournement.
+      final rows = await _db
+          .from('rent_payments')
+          .select('''
+            amount_paid, rent_period_month, paid_at, payment_method,
+            lease:lease_contracts!inner(
+              owner_id,
+              listing:listings(property_type, neighborhood, city)
+            )
+          ''')
+          .eq('lease.owner_id', me)
+          .order('paid_at', ascending: false)
+          .limit(40);
+
+      final now = DateTime.now();
+      var month = 0;
+      final movements = <OwnerMovement>[];
+
+      for (final r in rows) {
+        final amount = (r['amount_paid'] as num).round();
+        final paidAt = DateTime.parse(r['paid_at'] as String);
+        final listing =
+            (r['lease'] as Map?)?['listing'] as Map<String, dynamic>?;
+        final label = listing == null
+            ? 'Loyer'
+            : 'Loyer · '
+                  '${PropertyTypes.labelOf(listing['property_type'] as String?)}'
+                  ' ${listing['neighborhood'] ?? listing['city']}';
+
+        if (paidAt.year == now.year && paidAt.month == now.month) {
+          month += amount;
+        }
+        movements.add(
+          OwnerMovement(
+            label: label,
+            amountFcfa: amount,
+            paidAt: paidAt,
+            isFee: false,
+          ),
+        );
+
+        // La commission, LIGNE PAR LIGNE, juste sous le loyer qu'elle
+        // prélève. 10 % — le taux vit dans GROWTH_MONETISATION §6 ; le
+        // jour où il change, il changera ici et nulle part ailleurs.
+        final fee = (amount * 0.10).round();
+        if (fee > 0) {
+          movements.add(
+            OwnerMovement(
+              label: 'Commission EAZYRENT',
+              amountFcfa: -fee,
+              paidAt: paidAt,
+              isFee: true,
+            ),
+          );
+          if (paidAt.year == now.year && paidAt.month == now.month) {
+            month -= fee;
+          }
+        }
+      }
+
+      return Right(
+        OwnerEarnings(receivedThisMonth: month, movements: movements),
+      );
+    } on PostgrestException catch (e) {
+      return Left(ServerFailure(debug: '${e.code} ${e.message}'));
+    } catch (e) {
+      return Left(NetworkFailure(debug: e.toString()));
+    }
+  }
 
   @override
   Future<Either<Failure, void>> setAvailability(
