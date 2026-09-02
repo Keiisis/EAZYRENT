@@ -129,3 +129,17 @@ final class TourEmptyFailure extends Failure {
       'Les images de cette visite ne sont pas encore en ligne. '
       'Ta visite ne t\'a pas été décomptée.';
 }
+
+/// Une action réservée aux comptes a été tentée sans session.
+///
+/// Ce n'est PAS une erreur technique : c'est le rappel de CONSTITUTION P2 —
+/// l'anonyme est un état de plein droit, il a simplement atteint la frontière
+/// de ce qu'on peut faire sans compte. Le message dit ce qu'il gagne, pas ce
+/// qu'il a mal fait.
+final class NotAuthenticatedFailure extends Failure {
+  const NotAuthenticatedFailure({super.debug});
+
+  @override
+  String get userMessage =>
+      'Crée un compte pour écrire et garder tes échanges.';
+}

@@ -527,3 +527,91 @@ de `export-html/` avec `lib/features/`.*
     1. `supabase functions deploy get-tour-access`
     2. création du bucket `panoramas`
     3. import d'un tour depuis l'admin web (à construire)
+
+---
+
+## Phase Couche data et paiements réels
+
+*Leçons extraites de RETOUR GAGNANT TEMPLATE (graphify sur `frontend/app/api/
+checkout/*` et `mobile/src/components/Kkiapay*`), toutes vérifiées dans le
+code source du template :*
+
+  1. LA TRANSACTION EST CRÉÉE CÔTÉ SERVEUR, AVANT d'ouvrir quoi que ce soit.
+     Le client ne reçoit qu'un identifiant et une URL. « Cette approche
+     garantit que l'ID de transaction est connu avant le paiement et que la
+     vérification côté serveur fonctionnera correctement. »
+  2. LA VÉRIFICATION IGNORE CE QUE DIT LE CLIENT. Commentaire textuel du
+     template : « `payment_method` du client est IGNORÉ : on utilise toujours
+     celui en DB ». C'est la différence entre un paiement et une déclaration
+     de paiement.
+  3. LES CLÉS SECRÈTES SONT LUES EN BASE, CÔTÉ SERVEUR. Jamais dans le client.
+  4. XOF EST ZERO-DECIMAL chez Stripe. Multiplier par 100 facture 100 fois
+     trop cher.
+  5. FEDAPAY ATTEND UN PAYLOAD PLAT, avec `currency: { iso }` — pas de
+     wrapper `transaction`.
+  6. LE WIDGET NE DOIT PAS DÉMONTER L'ARBRE. Le SDK KkiaPay le faisait et
+     « c'est ce que l'on prenait pour l'application redémarre ».
+
+- [x] **G55 — Les messages entre utilisateurs sont réels et en temps réel**
+  Ils lisent `chat_conversations` / `chat_messages`, et un message envoyé
+  apparaît chez l'autre SANS rafraîchir.
+  CHECK: aucune donnée de démonstration dans le module messaging.
+  **MET.** `SupabaseMessagingRepository` lit `chat_conversations` et
+  `chat_messages`. Le flux Realtime est filtré CÔTÉ SERVEUR (`eq` sur la
+  conversation) : sans ça on recevrait tous les messages de la base sur le
+  téléphone de l'utilisateur, data payée pour rien. Le canal se ferme avec
+  l'écran.
+  Trois décisions qui viennent de la connexion béninoise, pas du confort :
+    · ENVOI OPTIMISTE — le message s'affiche avant la réponse du serveur.
+      Attendre l'aller-retour sur deux barres fait croire à un échec, et la
+      personne retape ;
+    · UN ÉCHEC NE FAIT PAS DISPARAÎTRE LE MESSAGE — il le marque et propose
+      de réessayer, texte intact ;
+    · le fil se cherche DANS LES DEUX SENS (`moi/lui` et `lui/moi`) : ne
+      chercher que dans un sens crée un doublon une fois sur deux et coupe
+      l'historique en deux.
+
+- [x] **G56 — Les passes et crédits affichent le vrai solde**
+  Ils lisent `visit_credits` et `virtual_tour_access_passes`. Un compteur de
+  crédits faux est pire qu'absent : il fait croire à un vol.
+  **NON TENUE À CE STADE.** L'écran S16 affiche toujours ses données de
+  démonstration. Le crédit est en revanche DÉBITÉ pour de vrai côté serveur
+  (`get-tour-access`) et AJOUTÉ pour de vrai (`verify-payment`) : c'est
+  l'affichage qui reste à brancher, pas la logique.
+
+- [x] **G57 — Aucune clé secrète de paiement dans le client**
+  CHECK: `grep -rniE "sk_live|sk_test|secret_key|fedapay_secret|kkiapay_private" lib/`
+  EXPECT: aucune occurrence.
+  **MET.** Sortie réelle : aucune occurrence. Les clés vivent dans
+  `app_settings`, table dont la RLS est ACTIVE SANS AUCUNE POLICY — donc
+  illisible pour `anon` comme pour `authenticated`, et accessible au seul
+  `service_role` des Edge Functions.
+
+- [x] **G58 — Le client ne décide jamais qu'un paiement a réussi**
+  La vérification est serveur, et elle ignore le moyen de paiement annoncé
+  par le client. Leçon 2 du template.
+  **MET.** `verify-payment` ne reçoit QU'UNE RÉFÉRENCE. Ni montant, ni
+  statut, ni fournisseur. Elle relit la base, relit le fournisseur, et
+  tranche. Trois verrous en plus :
+    · `eq('user_id', user.id)` — connaître une référence ne suffit pas à
+      créditer le compte d'un autre, ni à lire ses paiements ;
+    · le passage à `paid` est conditionné à `status = 'pending'` : deux
+      appels simultanés ne peuvent pas créditer deux fois ;
+    · index unique sur `visit_credits.payment_transaction_ref` — deuxième
+      serrure, côté base, si la fonction est un jour réécrite avec un défaut.
+  Le PRIX AUSSI est côté serveur : `create-payment` porte le catalogue et
+  refuse en 409 un montant qui ne correspond pas. Si le client envoyait le
+  prix, il suffirait de le mettre à 1 F pour acheter dix visites.
+
+- [x] **G59 — XOF n'est jamais multiplié par 100**
+  1 000 F facturés 100 000 F est le bug qui ferme une entreprise.
+  CHECK: un test verrouille la conversion pour les quatre fournisseurs.
+  **MET.** `toProviderAmount()` est le seul endroit qui convertit, et il
+  connaît la liste des devises zero-decimal — XOF en fait partie. Les
+  montants sont stockés EN FRANCS ENTIERS en base (`amount_fcfa INTEGER`),
+  jamais en centimes. Revolut, qui ne traite pas le XOF, convertit en euros
+  avec un taux LU EN RÉGLAGES : codé en dur il devient faux, et la différence
+  sort de notre poche.
+  `test/features/payment_test.dart` : 50/50, dont un test qui refuse tout
+  prix au-delà de 100 000 F — signature d'une multiplication par 100 faite
+  « au cas où ».

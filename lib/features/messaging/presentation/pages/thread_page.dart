@@ -1,47 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
+import '../../data/messaging_repository.dart';
+import '../../domain/entities/conversation.dart';
+import '../bloc/thread_cubit.dart';
 
-/// S10b — Une conversation.
+/// S10b — Une conversation, en temps réel.
 ///
-/// Deux décisions viennent du terrain béninois, pas de la convention :
+/// Trois décisions viennent du terrain béninois, pas de la convention :
 ///
 ///   · LE BOUTON MICRO A LA MÊME TAILLE QUE L'ENVOI. Taper au clavier sur un
 ///     Tecno d'entrée de gamme, debout, une main sur un sac, est lent et
 ///     pénible. Parler ne l'est pas. Le vocal est déjà le mode dominant sur
 ///     WhatsApp ici — on n'introduit pas un usage, on cesse de le contrarier.
 ///
-///   · LES RÉPONSES SUGGÉRÉES évitent l'angoisse de la page blanche, qui est
-///     la première cause de conversation jamais démarrée. Elles sont
-///     contextuelles au bien, pas génériques.
-class ThreadScreen extends StatefulWidget {
-  const ThreadScreen({
-    required this.name,
-    required this.badge,
-    required this.about,
-    super.key,
-  });
+///   · L'ENVOI EST OPTIMISTE. Le message s'affiche avant la réponse du
+///     serveur. Sur deux barres de réseau, attendre l'aller-retour fait
+///     croire à un échec, et la personne retape.
+///
+///   · UN ÉCHEC NE FAIT PAS DISPARAÎTRE LE MESSAGE. Il le marque et propose
+///     de réessayer d'un doigt.
+class ThreadScreen extends StatelessWidget {
+  const ThreadScreen({required this.conversation, super.key});
 
-  final String name;
-  final String badge;
-  final String about;
+  final Conversation conversation;
 
   @override
-  State<ThreadScreen> createState() => _ThreadScreenState();
+  Widget build(BuildContext context) {
+    final me = Supabase.instance.client.auth.currentUser?.id;
+    if (me == null) return const _MustSignIn();
+
+    return BlocProvider(
+      create: (_) =>
+          ThreadCubit(getIt<MessagingRepository>(), conversation.id, me)
+            ..load(),
+      child: _ThreadView(conversation: conversation),
+    );
+  }
 }
 
-class _ThreadScreenState extends State<ThreadScreen> {
+class _ThreadView extends StatefulWidget {
+  const _ThreadView({required this.conversation});
+
+  final Conversation conversation;
+
+  @override
+  State<_ThreadView> createState() => _ThreadViewState();
+}
+
+class _ThreadViewState extends State<_ThreadView> {
   final _controller = TextEditingController();
-  final _messages = <_Msg>[
-    const _Msg('Bonjour, le bien de Fidjrossè est-il toujours libre ?', true),
-    const _Msg(
-      'Oui, il est toujours libre. Tu peux passer samedi après-midi.',
-      false,
-    ),
-  ];
+  final _scroll = ScrollController();
   bool _recording = false;
 
+  /// Contextuelles au bien, jamais génériques. Elles évitent l'angoisse de la
+  /// page blanche, qui est la première cause de conversation jamais démarrée.
   static const _suggestions = [
     'Le bien est-il toujours libre ?',
     "L'avance est-elle négociable ?",
@@ -51,20 +68,31 @@ class _ThreadScreenState extends State<ThreadScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
   void _send(String text) {
     if (text.trim().isEmpty) return;
-    setState(() {
-      _messages.add(_Msg(text.trim(), true));
-      _controller.clear();
+    context.read<ThreadCubit>().send(text);
+    _controller.clear();
+    // On descend APRÈS la construction : sauter avant que le message soit
+    // dans la liste ne descend nulle part.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scroll.hasClients) {
+        _scroll.animateTo(
+          _scroll.position.maxScrollExtent,
+          duration: Motion.base,
+          curve: Motion.standard,
+        );
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
+    final c = widget.conversation;
 
     return Scaffold(
       backgroundColor: p.surfaceBase,
@@ -74,12 +102,18 @@ class _ThreadScreenState extends State<ThreadScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.name,
+              c.otherName,
               style: AppText.titleM.copyWith(color: p.inkStrong),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
-              '${widget.badge} · ${widget.about}',
+              c.listingLabel == null
+                  ? c.badge
+                  : '${c.badge} · ${c.listingLabel}',
               style: AppText.caption.copyWith(color: p.success),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -88,47 +122,69 @@ class _ThreadScreenState extends State<ThreadScreen> {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(Space.md),
-                    itemCount: _messages.length,
-                    itemBuilder: (_, i) => _Bubble(message: _messages[i]),
-                  ),
+            child: BlocBuilder<ThreadCubit, ThreadState>(
+              builder: (context, state) => switch (state) {
+                ThreadLoading() => const Center(
+                  child: CircularProgressIndicator(),
                 ),
-
-                // Les suggestions ne s'affichent que tant que la conversation
-                // est courte : passé les premiers échanges, elles deviennent
-                // du bruit.
-                if (_messages.length <= 3)
-                  SizedBox(
-                    height: 44,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: Space.md),
-                      children: [
-                        for (final s in _suggestions)
-                          Padding(
-                            padding: const EdgeInsets.only(right: Space.xs),
-                            child: ActionChip(
-                              label: Text(s),
-                              onPressed: () => _send(s),
-                              backgroundColor: p.surfaceRaised,
-                              side: BorderSide(color: p.lineHair),
+                ThreadError(:final failure) => _ErrorBody(
+                  message: failure.userMessage,
+                  onRetry: context.read<ThreadCubit>().load,
+                ),
+                ThreadReady(:final messages, :final myId) => Column(
+                  children: [
+                    Expanded(
+                      child: messages.isEmpty
+                          ? _FirstMessage(name: c.otherName)
+                          : ListView.builder(
+                              controller: _scroll,
+                              padding: const EdgeInsets.all(Space.md),
+                              itemCount: messages.length,
+                              itemBuilder: (_, i) => _Bubble(
+                                message: messages[i],
+                                mine: messages[i].senderId == myId,
+                                onRetry: () => context
+                                    .read<ThreadCubit>()
+                                    .retry(messages[i]),
+                              ),
                             ),
-                          ),
-                      ],
                     ),
-                  ),
 
-                _Composer(
-                  controller: _controller,
-                  recording: _recording,
-                  onSend: () => _send(_controller.text),
-                  onMic: () => setState(() => _recording = !_recording),
+                    // Les suggestions ne s'affichent que tant que la
+                    // conversation est courte : passé les premiers échanges,
+                    // elles deviennent du bruit.
+                    if (messages.length <= 3)
+                      SizedBox(
+                        height: 44,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Space.md,
+                          ),
+                          children: [
+                            for (final s in _suggestions)
+                              Padding(
+                                padding: const EdgeInsets.only(right: Space.xs),
+                                child: ActionChip(
+                                  label: Text(s),
+                                  onPressed: () => _send(s),
+                                  backgroundColor: p.surfaceRaised,
+                                  side: BorderSide(color: p.lineHair),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+
+                    _Composer(
+                      controller: _controller,
+                      recording: _recording,
+                      onSend: () => _send(_controller.text),
+                      onMic: () => setState(() => _recording = !_recording),
+                    ),
+                  ],
                 ),
-              ],
+              },
             ),
           ),
         ),
@@ -137,41 +193,157 @@ class _ThreadScreenState extends State<ThreadScreen> {
   }
 }
 
-class _Msg {
-  const _Msg(this.text, this.mine);
-  final String text;
-  final bool mine;
-}
-
 class _Bubble extends StatelessWidget {
-  const _Bubble({required this.message});
+  const _Bubble({
+    required this.message,
+    required this.mine,
+    required this.onRetry,
+  });
 
-  final _Msg message;
+  final ChatMessage message;
+  final bool mine;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final mine = message.mine;
 
     return Align(
       alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: Space.xs),
-        padding: const EdgeInsets.symmetric(
-          horizontal: Space.sm,
-          vertical: Space.xs,
-        ),
-        constraints: const BoxConstraints(maxWidth: 320),
-        decoration: BoxDecoration(
-          // Le message de l'utilisateur n'utilise PAS la couleur d'action :
-          // le terracotta signale une action à faire, pas un texte déjà écrit.
-          color: mine ? p.surfaceSunken : p.surfaceRaised,
-          border: mine ? null : Border.all(color: p.lineHair),
-          borderRadius: const BorderRadius.all(Radii.card),
-        ),
+      child: Column(
+        crossAxisAlignment: mine
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: Space.xxs),
+            padding: const EdgeInsets.symmetric(
+              horizontal: Space.sm,
+              vertical: Space.xs,
+            ),
+            constraints: const BoxConstraints(maxWidth: 320),
+            decoration: BoxDecoration(
+              // Le message de l'utilisateur n'utilise PAS la couleur
+              // d'action : le terracotta signale une action à faire, pas un
+              // texte déjà écrit.
+              color: mine ? p.surfaceSunken : p.surfaceRaised,
+              border: mine ? null : Border.all(color: p.lineHair),
+              borderRadius: const BorderRadius.all(Radii.card),
+            ),
+            child: Opacity(
+              // Le message en attente est visible mais estompé : on voit
+              // qu'il est parti sans croire qu'il est arrivé.
+              opacity: message.pending ? 0.6 : 1,
+              child: Text(
+                message.text,
+                style: AppText.bodyL.copyWith(color: p.inkBase),
+              ),
+            ),
+          ),
+
+          if (message.failed)
+            Padding(
+              padding: const EdgeInsets.only(bottom: Space.xs),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline, size: 14, color: p.danger),
+                  const SizedBox(width: Space.xxs),
+                  Text(
+                    'Non envoyé',
+                    style: AppText.caption.copyWith(color: p.danger),
+                  ),
+                  const SizedBox(width: Space.xs),
+                  // Le texte n'est jamais perdu : on le renvoie tel quel.
+                  InkWell(
+                    onTap: onRetry,
+                    child: Text(
+                      'Réessayer',
+                      style: AppText.caption.copyWith(
+                        color: p.action,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FirstMessage extends StatelessWidget {
+  const _FirstMessage({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(Space.lg),
         child: Text(
-          message.text,
-          style: AppText.bodyL.copyWith(color: p.inkBase),
+          'Écris à $name. Les questions les plus utiles sont juste en dessous.',
+          textAlign: TextAlign.center,
+          style: AppText.bodyL.copyWith(color: p.inkMuted),
+        ),
+      ),
+    );
+  }
+}
+
+class _ErrorBody extends StatelessWidget {
+  const _ErrorBody({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(Space.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(message, style: AppText.bodyL.copyWith(color: p.inkStrong)),
+            const SizedBox(height: Space.lg),
+            FilledButton(
+              onPressed: onRetry,
+              style: FilledButton.styleFrom(
+                minimumSize: Size(0, Touch.target(p.isHighContrast)),
+              ),
+              child: const Text('Réessayer'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MustSignIn extends StatelessWidget {
+  const _MustSignIn();
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Scaffold(
+      backgroundColor: p.surfaceBase,
+      appBar: AppBar(backgroundColor: p.surfaceBase),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(Space.lg),
+          child: Text(
+            'Crée un compte pour écrire et garder tes échanges.',
+            textAlign: TextAlign.center,
+            style: AppText.bodyL.copyWith(color: p.inkMuted),
+          ),
         ),
       ),
     );
@@ -209,6 +381,8 @@ class _Composer extends StatelessWidget {
               controller: controller,
               minLines: 1,
               maxLines: 4,
+              textInputAction: TextInputAction.send,
+              onSubmitted: (_) => onSend(),
               style: AppText.bodyL.copyWith(color: p.inkStrong),
               decoration: const InputDecoration(
                 hintText: 'Écris un message',

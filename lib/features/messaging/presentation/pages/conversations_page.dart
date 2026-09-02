@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../auth/domain/entities/account.dart';
+import '../../data/messaging_repository.dart';
+import '../../domain/entities/conversation.dart';
+import '../bloc/conversations_cubit.dart';
 import 'thread_page.dart';
 
 /// S10 — Messages. Le seul écran partagé par les TROIS profils.
+///
+/// Les fils viennent de `chat_conversations`. Plus aucune donnée de
+/// démonstration : ce qui s'affiche ici existe en base.
 ///
 /// L'état vide change selon le rôle, parce que « aucun message » ne veut pas
 /// dire la même chose pour un chercheur (personne à qui écrire encore) et
 /// pour un propriétaire (personne ne s'intéresse à son bien). L'issue
 /// proposée diffère donc aussi.
 ///
-/// Le statut de l'interlocuteur est TOUJOURS affiché en clair — « Bailleur
-/// vérifié », « Agent EAZYRENT ». Jamais un pseudonyme nu : sur un marché où
-/// l'arnaque est la crainte n°1, savoir à qui on parle fait partie du produit.
+/// Le statut de l'interlocuteur est TOUJOURS affiché en clair — « Bailleur »,
+/// « Agent EAZYRENT ». Jamais un pseudonyme nu : sur un marché où l'arnaque
+/// est la crainte n°1, savoir à qui on parle fait partie du produit.
 class ConversationsScreen extends StatelessWidget {
   const ConversationsScreen({required this.role, super.key});
 
@@ -22,49 +30,21 @@ class ConversationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final p = context.palette;
+    return BlocProvider(
+      create: (_) => ConversationsCubit(getIt<MessagingRepository>())..load(),
+      child: _ConversationsView(role: role),
+    );
+  }
+}
 
-    // Démonstration tant que le module messaging n'a pas sa couche data.
-    final demo = switch (role) {
-      UserRole.tenant => const [
-        _Conversation(
-          name: 'Mensah A.',
-          badge: 'Bailleur vérifié',
-          about: 'Chambre-salon Fidjrossè',
-          preview: 'Oui le bien est toujours libre, tu peux passer samedi.',
-          when: '10:24',
-          unread: true,
-        ),
-        _Conversation(
-          name: 'Rachid',
-          badge: 'Agent EAZYRENT',
-          about: 'Visite 360 · Godomey',
-          preview: 'Le tour est en ligne depuis ce matin.',
-          when: 'hier',
-          unread: false,
-        ),
-      ],
-      UserRole.owner => const [
-        _Conversation(
-          name: 'Koffi A.',
-          badge: 'A visité en 360°',
-          about: 'Chambre-salon Fidjrossè',
-          preview: "Bonjour, l'avance est-elle négociable ?",
-          when: '09:02',
-          unread: true,
-        ),
-      ],
-      UserRole.broker => const [
-        _Conversation(
-          name: 'Rachid',
-          badge: 'Agent EAZYRENT',
-          about: 'Villa Cadjèhoun',
-          preview: 'On passe vérifier le bien demain matin.',
-          when: '08:15',
-          unread: false,
-        ),
-      ],
-    };
+class _ConversationsView extends StatelessWidget {
+  const _ConversationsView({required this.role});
+
+  final UserRole role;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
 
     return Scaffold(
       backgroundColor: p.surfaceBase,
@@ -72,9 +52,17 @@ class ConversationsScreen extends StatelessWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
-            child: demo.isEmpty
-                ? _Empty(role: role)
-                : ListView(
+            child: BlocBuilder<ConversationsCubit, ConversationsState>(
+              builder: (context, state) => switch (state) {
+                ConversationsLoading() => const _Skeleton(),
+                ConversationsEmpty() => _Empty(role: role),
+                ConversationsError(:final failure) => _Error(
+                  message: failure.userMessage,
+                  onRetry: context.read<ConversationsCubit>().load,
+                ),
+                ConversationsReady(:final items) => RefreshIndicator(
+                  onRefresh: context.read<ConversationsCubit>().refresh,
+                  child: ListView(
                     padding: const EdgeInsets.symmetric(vertical: Space.sm),
                     children: [
                       Padding(
@@ -89,9 +77,12 @@ class ConversationsScreen extends StatelessWidget {
                           style: AppText.titleL.copyWith(color: p.inkStrong),
                         ),
                       ),
-                      for (final c in demo) _ConversationRow(conversation: c),
+                      for (final c in items) _ConversationRow(conversation: c),
                     ],
                   ),
+                ),
+              },
+            ),
           ),
         ),
       ),
@@ -99,28 +90,10 @@ class ConversationsScreen extends StatelessWidget {
   }
 }
 
-class _Conversation {
-  const _Conversation({
-    required this.name,
-    required this.badge,
-    required this.about,
-    required this.preview,
-    required this.when,
-    required this.unread,
-  });
-
-  final String name;
-  final String badge;
-  final String about;
-  final String preview;
-  final String when;
-  final bool unread;
-}
-
 class _ConversationRow extends StatelessWidget {
   const _ConversationRow({required this.conversation});
 
-  final _Conversation conversation;
+  final Conversation conversation;
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +101,15 @@ class _ConversationRow extends StatelessWidget {
     final c = conversation;
 
     return InkWell(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) =>
-              ThreadScreen(name: c.name, badge: c.badge, about: c.about),
-        ),
-      ),
+      onTap: () async {
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => ThreadScreen(conversation: c),
+          ),
+        );
+        // Au retour, l'aperçu et le compteur de non-lus ont changé.
+        if (context.mounted) await context.read<ConversationsCubit>().refresh();
+      },
       child: Container(
         constraints: BoxConstraints(
           minHeight: Touch.target(p.isHighContrast) + 24,
@@ -148,7 +124,12 @@ class _ConversationRow extends StatelessWidget {
             CircleAvatar(
               radius: 22,
               backgroundColor: p.surfaceSunken,
-              child: Icon(Icons.person_outline, color: p.inkMuted, size: 20),
+              backgroundImage: c.otherAvatarUrl == null
+                  ? null
+                  : NetworkImage(c.otherAvatarUrl!),
+              child: c.otherAvatarUrl != null
+                  ? null
+                  : Icon(Icons.person_outline, color: p.inkMuted, size: 20),
             ),
             const SizedBox(width: Space.sm),
             Expanded(
@@ -159,24 +140,28 @@ class _ConversationRow extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          c.name,
+                          c.otherName,
                           style: AppText.bodyL.copyWith(
                             color: p.inkStrong,
                             fontWeight: c.unread
                                 ? FontWeight.w700
                                 : FontWeight.w500,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Text(
-                        c.when,
+                        c.whenLabel(),
                         style: AppText.caption.copyWith(color: p.inkMuted),
                       ),
                     ],
                   ),
                   // Le statut, toujours en clair. Jamais un pseudonyme nu.
                   Text(
-                    '${c.badge} · ${c.about}',
+                    c.listingLabel == null
+                        ? c.badge
+                        : '${c.badge} · ${c.listingLabel}',
                     style: AppText.label.copyWith(color: p.success),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -186,7 +171,9 @@ class _ConversationRow extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          c.preview,
+                          c.lastMessage.isEmpty
+                              ? 'Conversation ouverte'
+                              : c.lastMessage,
                           style: AppText.bodyM.copyWith(
                             color: c.unread ? p.inkBase : p.inkMuted,
                           ),
@@ -213,6 +200,46 @@ class _ConversationRow extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _Skeleton extends StatelessWidget {
+  const _Skeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    // Trois lignes grises aux DIMENSIONS RÉELLES des conversations : quand
+    // les données arrivent, rien ne saute.
+    return ListView(
+      padding: const EdgeInsets.all(Space.md),
+      children: [
+        for (var i = 0; i < 3; i++)
+          Padding(
+            padding: const EdgeInsets.only(bottom: Space.md),
+            child: Row(
+              children: [
+                CircleAvatar(radius: 22, backgroundColor: p.surfaceSunken),
+                const SizedBox(width: Space.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(height: 14, width: 140, color: p.surfaceSunken),
+                      const SizedBox(height: Space.xs),
+                      Container(
+                        height: 12,
+                        width: double.infinity,
+                        color: p.surfaceSunken,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
@@ -265,6 +292,36 @@ class _Empty extends StatelessWidget {
               minimumSize: Size(0, Touch.target(p.isHighContrast)),
             ),
             child: Text(action),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Error extends StatelessWidget {
+  const _Error({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Padding(
+      padding: const EdgeInsets.all(Space.lg),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(message, style: AppText.bodyL.copyWith(color: p.inkStrong)),
+          const SizedBox(height: Space.lg),
+          FilledButton(
+            onPressed: onRetry,
+            style: FilledButton.styleFrom(
+              minimumSize: Size(0, Touch.target(p.isHighContrast)),
+            ),
+            child: const Text('Réessayer'),
           ),
         ],
       ),
