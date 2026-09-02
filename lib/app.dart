@@ -32,7 +32,13 @@ class EazyrentApp extends StatelessWidget {
     // l'écran ne changeait pas.
     return ListenableBuilder(
       listenable: getIt<ThemeController>(),
-      builder: (context, _) => _buildApp(getIt<ThemeController>().mode),
+      builder: (context, _) => _buildApp(
+        // `system` est résolu ICI, au-dessus de MaterialApp : c'est le seul
+        // endroit qui connaisse la luminosité choisie sur le téléphone.
+        getIt<ThemeController>().resolved(
+          MediaQuery.platformBrightnessOf(context),
+        ),
+      ),
     );
   }
 
@@ -42,7 +48,8 @@ class EazyrentApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       theme: switch (mode) {
-        AppThemeMode.light => AppTheme.light(),
+        // `system` ne parvient jamais jusqu'ici : il est résolu au-dessus.
+        AppThemeMode.system || AppThemeMode.light => AppTheme.light(),
         AppThemeMode.dark => AppTheme.dark(),
         AppThemeMode.sunlight => AppTheme.sunlight(),
       },

@@ -58,22 +58,66 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
 
                   const SizedBox(height: Space.lg),
-                  _Block(
+                  Text(
+                    'APPARENCE',
+                    style: AppText.label.copyWith(color: p.inkMuted),
+                  ),
+                  const SizedBox(height: Space.xs),
+
+                  // QUATRE CHOIX EXCLUSIFS, pas deux interrupteurs.
+                  //
+                  // Le mode sombre existait dans la palette depuis le début et
+                  // n'était atteignable par personne : `AppTheme.dark()` était
+                  // construit, jamais choisi. Un interrupteur « Plein Soleil »
+                  // seul laissait donc un tiers du travail invisible.
+                  _ThemeOption(
+                    icon: Icons.brightness_auto,
+                    title: 'Comme le téléphone',
+                    subtitle: 'Suit le réglage Android, clair ou sombre.',
+                    value: AppThemeMode.system,
+                    current: _theme.mode,
+                    onPick: (m) => _theme.mode = m,
+                  ),
+                  _ThemeOption(
+                    icon: Icons.light_mode_outlined,
+                    title: 'Clair',
+                    subtitle: 'Le mode par défaut, en intérieur.',
+                    value: AppThemeMode.light,
+                    current: _theme.mode,
+                    onPick: (m) => _theme.mode = m,
+                  ),
+                  _ThemeOption(
+                    icon: Icons.dark_mode_outlined,
+                    title: 'Sombre',
+                    subtitle:
+                        'Moins de lumière le soir, et moins de batterie sur '
+                        'les écrans AMOLED.',
+                    value: AppThemeMode.dark,
+                    current: _theme.mode,
+                    onPick: (m) => _theme.mode = m,
+                  ),
+                  _ThemeOption(
                     icon: Icons.wb_sunny_outlined,
-                    title: 'Mode Plein Soleil',
-                    body:
-                        'Contraste maximal, ombres supprimées et boutons '
-                        'agrandis à 56 dp, pour rester lisible en plein midi '
-                        'sur la voie.',
-                    value: _theme.isSunlight,
-                    onChanged: _theme.toggleSunlight,
+                    title: 'Plein Soleil',
+                    subtitle:
+                        'Bordures épaissies, ombres supprimées, boutons à '
+                        '56 dp. Pour lire à midi sur la voie.',
+                    value: AppThemeMode.sunlight,
+                    current: _theme.mode,
+                    onPick: (m) => _theme.mode = m,
                     note: _theme.autoSunlight
-                        ? 'S\'active tout seul au-delà de 8 000 lux — la '
-                              'luminosité d\'une rue à midi, pas celle d\'un '
+                        ? "S'active tout seul au-delà de 8 000 lux — la "
+                              "luminosité d'une rue à midi, pas celle d'un "
                               'bureau.'
                         : null,
                   ),
 
+                  const SizedBox(height: Space.lg),
+                  Text(
+                    'DONNÉES',
+                    style: AppText.label.copyWith(color: p.inkMuted),
+                  ),
+                  const SizedBox(height: Space.xs),
                   _Block(
                     icon: Icons.data_saver_on,
                     title: 'Mode Léger',
@@ -188,7 +232,6 @@ class _Block extends StatelessWidget {
     required this.body,
     required this.value,
     required this.onChanged,
-    this.note,
   });
 
   final IconData icon;
@@ -196,7 +239,6 @@ class _Block extends StatelessWidget {
   final String body;
   final bool value;
   final ValueChanged<bool> onChanged;
-  final String? note;
 
   @override
   Widget build(BuildContext context) {
@@ -237,10 +279,6 @@ class _Block extends StatelessWidget {
               ),
               const SizedBox(height: Space.xxs),
               Text(body, style: AppText.bodyM.copyWith(color: p.inkMuted)),
-              if (note != null) ...[
-                const SizedBox(height: Space.xxs),
-                Text(note!, style: AppText.caption.copyWith(color: p.info)),
-              ],
             ],
           ),
         ),
@@ -331,6 +369,98 @@ class _QualityOption extends StatelessWidget {
                       subtitle,
                       style: AppText.bodyM.copyWith(color: p.inkMuted),
                     ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Un mode d'affichage, exclusif des autres.
+///
+/// Des interrupteurs indépendants laissaient exprimer « sombre ET Plein
+/// Soleil », qui n'a aucun sens : ce sont deux façons opposées de traiter la
+/// lumière. Un choix unique rend l'état impossible plutôt que de le corriger
+/// après coup.
+class _ThemeOption extends StatelessWidget {
+  const _ThemeOption({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.current,
+    required this.onPick,
+    this.note,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final AppThemeMode value;
+  final AppThemeMode current;
+  final ValueChanged<AppThemeMode> onPick;
+  final String? note;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final on = value == current;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: Space.xs),
+      child: InkWell(
+        onTap: () => onPick(value),
+        borderRadius: const BorderRadius.all(Radii.card),
+        child: Container(
+          constraints: BoxConstraints(
+            minHeight: Touch.target(p.isHighContrast),
+          ),
+          padding: const EdgeInsets.all(Space.sm),
+          decoration: BoxDecoration(
+            color: p.surfaceRaised,
+            border: Border.all(
+              color: on ? p.action : p.lineHair,
+              width: on ? p.borderWidth + 0.5 : p.borderWidth,
+            ),
+            borderRadius: const BorderRadius.all(Radii.card),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                on ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                size: 20,
+                color: on ? p.action : p.inkFaint,
+              ),
+              const SizedBox(width: Space.sm),
+              Icon(icon, size: 20, color: on ? p.action : p.inkBase),
+              const SizedBox(width: Space.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: AppText.bodyL.copyWith(
+                        color: p.inkStrong,
+                        fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: AppText.bodyM.copyWith(color: p.inkMuted),
+                    ),
+                    if (note != null && on) ...[
+                      const SizedBox(height: Space.xxs),
+                      Text(
+                        note!,
+                        style: AppText.caption.copyWith(color: p.info),
+                      ),
+                    ],
                   ],
                 ),
               ),

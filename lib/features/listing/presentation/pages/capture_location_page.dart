@@ -298,7 +298,7 @@ class _CaptureLocationScreenState extends State<CaptureLocationScreen> {
           Container(
             decoration: BoxDecoration(
               color: p.surfaceRaised,
-              boxShadow: Elevation.stickyBar,
+              boxShadow: p.shadowBar,
             ),
             child: SafeArea(
               top: false,
@@ -474,7 +474,7 @@ class _AccuracyBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: p.surfaceRaised,
         borderRadius: const BorderRadius.all(Radii.card),
-        boxShadow: Elevation.mapPin,
+        boxShadow: p.shadowCard,
       ),
       child: Row(
         children: [

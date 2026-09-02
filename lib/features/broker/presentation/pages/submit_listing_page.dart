@@ -200,7 +200,7 @@ class _SubmitListingScreenState extends State<SubmitListingScreen> {
         padding: const EdgeInsets.all(Space.md),
         decoration: BoxDecoration(
           color: p.surfaceRaised,
-          boxShadow: Elevation.stickyBar,
+          boxShadow: p.shadowBar,
         ),
         child: SafeArea(
           top: false,
@@ -335,7 +335,10 @@ class _PhotoStrip extends StatelessWidget {
                   width: 88,
                   decoration: BoxDecoration(
                     color: p.surfaceSunken,
-                    border: Border.all(color: p.lineStrong),
+                    border: Border.all(
+                      color: p.lineStrong,
+                      width: p.borderWidth,
+                    ),
                     borderRadius: const BorderRadius.all(Radii.input),
                   ),
                   child: Icon(Icons.add_a_photo_outlined, color: p.inkMuted),

@@ -203,10 +203,7 @@ class _Choices extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(Space.md),
-      decoration: BoxDecoration(
-        color: p.surfaceRaised,
-        boxShadow: Elevation.stickyBar,
-      ),
+      decoration: BoxDecoration(color: p.surfaceRaised, boxShadow: p.shadowBar),
       child: SafeArea(
         top: false,
         child: Column(

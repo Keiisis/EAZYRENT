@@ -310,7 +310,7 @@ class _MoveInCost extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(Space.md),
       decoration: BoxDecoration(
-        border: Border.all(color: p.lineHair),
+        border: Border.all(color: p.lineHair, width: p.borderWidth),
         borderRadius: const BorderRadius.all(Radii.card),
       ),
       child: Column(
@@ -449,10 +449,7 @@ class _ActionBar extends StatelessWidget {
         Space.md,
         Space.md,
       ),
-      decoration: BoxDecoration(
-        color: p.surfaceRaised,
-        boxShadow: Elevation.stickyBar,
-      ),
+      decoration: BoxDecoration(color: p.surfaceRaised, boxShadow: p.shadowBar),
       child: SafeArea(
         top: false,
         child: Row(

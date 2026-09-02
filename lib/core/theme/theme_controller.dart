@@ -1,6 +1,11 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
-enum AppThemeMode { light, dark, sunlight }
+/// Quatre choix, et le premier est le bon défaut.
+///
+/// `system` suit le réglage Android. C'est ce que fait tout le reste du
+/// téléphone : imposer le mode clair à quelqu'un qui a mis son appareil en
+/// sombre revient à lui éblouir les yeux à 22 h.
+enum AppThemeMode { system, light, dark, sunlight }
 
 /// Qualité des tours 360, et donc volume de données par pièce filmée.
 enum TourQuality {
@@ -28,7 +33,7 @@ enum TourQuality {
 class ThemeController extends ChangeNotifier {
   ThemeController();
 
-  AppThemeMode _mode = AppThemeMode.light;
+  AppThemeMode _mode = AppThemeMode.system;
   bool _liteData = true;
   TourQuality _tourQuality = TourQuality.standard;
   bool _autoSunlight = true;
@@ -40,17 +45,34 @@ class ThemeController extends ChangeNotifier {
 
   bool get isSunlight => _mode == AppThemeMode.sunlight;
 
+  /// Le mode EFFECTIF, une fois `system` résolu.
+  ///
+  /// Le Plein Soleil l'emporte toujours : il a été choisi à la main, pour une
+  /// raison que le capteur du téléphone ne connaît pas — on est dehors.
+  AppThemeMode resolved(Brightness platform) => switch (_mode) {
+    AppThemeMode.system =>
+      platform == Brightness.dark ? AppThemeMode.dark : AppThemeMode.light,
+    final m => m,
+  };
+
+  String get label => switch (_mode) {
+    AppThemeMode.system => 'Comme le téléphone',
+    AppThemeMode.light => 'Clair',
+    AppThemeMode.dark => 'Sombre',
+    AppThemeMode.sunlight => 'Plein Soleil',
+  };
+
   set mode(AppThemeMode value) {
     if (_mode == value) return;
     _mode = value;
     notifyListeners();
   }
 
-  /// Bascule manuelle depuis « Moi » ou les réglages. Elle repart toujours
-  /// vers `light` et non vers `dark` : quelqu'un qui coupe le Plein Soleil
-  /// est rentré à l'ombre, il n'a pas demandé le mode sombre.
+  /// Bascule manuelle depuis « Moi ». Couper le Plein Soleil REVIENT AU
+  /// RÉGLAGE DU TÉLÉPHONE, et non au mode clair : quelqu'un qui rentre à
+  /// l'ombre le soir veut retrouver son sombre habituel, pas un écran blanc.
   void toggleSunlight(bool on) =>
-      mode = on ? AppThemeMode.sunlight : AppThemeMode.light;
+      mode = on ? AppThemeMode.sunlight : AppThemeMode.system;
 
   set liteData(bool value) {
     if (_liteData == value) return;

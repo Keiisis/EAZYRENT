@@ -54,7 +54,7 @@ class MyHomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(Space.md),
                   decoration: BoxDecoration(
                     color: p.surfaceRaised,
-                    border: Border.all(color: p.lineHair),
+                    border: Border.all(color: p.lineHair, width: p.borderWidth),
                     borderRadius: const BorderRadius.all(Radii.card),
                   ),
                   child: Column(

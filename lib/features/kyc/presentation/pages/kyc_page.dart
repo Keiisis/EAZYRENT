@@ -252,7 +252,7 @@ class _KycScreenState extends State<KycScreen> {
         padding: const EdgeInsets.all(Space.md),
         decoration: BoxDecoration(
           color: p.surfaceRaised,
-          boxShadow: Elevation.stickyBar,
+          boxShadow: p.shadowBar,
         ),
         child: SafeArea(
           top: false,

@@ -91,6 +91,20 @@ final class AppPalette extends ThemeExtension<AppPalette> {
   /// et les zones tactiles passent de 48 à 56 dp.
   final bool isHighContrast;
 
+  /// Épaisseur des bordures. 2 dp en Plein Soleil, 1 dp ailleurs.
+  ///
+  /// C'est le réglage qui rend le mode VISIBLE : dehors, ce sont les
+  /// séparations qui portent la lisibilité, pas la blancheur du fond.
+  double get borderWidth => isHighContrast ? 2 : 1;
+
+  /// Aucune ombre en Plein Soleil. Une ombre floutée ne rend rien sous un
+  /// soleil zénithal, et coûte un passage de rendu sur un Mali-G52.
+  List<BoxShadow> get shadowCard =>
+      isHighContrast ? Elevation.none : Elevation.mapPin;
+
+  List<BoxShadow> get shadowBar =>
+      isHighContrast ? Elevation.none : Elevation.stickyBar;
+
   static const light = AppPalette(
     surfaceBase: Color(0xFFF8FAFC),
     surfaceRaised: Color(0xFFFFFFFF),
@@ -133,19 +147,41 @@ final class AppPalette extends ThemeExtension<AppPalette> {
     isHighContrast: false,
   );
 
-  /// Plein Soleil — cible AAA. `inkMuted` fusionne avec `inkBase` : en plein
-  /// jour, il n'y a plus de texte secondaire, seulement du texte lisible.
+  /// Plein Soleil — cible AAA.
+  ///
+  /// ⚠️ CE MODE A ÉTÉ REFAIT. La première version faisait passer le fond de
+  /// `#F8FAFC` à `#FFFFFF` et l'encre de `#0B0F19` à `#000000` : trois pour
+  /// cent d'écart, invisibles. Constaté sur l'appareil — « on ne voit aucune
+  /// différence ». Un mode qui ne se voit pas n'existe pas, et un
+  /// interrupteur qui ne change rien apprend que les réglages sont
+  /// décoratifs.
+  ///
+  /// Ce qui rend un écran lisible dehors n'est PAS la blancheur du fond :
+  /// c'est la SÉPARATION des éléments. En plein soleil, un panneau blanc
+  /// posé sur un fond blanc sans bordure disparaît, quelle que soit la
+  /// qualité du contraste du texte. D'où :
+  ///   · `surfaceSunken` nettement gris — les champs et blocs se voient ;
+  ///   · `lineHair` porté au niveau d'une vraie bordure, pas d'un cheveu ;
+  ///   · bordures épaissies à 2 dp via `borderWidth` ;
+  ///   · ombres supprimées : dehors elles ne rendent rien et coûtent du GPU.
+  ///
+  /// `inkMuted` fusionne avec `inkBase` : en plein jour, il n'y a plus de
+  /// texte secondaire, seulement du texte lisible.
   static const sunlight = AppPalette(
     surfaceBase: Color(0xFFFFFFFF),
     surfaceRaised: Color(0xFFFFFFFF),
-    surfaceSunken: Color(0xFFF1F5F9),
+    // Franchement gris, et non plus un blanc cassé : c'est lui qui dessine
+    // les champs de saisie et les blocs d'information.
+    surfaceSunken: Color(0xFFDCE3EC),
     surfaceOverlay: Color(0xFFFFFFFF),
     inkStrong: Color(0xFF000000),
-    inkBase: Color(0xFF0B0F19),
-    inkMuted: Color(0xFF0B0F19), // volontairement identique à inkBase
-    inkFaint: Color(0xFF55617A),
-    lineHair: Color(0xFFCBD5E1),
-    lineStrong: Color(0xFF64748B),
+    inkBase: Color(0xFF000000),
+    inkMuted: Color(0xFF1E2635), // volontairement proche de inkBase
+    inkFaint: Color(0xFF475569),
+    // 4,6:1 sur blanc : une bordure qui se VOIT dehors, là où #CBD5E1
+    // disparaissait au premier rayon.
+    lineHair: Color(0xFF64748B),
+    lineStrong: Color(0xFF1E2635),
     action: Color(0xFF9E2810), // ~8:1 sur blanc
     actionFill: Color(0xFF9E2810),
     actionOnFill: Color(0xFFFFFFFF),

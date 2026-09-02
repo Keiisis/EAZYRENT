@@ -219,7 +219,7 @@ class _PublishListingScreenState extends State<PublishListingScreen> {
         padding: const EdgeInsets.all(Space.md),
         decoration: BoxDecoration(
           color: p.surfaceRaised,
-          boxShadow: Elevation.stickyBar,
+          boxShadow: p.shadowBar,
         ),
         child: SafeArea(
           top: false,
@@ -342,7 +342,7 @@ class _CostPreview extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(Space.md),
       decoration: BoxDecoration(
-        border: Border.all(color: p.lineHair),
+        border: Border.all(color: p.lineHair, width: p.borderWidth),
         borderRadius: const BorderRadius.all(Radii.card),
       ),
       child: Column(

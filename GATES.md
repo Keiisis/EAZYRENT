@@ -615,3 +615,60 @@ code source du template :*
   `test/features/payment_test.dart` : 50/50, dont un test qui refuse tout
   prix au-delà de 100 000 F — signature d'une multiplication par 100 faite
   « au cas où ».
+
+---
+
+## Phase Thème réel et couche data (suite)
+
+- [x] **G60 — Le Plein Soleil SE VOIT**
+  Constat sur l'appareil : « on ne voit aucune différence ». Il avait raison —
+  la première version passait le fond de `#F8FAFC` à `#FFFFFF` et l'encre de
+  `#0B0F19` à `#000000`. Trois pour cent d'écart.
+  **MET, et la correction est structurelle.** Ce qui rend un écran lisible
+  dehors n'est pas la blancheur du fond, c'est la SÉPARATION des éléments :
+  en plein soleil, un panneau blanc sur fond blanc sans bordure disparaît,
+  quelle que soit la qualité du contraste du texte.
+    · `lineHair` passe de `#CBD5E1` (1,3:1) à `#64748B` (4,6:1) ;
+    · `borderWidth` 1 → 2 dp, appliqué aux 21 fichiers concernés ;
+    · ombres SUPPRIMÉES (`shadowCard`/`shadowBar` rendent `Elevation.none`) :
+      dehors elles ne rendent rien et coûtent un passage de rendu ;
+    · `surfaceSunken` franchement gris, pour que champs et blocs existent.
+  PREUVE : `test/core/theme_test.dart`, 15 tests, dont le contraste de
+  bordure exigé > 3:1 ET > 2× celui du mode clair.
+
+- [x] **G61 — Le mode sombre existe et quelqu'un peut le choisir**
+  `AppTheme.dark()` était construit depuis le début et n'était atteignable
+  par personne : un tiers du travail de palette était invisible.
+  **MET.** Quatre choix EXCLUSIFS remplacent l'interrupteur unique : Comme le
+  téléphone · Clair · Sombre · Plein Soleil. Deux interrupteurs indépendants
+  laissaient exprimer « sombre ET Plein Soleil », qui n'a aucun sens — ce
+  sont deux façons opposées de traiter la lumière.
+  Le défaut est `system` : imposer le clair à quelqu'un qui a mis son
+  téléphone en sombre revient à lui éblouir les yeux à 22 h. Et couper le
+  Plein Soleil REVIENT AU RÉGLAGE DU TÉLÉPHONE, pas au mode clair — on rentre
+  à l'ombre le soir, on ne demande pas un écran blanc.
+
+- [x] **G62 — Le bailleur voit ses VRAIS biens**
+  `SupabaseOwnerRepository` lit `listings` et `visit_bookings`. Les demandes
+  en attente sont comptées en UNE requête pour tous les biens : dix annonces
+  ne doivent pas coûter dix aller-retours sur deux barres de réseau.
+  « A visité en 360° » est calculé depuis `virtual_tour_access_passes` — ce
+  qui change tout pour le bailleur : le déplacement n'est plus une
+  découverte, c'est une confirmation.
+
+- [x] **G63 — Le solde de crédits est celui de la base**
+  `SupabasePassesRepository` lit `visit_credits` et
+  `virtual_tour_access_passes`, et EXCLUT les crédits expirés du solde. Les
+  compter donnerait un chiffre flatteur et faux, dont l'écart apparaîtrait au
+  pire moment : devant un bien qu'on veut ouvrir.
+  L'historique inclut les tentatives ÉCHOUÉES. Ne montrer que les succès
+  reviendrait à nier ce qu'a vécu quelqu'un qui a vu un débit passer.
+
+- [ ] **G64 — Les Edge Functions sont déployées**
+  NON TENUE, et pas de mon fait : `supabase functions deploy` exige un jeton
+  d'accès que je n'ai pas et que je ne dois pas demander en clair. Le compte
+  n'est pas connecté sur cette machine —
+  `LegacyPlatformAuthRequiredError: Access token not provided`.
+  À exécuter : `npx supabase login`, puis
+  `npx supabase link --project-ref nwavznnpvxgvigxbnscv`, puis
+  `npx supabase functions deploy get-tour-access create-payment verify-payment`.

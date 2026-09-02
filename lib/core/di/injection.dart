@@ -15,6 +15,8 @@ import '../../features/listing/data/datasources/listing_remote_datasource.dart';
 import '../../features/listing/data/repositories/listing_repository_impl.dart';
 import '../../features/listing/domain/repositories/listing_repository.dart';
 import '../../features/messaging/data/messaging_repository.dart';
+import '../../features/owner/data/owner_repository.dart';
+import '../../features/passes/data/passes_repository.dart';
 import '../../features/payment/data/payment_repository.dart';
 import '../../features/tour/data/tour_repository.dart';
 import '../moments/moment.dart';
@@ -64,6 +66,12 @@ Future<void> configureDependencies() async {
     // demander au serveur de créer, puis de vérifier.
     ..registerLazySingleton<PaymentRepository>(
       () => SupabasePaymentRepository(getIt<SupabaseClient>()),
+    )
+    ..registerLazySingleton<OwnerRepository>(
+      () => SupabaseOwnerRepository(getIt<SupabaseClient>()),
+    )
+    ..registerLazySingleton<PassesRepository>(
+      () => SupabasePassesRepository(getIt<SupabaseClient>()),
     );
 
   // TODO(E0.1) : brancher $initGetIt(getIt) une fois build_runner exécuté.

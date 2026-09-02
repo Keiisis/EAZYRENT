@@ -227,7 +227,9 @@ class _Bubble extends StatelessWidget {
               // d'action : le terracotta signale une action à faire, pas un
               // texte déjà écrit.
               color: mine ? p.surfaceSunken : p.surfaceRaised,
-              border: mine ? null : Border.all(color: p.lineHair),
+              border: mine
+                  ? null
+                  : Border.all(color: p.lineHair, width: p.borderWidth),
               borderRadius: const BorderRadius.all(Radii.card),
             ),
             child: Opacity(
@@ -370,10 +372,7 @@ class _Composer extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(Space.sm),
-      decoration: BoxDecoration(
-        color: p.surfaceRaised,
-        boxShadow: Elevation.stickyBar,
-      ),
+      decoration: BoxDecoration(color: p.surfaceRaised, boxShadow: p.shadowBar),
       child: Row(
         children: [
           Expanded(

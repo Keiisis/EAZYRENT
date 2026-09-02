@@ -221,7 +221,7 @@ class _BottomPanel extends StatelessWidget {
       decoration: BoxDecoration(
         color: p.surfaceRaised,
         borderRadius: const BorderRadius.vertical(top: Radii.sheet),
-        boxShadow: Elevation.stickyBar,
+        boxShadow: p.shadowBar,
       ),
       child: SafeArea(
         top: false,
@@ -467,7 +467,7 @@ class _Banner extends StatelessWidget {
       decoration: BoxDecoration(
         color: p.surfaceRaised,
         borderRadius: const BorderRadius.all(Radii.card),
-        boxShadow: Elevation.mapPin,
+        boxShadow: p.shadowCard,
       ),
       child: Row(
         children: [
@@ -519,8 +519,10 @@ class _MeDot extends StatelessWidget {
     decoration: BoxDecoration(
       color: color,
       shape: BoxShape.circle,
+      // Le liseré blanc est constant : sur une carte, le point de position
+      // doit se détacher des tuiles quel que soit le thème.
       border: Border.all(color: Colors.white, width: 3),
-      boxShadow: Elevation.mapPin,
+      boxShadow: context.palette.shadowCard,
     ),
   );
 }
